@@ -1,12 +1,12 @@
-using System.Collections.Generic;
+using Godot.Collections;
 
 public class VariableManager
 {
     public static VariableManager Instance { get; } = new VariableManager();
 
-    public Dictionary<string, object> Variables { get; } = new();
+    public Dictionary<string, Object> Variables { get; } = new();
 
-    public void SetVariable(string name, object value)
+    public void SetVariable(string name, Object value)
     {
         Variables[name] = value;
     }

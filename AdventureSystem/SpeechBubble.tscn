@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://vo75r3wmqxta"]
+
+[ext_resource type="Theme" uid="uid://c6f1m287eoebh" path="res://AdventureSystem/SpeechBubble.tres" id="1_4bq3d"]
+[ext_resource type="Script" path="res://AdventureSystem/SpeechBubble.cs" id="2_3dp3e"]
+
+[node name="SpeechBubble" type="PanelContainer"]
+offset_right = 139.0
+offset_bottom = 20.0
+theme = ExtResource("1_4bq3d")
+script = ExtResource("2_3dp3e")
+
+[node name="Text" type="RichTextLabel" parent="."]
+clip_contents = false
+layout_mode = 2
+bbcode_enabled = true
+text = "[center]1 2 3 sfjhsjkfj hjdskf dshfjks[/center] hddsksfskfs"
+fit_content = true
+scroll_active = false
+autowrap_mode = 2
+shortcut_keys_enabled = false
+drag_and_drop_selection_enabled = false
+
+[node name="LifeTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="LifeTimer" to="." method="_OnLifeTimerTimeout"]

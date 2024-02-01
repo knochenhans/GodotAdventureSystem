@@ -1,18 +1,35 @@
-[gd_scene load_steps=3 format=3 uid="uid://cgomoes0br310"]
+[gd_scene load_steps=6 format=3 uid="uid://cgomoes0br310"]
 
 [ext_resource type="Script" path="res://AdventureSystem/Character.cs" id="1_auhhc"]
+[ext_resource type="AudioStream" uid="uid://dr8bgwfljde4a" path="res://Resources/Sounds/PickUp.wav" id="2_moa4k"]
 [ext_resource type="SpriteFrames" uid="uid://boamo1pw4nwro" path="res://Resources/Character.aseprite" id="2_prt4m"]
+[ext_resource type="AudioStream" uid="uid://bpedpmxbtyr4n" path="res://Resources/Sounds/Step.ogg" id="3_04wru"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_ym6ke"]
+random_pitch = 1.05
+random_volume_offset_db = 0.3
+streams_count = 1
+stream_0/stream = ExtResource("3_04wru")
+stream_0/weight = 1.0
 
 [node name="Character" type="Node2D"]
 script = ExtResource("1_auhhc")
 Speed = 50.0
+CharacterName = "You"
+PickupSound = ExtResource("2_moa4k")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(-12, 0)
 sprite_frames = ExtResource("2_prt4m")
-animation = &"idle"
+animation = &"talk"
+frame_progress = 0.452795
 centered = false
 offset = Vector2(0, -48)
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 path_desired_distance = 1.0
+
+[node name="StepSounds" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource("AudioStreamRandomizer_ym6ke")
+
+[node name="Sounds" type="AudioStreamPlayer2D" parent="."]

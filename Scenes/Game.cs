@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 using System;
 
 public partial class Game : Scene
@@ -9,12 +10,18 @@ public partial class Game : Scene
 		VerbSelected,
 	}
 
+	public VariableManager VariableManager { get; set; } = new();
+	public InventoryManager InventoryManager { get; set; } = new();
+
 	public Verb[] Verbs { get; set; }
 	public Interface InterfaceNode { get; set; }
 	public Stage StageNode { get; set; }
-	public VariableManager VariableManager { get; set; } = new();
 	public Verb currentVerb { get; set; }
-	public Camera2D Camera2D { get; set; }
+	public Camera2D Camera2DNode { get; set; }
+
+	public Dictionary<string, string> Things { get; set; } = new();
+
+	PackedScene IngameMenuScene { get; set; }
 
 	CommandState _currentCommandState = CommandState.Idle;
 	private CommandState CurrentCommandState
@@ -48,19 +55,36 @@ public partial class Game : Scene
 		InterfaceNode.GamePanelMouseMotion += _OnGamePanelMouseMotion;
 		InterfaceNode.GamePanelMousePressed += _OnGamePanelMousePressed;
 
+		InventoryManager.ObjectAdded += InterfaceNode._OnObjectAddedToInventory;
+
 		StageNode = GetNode<Stage>("Stage");
 		StageNode.SetCommandLabel += _OnInterfaceSetCommandLabel;
-		StageNode.ActivateHotspot += _OnHotspotAreaActivated;
+		StageNode.ActivateThing += _OnThingActivated;
+		StageNode.PlayerCharacter.InventoryManager = InventoryManager;
 
-		Camera2D = GetNode<Camera2D>("Camera2D");
+		Camera2DNode = GetNode<Camera2D>("Camera2D");
+
+		MessageDataManager.LoadMessages("res://messages.json");
+
+		IngameMenuScene = ResourceLoader.Load<PackedScene>("res://AdventureSystem/IngameMenu.tscn");
 	}
-
-	// public void _OnButtonPressed() => SceneManagerNode.ChangeToScene("Menu");
 
 	public override void _Input(InputEvent @event)
 	{
-		if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape)
-			SceneManagerNode.Quit();
+		if (@event is InputEventKey keyEvent && keyEvent.Pressed)
+		{
+			switch (keyEvent.Keycode)
+			{
+				case Key.Escape:
+					SceneManagerNode.Quit();
+					// SceneManagerNode.ChangeToScene("Menu");
+					break;
+				case Key.F5:
+					var ingameMenu = IngameMenuScene.Instantiate<IngameMenu>();
+					AddChild(ingameMenu);
+					break;
+			}
+		}
 	}
 
 	public void _OnVerbActivated(Verb verb)
@@ -86,30 +110,72 @@ public partial class Game : Scene
 
 		if (CurrentCommandState == CommandState.Idle)
 		{
-			StageNode.PlayerCharacter.MoveTo(mouseButtonEvent.Position);
+			StageNode.PlayerCharacter.MoveTo(mouseButtonEvent.Position / Camera2DNode.Zoom + Camera2DNode.Position);
+		}
+		else if (CurrentCommandState == CommandState.VerbSelected)
+		{
+			if (mouseButtonEvent.ButtonIndex == MouseButton.Right)
+			{
+				CurrentCommandState = CommandState.Idle;
+				InterfaceNode.ResetCommandLabel();
+			}
 		}
 	}
 
-	public async void _OnHotspotAreaActivated(HotspotArea hotspotArea)
+	public async void _OnThingActivated(Thing thing)
 	{
-		StageNode.PlayerCharacter.MoveTo(hotspotArea.CalculateCenter());
+		Vector2 position = Vector2.Zero;
+		if (thing is Object object_)
+			position = object_.Position;
+		else if (thing is HotspotArea hotspotArea)
+			position = hotspotArea.CalculateCenter();
+		else
+			GD.PrintErr($"_OnAreaActivated: Area {thing.ID} is not an Object or a HotspotArea");
+
+		StageNode.PlayerCharacter.MoveTo(position);
 
 		await ToSignal(StageNode.PlayerCharacter, "CharacterMoved");
 
-		var message = "That doesn't seem to work.";
+		var message = MessageDataManager.GetMessages("default", currentVerb.ID);
 		if (CurrentCommandState == CommandState.VerbSelected)
 		{
-			if (hotspotArea.Actions.ContainsKey(currentVerb.ID))
-				if (hotspotArea.Actions[currentVerb.ID] != "")
-				{
-					GD.Print($"_OnHotspotAreaActivated: Verb: {currentVerb.Name}, Hotspot: {hotspotArea.DisplayedName}, Action: {hotspotArea.Actions[currentVerb.ID]}");
-					message = hotspotArea.Actions[currentVerb.ID];
-				}
+			GD.Print($"_OnObjectActivated: Verb: {currentVerb.Name}, Object: {MessageDataManager.GetMessages(thing.ID, "name")[0]}");
+			var thingMessages = MessageDataManager.GetMessages(thing.ID, currentVerb.ID);
 
-			InterfaceNode.SetCommandLabel(message, true);
+			if (thingMessages.Count == 0)
+				thingMessages = MessageDataManager.GetMessages(thing.ID, "default");
+
+			for (int i = 0; i < thingMessages.Count; i++)
+			{
+				if (!ParseMessage(thing, thingMessages[i]))
+					StageNode.PlayerCharacter.Talk(new Array<string> { thingMessages[i] });
+			}
 
 			CurrentCommandState = CommandState.Idle;
+			return;
 		}
+
+		GD.Print($"_OnObjectActivated: Object: {thing.DisplayedName} activated");
+
+		InterfaceNode.SetCommandLabel(thing.DisplayedName);
+		CurrentCommandState = CommandState.VerbSelected;
+	}
+
+	private bool ParseMessage(Thing thing, string message)
+	{
+		message = message.StripEdges();
+
+		if (message.StartsWith("$"))
+		{
+			switch (message)
+			{
+				case "$pick_up":
+					StageNode.PlayerCharacter.PickUp(thing as Object);
+					break;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	public void _OnInterfaceSetCommandLabel(string commandLabel)
@@ -127,11 +193,13 @@ public partial class Game : Scene
 	{
 		if (StageNode.PlayerCharacter.Position.X > StageNode.GetViewportRect().Size.X / 8)
 		{
-			Camera2D.Position = new Vector2(StageNode.PlayerCharacter.Position.X - StageNode.GetViewportRect().Size.X / 8, Camera2D.Position.Y);
+			if (Camera2DNode.Position.X + StageNode.GetViewportRect().Size.X / 4 < StageNode.GetSize().X)
+				Camera2DNode.Position = new Vector2(StageNode.PlayerCharacter.Position.X - StageNode.GetViewportRect().Size.X / 8, Camera2DNode.Position.Y);
 		}
-		else
+		else if (StageNode.PlayerCharacter.Position.X < StageNode.GetViewportRect().Size.X / 8)
 		{
-			Camera2D.Position = new Vector2(0, Camera2D.Position.Y);
+			if (Camera2DNode.Position.X - StageNode.GetViewportRect().Size.X / 4 > 0)
+				Camera2DNode.Position = new Vector2(StageNode.PlayerCharacter.Position.X - StageNode.GetViewportRect().Size.X / 8, Camera2DNode.Position.Y);
 		}
 	}
 }

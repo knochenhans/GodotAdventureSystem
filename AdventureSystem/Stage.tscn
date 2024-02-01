@@ -1,14 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://dfn31vgvg841"]
+[gd_scene load_steps=7 format=3 uid="uid://dfn31vgvg841"]
 
 [ext_resource type="Script" path="res://AdventureSystem/Stage.cs" id="1_5h3ot"]
 [ext_resource type="PackedScene" uid="uid://cfxx85p2tifa3" path="res://AdventureSystem/Map.tscn" id="1_hcx4b"]
 [ext_resource type="PackedScene" uid="uid://cdp281ib4s7f4" path="res://AdventureSystem/HotspotPolygon.tscn" id="3_8aehx"]
 [ext_resource type="PackedScene" uid="uid://cgomoes0br310" path="res://AdventureSystem/Character.tscn" id="4_s6hpb"]
+[ext_resource type="PackedScene" uid="uid://cbyij1livuxja" path="res://Resources/Note.tscn" id="5_cqm0b"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_wc6y7"]
-vertices = PackedVector2Array(196, 157, 195, 157, 271, 154, 944, 251, 850, 159, 849, 158, 933, 156, 946, 242, 616, 247, 308, 252, 170, 252, 20, 248, 20, 170, 78, 165, 390, 159, 588, 171, 590, 171, 678, 166, 741, 178, 795, 176)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2), PackedInt32Array(3, 4, 5, 6, 7), PackedInt32Array(8, 9, 10, 11, 12, 13, 0, 2, 14, 15), PackedInt32Array(8, 15, 16), PackedInt32Array(3, 8, 16, 17, 18), PackedInt32Array(3, 18, 19), PackedInt32Array(3, 19, 4)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(11, 161, 77, 155, 195, 147, 271, 144, 390, 149, 589, 161, 680, 156, 742, 168, 793, 166, 847, 149, 942, 146, 956, 244, 953, 262, 616, 257, 308, 262, 170, 262, 10, 258)])
+vertices = PackedVector2Array(196, 157, 195, 157, 271, 154, 850, 159, 849, 158, 933, 156, 938, 209, 21, 208, 21, 170, 78, 165, 390, 159, 588, 171, 590, 171, 741, 178, 795, 176, 678, 166)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2), PackedInt32Array(3, 4, 5, 6), PackedInt32Array(6, 7, 8, 9, 0, 2, 10, 11), PackedInt32Array(6, 11, 12, 13), PackedInt32Array(14, 3, 6), PackedInt32Array(13, 14, 6), PackedInt32Array(13, 12, 15)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(11, 161, 77, 155, 195, 147, 271, 144, 390, 149, 589, 161, 680, 156, 742, 168, 793, 166, 847, 149, 942, 146, 950, 220, 11, 218)])
 source_geometry_group_name = &"navigation_polygon_source_group"
 
 [node name="Stage" type="Node2D"]
@@ -22,23 +23,21 @@ script = ExtResource("1_5h3ot")
 position = Vector2(-3, 0)
 polygon = PackedVector2Array(26, 22, 25, 34, 31, 39, 42, 44, 50, 48, 58, 56, 68, 56, 80, 51, 90, 60, 104, 44, 116, 43, 132, 29, 130, 14, 114, 6, 106, -2, 57, -1, 48, 10, 36, 10)
 ID = "cloud1"
-DisplayedName = "A cloud"
 Actions = {
 "close": "",
 "give": "",
-"look": "A cloud high above you in the sky",
+"look": "A cloud high above in the sky",
 "open": "",
 "pick_up": "",
 "pull": "",
 "push": "",
-"talk_to": "The cloud’s not talking back to you.",
+"talk_to": "This cloud’s not talking back to me. What a shame!",
 "use": ""
 }
 
 [node name="cloud2" parent="HotspotPolygons" instance=ExtResource("3_8aehx")]
 polygon = PackedVector2Array(306, 57, 314, 72, 322, 80, 340, 73, 348, 80, 367, 85, 382, 84, 413, 88, 426, 82, 447, 78, 455, 71, 478, 62, 480, 50, 465, 36, 441, 26, 403, 19, 367, 22, 340, 35, 320, 40)
 ID = "cloud2"
-DisplayedName = "Another cloud"
 Actions = {
 "close": "",
 "give": "",
@@ -47,14 +46,13 @@ Actions = {
 "pick_up": "",
 "pull": "",
 "push": "",
-"talk_to": "This cloud doesn’t seem eager to talk you, either",
+"talk_to": "This cloud doesn’t seem eager to talk, either",
 "use": ""
 }
 
 [node name="cloud3" parent="HotspotPolygons" instance=ExtResource("3_8aehx")]
 polygon = PackedVector2Array(702, 68, 690, 85, 692, 96, 707, 114, 737, 120, 771, 121, 832, 133, 853, 118, 895, 118, 912, 93, 938, 73, 953, 57, 949, 33, 928, 21, 889, 19, 863, 16, 841, 25, 818, 18, 805, 30, 782, 28, 758, 1, 739, 3, 724, 22, 719, 35, 701, 41, 698, 56)
 ID = "cloud3"
-DisplayedName = "Definitely not a cloud"
 Actions = {
 "close": "",
 "give": "",
@@ -72,3 +70,8 @@ position = Vector2(56, 190)
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_wc6y7")
+
+[node name="Objects" type="Node2D" parent="."]
+
+[node name="Note" parent="Objects" instance=ExtResource("5_cqm0b")]
+position = Vector2(618, 193)

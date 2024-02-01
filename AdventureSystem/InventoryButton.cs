@@ -3,13 +3,28 @@ using System;
 
 public partial class InventoryButton : Button
 {
-	// Called when the node enters the scene tree for the first time.
+	TextureRect TextureRect { get; set; }
+
 	public override void _Ready()
 	{
+		TextureRect = GetNode<TextureRect>("%TextureRect");
+
+		SetMeta("thingID", "");
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public void SetThing(string thingID, Texture2D texture)
 	{
+		var image = texture.GetImage();
+		Vector2 zoom = GetViewport().GetCamera2D().Zoom;
+		image.Resize(image.GetWidth() * (int)zoom.X, image.GetHeight() * (int)zoom.Y, Image.Interpolation.Nearest);
+		TextureRect.Texture = ImageTexture.CreateFromImage(image);
+
+		SetMeta("thingID", thingID);
+	}
+
+	public void RemoveThing()
+	{
+		TextureRect.Texture = null;
+		SetMeta("thingID", "");
 	}
 }

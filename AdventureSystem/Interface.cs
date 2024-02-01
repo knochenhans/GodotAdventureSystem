@@ -4,7 +4,7 @@ public partial class Interface : CanvasLayer
 {
 	GridContainer VerbGridContainer { get; set; }
 	GridContainer InventoryGridContainer { get; set; }
-	InventorySlot[] InventorySlots { get; set; }
+	// InventorySlot[] InventorySlots { get; set; }
 	Label CommandLabel { get; set; }
 	GamePanel GamePanel { get; set; }
 
@@ -13,6 +13,8 @@ public partial class Interface : CanvasLayer
 
 	[Signal]
 	public delegate void GamePanelMousePressedEventHandler(InputEventMouseButton mouseButtonEvent);
+
+	int Zoom = 4;
 
 	enum MessageStateEnum
 	{
@@ -36,7 +38,7 @@ public partial class Interface : CanvasLayer
 	{
 		VerbGridContainer = GetNode<GridContainer>("%Verbs");
 		InventoryGridContainer = GetNode<GridContainer>("%Inventory");
-		InventorySlots = new InventorySlot[8];
+		// InventorySlots = new InventorySlot[8];
 		CommandLabel = GetNode<Label>("%CommandLabel");
 		GamePanel = GetNode<GamePanel>("%GamePanel");
 		GamePanel.GuiInput += _OnGamePanelInputEvent;
@@ -54,16 +56,19 @@ public partial class Interface : CanvasLayer
 			VerbGridContainer.AddChild(button);
 		}
 
-		foreach (var slot in InventorySlots)
+		var inventoryButtonCount = 8;
+
+		for (int i = 0; i < inventoryButtonCount; i++)
 		{
 			var button = ResourceLoader.Load<PackedScene>("res://AdventureSystem/InventoryButton.tscn").Instantiate() as InventoryButton;
-			var textureRect = button.GetNode<TextureRect>("%TextureRect");
-			var texture = ResourceLoader.Load<Texture2D>("res://Resources/Item.png");
-			var image = texture.GetImage();
-			image.Resize(image.GetWidth() * 4, image.GetHeight() * 4, Image.Interpolation.Nearest);
-			var newTexture = ImageTexture.CreateFromImage(image);
-			button.GetNode<TextureRect>("%TextureRect").Texture = newTexture;
-
+			// var textureRect = button.GetNode<TextureRect>("%TextureRect");
+			// var texture = ResourceLoader.Load<Texture2D>("res://Resources/Item.png");
+			// var image = texture.GetImage();
+			// image.Resize(image.GetWidth() * Zoom, image.GetHeight() * Zoom, Image.Interpolation.Nearest);
+			// var newTexture = ImageTexture.CreateFromImage(image);
+			// button.GetNode<TextureRect>("%TextureRect").Texture = newTexture;
+			button.MouseEntered += () => _OnInventoryButtonMouseEntered(button as InventoryButton);
+			button.MouseExited += _OnInventoryButtonMouseExited;
 			InventoryGridContainer.AddChild(button);
 		}
 	}
@@ -72,7 +77,7 @@ public partial class Interface : CanvasLayer
 	{
 		if (@event is InputEventMouseMotion mouseMotionEvent)
 			EmitSignal(SignalName.GamePanelMouseMotion);
-		else if (@event is InputEventMouseButton mouseButtonEvent && mouseButtonEvent.Pressed && mouseButtonEvent.ButtonIndex == MouseButton.Left)
+		else if (@event is InputEventMouseButton mouseButtonEvent && mouseButtonEvent.Pressed)
 			EmitSignal(SignalName.GamePanelMousePressed, mouseButtonEvent);
 	}
 
@@ -97,4 +102,33 @@ public partial class Interface : CanvasLayer
 	}
 
 	public void ResetCommandLabel() => SetCommandLabel("");
+
+	public void _OnObjectAddedToInventory(string thingID, Texture2D texture)
+	{
+		foreach (var inventoryButton in InventoryGridContainer.GetChildren())
+		{
+			var button = inventoryButton as InventoryButton;
+			if (button.GetMeta("thingID").AsString() == "")
+			{
+				button.SetThing(thingID, texture);
+				break;
+			}
+		}
+	}
+
+	public void _OnInventoryButtonMouseEntered(InventoryButton inventoryButton)
+	{
+		var thingID = inventoryButton.GetMeta("thingID").AsString();
+
+		if (thingID != "")
+		{
+			var messages = MessageDataManager.GetMessages(thingID, "name");
+			SetCommandLabel(messages[0], true);
+		}
+	}
+
+	public void _OnInventoryButtonMouseExited()
+	{
+		ResetCommandLabel();
+	}
 }
