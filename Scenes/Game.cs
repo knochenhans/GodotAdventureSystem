@@ -45,14 +45,14 @@ public partial class Game : Scene
 
 		InterfaceNode = GetNode<Interface>("Interface");
 		InterfaceNode.Init(Verbs);
-		InterfaceNode.GamePanelActivated += _OnGamePanelActivated;
+		InterfaceNode.GamePanelMouseMotion += _OnGamePanelMouseMotion;
 
 		StageNode = GetNode<Stage>("Stage");
 		StageNode.SetCommandLabel += _OnInterfaceSetCommandLabel;
 		StageNode.ActivateHotspot += _OnHotspotAreaActivated;
 	}
 
-	public void _OnButtonPressed() => SceneManagerNode.ChangeToScene("Menu");
+	// public void _OnButtonPressed() => SceneManagerNode.ChangeToScene("Menu");
 
 	public override void _Input(InputEvent @event)
 	{
@@ -69,10 +69,12 @@ public partial class Game : Scene
 		CurrentCommandState = CommandState.VerbSelected;
 	}
 
-	public void _OnGamePanelActivated()
+	public void _OnGamePanelMouseMotion()
 	{
 		if (CurrentCommandState == CommandState.Idle)
 			InterfaceNode.ResetCommandLabel();
+		else if (CurrentCommandState == CommandState.VerbSelected)
+			InterfaceNode.SetCommandLabel($"{currentVerb.Name}");
 	}
 
 	public void _OnHotspotAreaActivated(HotspotArea hotspotArea)
@@ -87,7 +89,7 @@ public partial class Game : Scene
 					message = hotspotArea.Actions[currentVerb.ID];
 				}
 
-			InterfaceNode.SetCommandLabel(message);
+			InterfaceNode.SetCommandLabel(message, true);
 
 			CurrentCommandState = CommandState.Idle;
 		}

@@ -34,6 +34,7 @@ public partial class Stage : Node2D
 				hotspotArea.ID = hotspotPolygonNode.ID;
 				hotspotArea.Actions = hotspotPolygonNode.Actions;
 				hotspotArea.GetNode<CollisionPolygon2D>("CollisionPolygon2D").Polygon = hotspotPolygonNode.Polygon;
+				hotspotArea.Transform = hotspotPolygonNode.Transform;
 				HotspotPolygonsNode.RemoveChild(hotspotPolygonNode);
 
 				hotspotAreas.Add(hotspotArea);
@@ -46,12 +47,6 @@ public partial class Stage : Node2D
 			HotspotPolygonsNode.AddChild(hotspotArea);
 		}
 	}
-
-	// public void _OnMapInputEvent(Viewport viewport, InputEvent @event, int shapeIdx)
-	// {
-	// 	if (@event is InputEventMouseMotion mouseMotionEvent)
-	// 		EmitSignal(SignalName.SetCommandLabel, "");
-	// }
 
 	public void _OnHotspotAreaInputEvent(InputEvent @event, HotspotArea hotspotAreaNode)
 	{

@@ -9,7 +9,25 @@ public partial class Interface : CanvasLayer
 	GamePanel GamePanel { get; set; }
 
 	[Signal]
-	public delegate void GamePanelActivatedEventHandler();
+	public delegate void GamePanelMouseMotionEventHandler();
+
+	enum MessageStateEnum
+	{
+		Idle,
+		Keep
+	}
+
+	MessageStateEnum _messageState = MessageStateEnum.Idle;
+	private MessageStateEnum MessageState
+	{
+		get => _messageState;
+		set
+		{
+			if (value == MessageStateEnum.Keep)
+				GetNode<Timer>("%MessageTimer").Start();
+			_messageState = value;
+		}
+	}
 
 	public override void _Ready()
 	{
@@ -50,13 +68,27 @@ public partial class Interface : CanvasLayer
 	public void _OnGamePanelInputEvent(InputEvent @event)
 	{
 		if (@event is InputEventMouseMotion mouseMotionEvent)
-			EmitSignal(SignalName.GamePanelActivated);
+			EmitSignal(SignalName.GamePanelMouseMotion);
 	}
 
-	public void SetCommandLabel(string text)
+	public void SetCommandLabel(string text, bool keep = false)
 	{
-		CommandLabel.Text = text;
-		GD.Print($"SetCommandLabel: {text}");
+		if (MessageState == MessageStateEnum.Idle)
+		{
+			CommandLabel.Text = text;
+			GD.Print($"SetCommandLabel: {text}");
+
+			if (keep)
+				MessageState = MessageStateEnum.Keep;
+			// else
+			// 	MessageState = MessageStateEnum.Idle;
+		}
+	}
+
+	public void _OnMessageTimerTimeout()
+	{
+		SetCommandLabel("");
+		MessageState = MessageStateEnum.Idle;
 	}
 
 	public void ResetCommandLabel() => SetCommandLabel("");

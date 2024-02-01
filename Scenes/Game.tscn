@@ -17,3 +17,7 @@ anchor_mode = 0
 zoom = Vector2(4, 4)
 
 [node name="Interface" parent="." index="2" instance=ExtResource("4_rus0q")]
+
+[node name="MessageTimer" type="Timer" parent="." index="3"]
+wait_time = 3.0
+one_shot = true
