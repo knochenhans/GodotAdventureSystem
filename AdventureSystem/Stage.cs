@@ -6,6 +6,7 @@ public partial class Stage : Node2D
 {
 	public Node2D HotspotPolygonsNode { get; set; }
 	public Interface InterfaceNode { get; set; }
+	public Character PlayerCharacter { get; set; }
 
 	[Signal]
 	public delegate void SetCommandLabelEventHandler(string commandLabel);
@@ -19,6 +20,7 @@ public partial class Stage : Node2D
 
 		HotspotPolygonsNode = GetNode<Node2D>("HotspotPolygons");
 		InterfaceNode = GetNode<Interface>("../Interface");
+		PlayerCharacter = GetNode<Character>("PlayerCharacter");
 
 		// Convert HotspotPolygons to HotspotAreas
 		Array<HotspotArea> hotspotAreas = new();
@@ -46,6 +48,9 @@ public partial class Stage : Node2D
 			hotspotArea.InputEvent += (viewport, @event, shapeIdx) => _OnHotspotAreaInputEvent(@event, hotspotArea);
 			HotspotPolygonsNode.AddChild(hotspotArea);
 		}
+
+		var navigationregion = GetNode<NavigationRegion2D>("NavigationRegion2D");
+		// PlayerCharacter.GetNode<NavigationAgent2D>("NavigationAgent2D").SetNavigationMap(navigationregion.GetNavigationMap());
 	}
 
 	public void _OnHotspotAreaInputEvent(InputEvent @event, HotspotArea hotspotAreaNode)

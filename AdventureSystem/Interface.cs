@@ -11,6 +11,9 @@ public partial class Interface : CanvasLayer
 	[Signal]
 	public delegate void GamePanelMouseMotionEventHandler();
 
+	[Signal]
+	public delegate void GamePanelMousePressedEventHandler(InputEventMouseButton mouseButtonEvent);
+
 	enum MessageStateEnum
 	{
 		Idle,
@@ -69,6 +72,8 @@ public partial class Interface : CanvasLayer
 	{
 		if (@event is InputEventMouseMotion mouseMotionEvent)
 			EmitSignal(SignalName.GamePanelMouseMotion);
+		else if (@event is InputEventMouseButton mouseButtonEvent && mouseButtonEvent.Pressed && mouseButtonEvent.ButtonIndex == MouseButton.Left)
+			EmitSignal(SignalName.GamePanelMousePressed, mouseButtonEvent);
 	}
 
 	public void SetCommandLabel(string text, bool keep = false)

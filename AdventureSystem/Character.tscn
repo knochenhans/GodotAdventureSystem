@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://cgomoes0br310"]
+
+[ext_resource type="Script" path="res://AdventureSystem/Character.cs" id="1_auhhc"]
+[ext_resource type="SpriteFrames" uid="uid://boamo1pw4nwro" path="res://Resources/Character.aseprite" id="2_prt4m"]
+
+[node name="Character" type="Node2D"]
+script = ExtResource("1_auhhc")
+Speed = 50.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-12, 0)
+sprite_frames = ExtResource("2_prt4m")
+animation = &"idle"
+centered = false
+offset = Vector2(0, -48)
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_desired_distance = 1.0

@@ -1,8 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://dfn31vgvg841"]
+[gd_scene load_steps=6 format=3 uid="uid://dfn31vgvg841"]
 
 [ext_resource type="Script" path="res://AdventureSystem/Stage.cs" id="1_5h3ot"]
 [ext_resource type="PackedScene" uid="uid://cfxx85p2tifa3" path="res://AdventureSystem/Map.tscn" id="1_hcx4b"]
 [ext_resource type="PackedScene" uid="uid://cdp281ib4s7f4" path="res://AdventureSystem/HotspotPolygon.tscn" id="3_8aehx"]
+[ext_resource type="PackedScene" uid="uid://cgomoes0br310" path="res://AdventureSystem/Character.tscn" id="4_s6hpb"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_wc6y7"]
+vertices = PackedVector2Array(196, 157, 195, 157, 271, 154, 944, 251, 850, 159, 849, 158, 933, 156, 946, 242, 616, 247, 308, 252, 170, 252, 20, 248, 20, 170, 78, 165, 390, 159, 588, 171, 590, 171, 678, 166, 741, 178, 795, 176)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2), PackedInt32Array(3, 4, 5, 6, 7), PackedInt32Array(8, 9, 10, 11, 12, 13, 0, 2, 14, 15), PackedInt32Array(8, 15, 16), PackedInt32Array(3, 8, 16, 17, 18), PackedInt32Array(3, 18, 19), PackedInt32Array(3, 19, 4)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(11, 161, 77, 155, 195, 147, 271, 144, 390, 149, 589, 161, 680, 156, 742, 168, 793, 166, 847, 149, 942, 146, 956, 244, 953, 262, 616, 257, 308, 262, 170, 262, 10, 258)])
+source_geometry_group_name = &"navigation_polygon_source_group"
 
 [node name="Stage" type="Node2D"]
 script = ExtResource("1_5h3ot")
@@ -60,20 +67,8 @@ Actions = {
 "use": ""
 }
 
-[node name="meadow" parent="HotspotPolygons" instance=ExtResource("3_8aehx")]
-position = Vector2(16.5385, 0)
-scale = Vector2(9.26923, 1)
-polygon = PackedVector2Array(-1.89212, 164, 24.7156, 141, 53.2365, 152, 62.9461, 160, 73.9502, 155, 81.5021, 164, 88.7303, 144, 101.676, 143, 102, 272, -2, 275)
-ID = "meadow    "
-DisplayedName = "A beautiful meadow"
-Actions = {
-"close": "",
-"give": "",
-"look": "You see a beautiful meadow stretching in all directions ",
-"open": "",
-"pick_up": "",
-"pull": "",
-"push": "",
-"talk_to": "",
-"use": ""
-}
+[node name="PlayerCharacter" parent="." instance=ExtResource("4_s6hpb")]
+position = Vector2(56, 190)
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_wc6y7")
