@@ -5,4 +5,4 @@
 [node name="SceneManager" type="Node"]
 script = ExtResource("1_wfiiq")
 SceneNames = Array[String](["Intro", "Menu", "Game", "Options", "Credits"])
-InitialSceneName = "Game"
+InitialSceneName = "Menu"

@@ -34,6 +34,9 @@ public partial class Game : Scene
 	{
 		base._Ready();
 
+		var cursor = ResourceLoader.Load("res://Resources/Cursor_64.png");
+		Input.SetCustomMouseCursor(cursor, Input.CursorShape.Arrow, new Vector2(29, 29));
+
 		Verbs = new Verb[]
 		{
 			new("give", "Give"),

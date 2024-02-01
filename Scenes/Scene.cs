@@ -30,6 +30,8 @@ public partial class Scene : Node
 	
 	public async override void _Ready()
 	{
+		Input.SetCustomMouseCursor(null);
+
 		SceneManagerNode = GetNode<SceneManager>("/root/SceneManager");
 
 		await Fade(global::Fade.FadeDirectionEnum.In, FadeInTime);
