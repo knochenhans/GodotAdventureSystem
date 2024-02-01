@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://djr2ujifidf1h"]
+
+[ext_resource type="Script" path="res://AdventureSystem/HotspotArea.cs" id="1_avvov"]
+
+[node name="HotspotArea" type="Area2D"]
+monitorable = false
+script = ExtResource("1_avvov")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]

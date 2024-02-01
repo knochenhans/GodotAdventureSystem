@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3 uid="uid://b46xhre03dhm8"]
+
+[ext_resource type="PackedScene" uid="uid://bawrmdt67ohun" path="res://Scenes/Scene.tscn" id="1_hl7nu"]
+[ext_resource type="Script" path="res://Scenes/Game.cs" id="2_4jlpu"]
+[ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://AdventureSystem/Stage.tscn" id="3_kqwmw"]
+[ext_resource type="PackedScene" uid="uid://ca6ex1hvbacgf" path="res://AdventureSystem/Interface.tscn" id="4_rus0q"]
+
+[node name="Game" instance=ExtResource("1_hl7nu")]
+script = ExtResource("2_4jlpu")
+FadeInTime = 0.0
+FadeOutTime = 0.0
+
+[node name="Stage" parent="." index="0" instance=ExtResource("3_kqwmw")]
+
+[node name="Camera2D" type="Camera2D" parent="." index="1"]
+anchor_mode = 0
+zoom = Vector2(4, 4)
+
+[node name="Interface" parent="." index="2" instance=ExtResource("4_rus0q")]

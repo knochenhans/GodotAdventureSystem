@@ -1,0 +1,39 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Adventure System"
+run/main_scene="res://SceneManager.tscn"
+config/features=PackedStringArray("4.2", "C#", "Mobile")
+config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/mode=3
+window/size/resizable=false
+window/stretch/scale_mode="integer"
+mouse_cursor/custom_image="res://Resources/Cursor_64.png"
+mouse_cursor/custom_image_hotspot=Vector2(29, 29)
+
+[dotnet]
+
+project/assembly_name="AdventureSystem"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/AsepriteWizard/plugin.cfg")
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="mobile"

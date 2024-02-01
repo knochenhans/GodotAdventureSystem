@@ -1,0 +1,49 @@
+[gd_scene load_steps=4 format=3 uid="uid://dfn31vgvg841"]
+
+[ext_resource type="Script" path="res://AdventureSystem/Stage.cs" id="1_5h3ot"]
+[ext_resource type="PackedScene" uid="uid://cfxx85p2tifa3" path="res://AdventureSystem/Map.tscn" id="1_hcx4b"]
+[ext_resource type="PackedScene" uid="uid://cdp281ib4s7f4" path="res://AdventureSystem/HotspotPolygon.tscn" id="3_8aehx"]
+
+[node name="Stage" type="Node2D"]
+script = ExtResource("1_5h3ot")
+
+[node name="Map" parent="." instance=ExtResource("1_hcx4b")]
+
+[node name="HotspotPolygons" type="Node2D" parent="."]
+
+[node name="cloud1" parent="HotspotPolygons" instance=ExtResource("3_8aehx")]
+position = Vector2(-3, 0)
+polygon = PackedVector2Array(26, 22, 25, 34, 31, 39, 42, 44, 50, 48, 58, 56, 68, 56, 80, 51, 90, 60, 104, 44, 116, 43, 132, 29, 130, 14, 114, 6, 106, -2, 57, -1, 48, 10, 36, 10)
+ID = "cloud1"
+DisplayedName = "A cloud"
+Actions = {
+"close": "",
+"give": "",
+"look": "",
+"open": "",
+"pick_up": "",
+"pull": "",
+"push": "",
+"talk_to": "The cloud’s not talking back to you.",
+"use": ""
+}
+
+[node name="cloud2" parent="HotspotPolygons" instance=ExtResource("3_8aehx")]
+polygon = PackedVector2Array(306, 57, 314, 72, 322, 80, 340, 73, 348, 80, 367, 85, 382, 84, 413, 88, 426, 82, 447, 78, 455, 71, 478, 62, 480, 50, 465, 36, 441, 26, 403, 19, 367, 22, 340, 35, 320, 40)
+ID = "cloud2"
+DisplayedName = "Another cloud"
+
+[node name="cloud3" parent="HotspotPolygons" instance=ExtResource("3_8aehx")]
+polygon = PackedVector2Array(702, 68, 690, 85, 692, 96, 707, 114, 737, 120, 771, 121, 832, 133, 853, 118, 895, 118, 912, 93, 938, 73, 953, 57, 949, 33, 928, 21, 889, 19, 863, 16, 841, 25, 818, 18, 805, 30, 782, 28, 758, 1, 739, 3, 724, 22, 719, 35, 701, 41, 698, 56)
+ID = "cloud3"
+DisplayedName = "Definitely not a cloud"
+
+[node name="meadow" parent="HotspotPolygons" instance=ExtResource("3_8aehx")]
+polygon = PackedVector2Array(-1, 163, 32, 160, 83, 156, 80, 274, -2, 275)
+ID = "meadow    "
+DisplayedName = "A beautiful meadow"
+
+[node name="Polygon2D" parent="HotspotPolygons" instance=ExtResource("3_8aehx")]
+polygon = PackedVector2Array(52, 147, 55, 272, 181, 270, 184, 147)
+ID = "test"
+DisplayedName = "test"

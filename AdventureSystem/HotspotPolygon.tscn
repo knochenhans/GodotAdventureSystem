@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cdp281ib4s7f4"]
+
+[ext_resource type="Script" path="res://AdventureSystem/HotspotPolygon.cs" id="1_tvm1p"]
+
+[node name="Polygon2D" type="Polygon2D"]
+color = Color(0, 1, 1, 0.262745)
+script = ExtResource("1_tvm1p")
