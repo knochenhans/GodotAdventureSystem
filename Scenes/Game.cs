@@ -1,6 +1,7 @@
+using System;
 using Godot;
 using Godot.Collections;
-using System;
+using GodotInk;
 
 public partial class Game : Scene
 {
@@ -29,6 +30,9 @@ public partial class Game : Scene
 		get => _currentCommandState;
 		set => _currentCommandState = value;
 	}
+
+	[Export]
+	InkStory InkStory { get; set; }
 
 	public override void _Ready()
 	{
@@ -70,6 +74,9 @@ public partial class Game : Scene
 		MessageDataManager.LoadMessages("res://messages.json");
 
 		IngameMenuScene = ResourceLoader.Load<PackedScene>("res://AdventureSystem/IngameMenu.tscn");
+
+		InkStory.BindExternalFunction("display", Display, true);
+		InkStory.Continue();
 	}
 
 	public override void _Input(InputEvent @event)
@@ -205,4 +212,9 @@ public partial class Game : Scene
 				Camera2DNode.Position = new Vector2(StageNode.PlayerCharacter.Position.X - StageNode.GetViewportRect().Size.X / 8, Camera2DNode.Position.Y);
 		}
 	}
+
+	public Action<string> Display = (parameter) =>
+	{
+		GD.Print($"Display: {parameter}");
+	};
 }

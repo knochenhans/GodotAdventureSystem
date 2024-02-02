@@ -7,7 +7,7 @@ public partial class Stage : Node2D
 	public Node2D HotspotPolygonsNode { get; set; }
 	public Interface InterfaceNode { get; set; }
 	public Character PlayerCharacter { get; set; }
-	public Node2D MapNode { get; set; }
+	public TextureRect BackgroundNode { get; set; }
 
 	[Signal]
 	public delegate void SetCommandLabelEventHandler(string commandLabel);
@@ -22,7 +22,7 @@ public partial class Stage : Node2D
 		HotspotPolygonsNode = GetNode<Node2D>("HotspotPolygons");
 		InterfaceNode = GetNode<Interface>("../Interface");
 		PlayerCharacter = GetNode<Character>("PlayerCharacter");
-		MapNode = GetNode<Node2D>("Map");
+		BackgroundNode = GetNode<TextureRect>("Background");
 
 		// Convert HotspotPolygons to HotspotAreas
 		Array<HotspotArea> hotspotAreas = new();
@@ -68,6 +68,6 @@ public partial class Stage : Node2D
 
 	public Vector2 GetSize()
 	{
-		return MapNode.GetNode<TextureRect>("Background").Texture.GetSize();
+		return BackgroundNode.Texture.GetSize();
 	}
 }
