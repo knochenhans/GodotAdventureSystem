@@ -3,9 +3,11 @@
 [ext_resource type="Script" path="res://AdventureSystem/Object.cs" id="1_wkkov"]
 
 [node name="Object" type="Area2D"]
+y_sort_enabled = true
 monitorable = false
 script = ExtResource("1_wkkov")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+y_sort_enabled = true
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]

@@ -24,4 +24,9 @@ public partial class InventoryManager : GodotObject
         Inventory.Remove(objectID);
         EmitSignal(SignalName.ObjectRemoved, objectID);
     }
+
+    public bool HasObject(string objectID)
+    {
+        return Inventory.ContainsKey(objectID);
+    }
 }

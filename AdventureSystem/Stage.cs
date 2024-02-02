@@ -9,11 +9,17 @@ public partial class Stage : Node2D
 	public Character PlayerCharacter { get; set; }
 	public TextureRect BackgroundNode { get; set; }
 
-	[Signal]
-	public delegate void SetCommandLabelEventHandler(string commandLabel);
+	// [Signal]
+	// public delegate void SetCommandLabelEventHandler(string commandLabel);
 
 	[Signal]
-	public delegate void ActivateThingEventHandler(Thing thing);
+	public delegate void ThingHoveredEventHandler(string thingID);
+
+	[Signal]
+	public delegate void ThingLeaveEventHandler(string thingID);
+
+	[Signal]
+	public delegate void ThingClickedEventHandler(string thingID);
 
 	public override void _Ready()
 	{
@@ -61,13 +67,35 @@ public partial class Stage : Node2D
 	public void _OnThingInputEvent(InputEvent @event, Thing thing)
 	{
 		if (@event is InputEventMouseMotion mouseMotionEvent)
-			EmitSignal(SignalName.SetCommandLabel, MessageDataManager.GetMessages(thing.ID, "name")[0]);
+			EmitSignal(SignalName.ThingHovered, thing.ID);
 		else if (@event is InputEventMouseButton mouseButtonEvent && mouseButtonEvent.Pressed && mouseButtonEvent.ButtonIndex == MouseButton.Left)
-			EmitSignal(SignalName.ActivateThing, thing);
+			EmitSignal(SignalName.ThingClicked, thing.ID);
+		// EmitSignal(SignalName.SetCommandLabel, MessageDataManager.GetMessages(thing.ID, "name"));
 	}
 
 	public Vector2 GetSize()
 	{
 		return BackgroundNode.Texture.GetSize();
+	}
+
+	public Object FindObject(string objectID)
+	{
+		foreach (var object_ in GetNode<Node2D>("Objects").GetChildren())
+			if (object_ is Object objectNode && objectNode.ID == objectID)
+				return objectNode;
+		return null;
+	}
+
+	public Array<Thing> CollectThings()
+	{
+		Array<Thing> things = new();
+
+		foreach (var objectNode in GetNode<Node2D>("Objects").GetChildren())
+			things.Add(objectNode as Thing);
+
+		foreach (var hotspotAreaNode in HotspotPolygonsNode.GetChildren())
+			things.Add(hotspotAreaNode as Thing);
+
+		return things;
 	}
 }

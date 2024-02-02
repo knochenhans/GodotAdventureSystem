@@ -9,6 +9,9 @@ public partial class SpeechBubble : PanelContainer
 	[Export]
 	public float LifeTimeLengthMultiplier { get; set; } = 0.05f;
 
+	[Export]
+	public float MinimumLifeTime { get; set; } = 1.0f;
+
 	[Signal]
 	public delegate void FinishedEventHandler();
 
@@ -22,7 +25,7 @@ public partial class SpeechBubble : PanelContainer
 	{
 		RichTextLabel.Text = $"[center]{text}[/center]";
 		RichTextLabel.AddThemeColorOverride("font_color", color);
-		LifeTimer.WaitTime = text.Length * LifeTimeLengthMultiplier;
+		LifeTimer.WaitTime = Math.Max(text.Length * LifeTimeLengthMultiplier, MinimumLifeTime);
 		LifeTimer.Start();
 	}
 

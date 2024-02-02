@@ -1,0 +1,45 @@
+EXTERNAL display(text)
+
+VAR test = true
+
+{ test == true:
+    x
+- else:
+    y
+}
+
+= meadow
+VAR test2 = true
+
+{ test == true:
+    x
+- else:
+    y
+}
+    -> END
+
+-----
+
+EXTERNAL display(text)
+
+-> END
+
+=== function verb(thing_id, verb_id) ===
+    VAR output = ""
+    { thing_id:
+    
+    - "cloud1":
+
+        { verb_id:
+
+        - "look": ~ output = "A cloud high above in the sky."
+        - else: ~ output = "Unknown verb for {thing_id}."
+        
+        }
+
+    - else: ~ output = "Unknown thing."
+    }
+    ~ display(output)
+    
+
+    

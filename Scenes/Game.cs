@@ -13,11 +13,12 @@ public partial class Game : Scene
 
 	public VariableManager VariableManager { get; set; } = new();
 	public InventoryManager InventoryManager { get; set; } = new();
+	public ThingManager ThingManager { get; set; } = new();
 
-	public Verb[] Verbs { get; set; }
+	public Dictionary<string, string> Verbs { get; set; }
 	public Interface InterfaceNode { get; set; }
 	public Stage StageNode { get; set; }
-	public Verb currentVerb { get; set; }
+	public string currentVerbID { get; set; }
 	public Camera2D Camera2DNode { get; set; }
 
 	public Dictionary<string, string> Things { get; set; } = new();
@@ -28,11 +29,49 @@ public partial class Game : Scene
 	private CommandState CurrentCommandState
 	{
 		get => _currentCommandState;
-		set => _currentCommandState = value;
+		set
+		{
+			if (value == CommandState.Idle)
+			{
+				InterfaceNode.ResetCommandLabel();
+				currentVerbID = "";
+			}
+			_currentCommandState = value;
+		}
 	}
 
 	[Export]
 	InkStory InkStory { get; set; }
+
+	// Ink external functions
+	Action<string> DisplayMessage;
+	Action<string> PrintError;
+	Action<string> PickUp;
+	Func<string, Variant> IsInInventory;
+
+	public Game()
+	{
+		DisplayMessage = (parameter) =>
+		{
+			GD.Print($"Calling external Ink function: Display: {parameter}");
+			StageNode.PlayerCharacter.Talk(new Array<string> { parameter });
+		};
+		PrintError = (parameter) =>
+		{
+			GD.PrintErr($"Calling external Ink function: Error: {parameter}");
+		};
+		PickUp = (parameter) =>
+		{
+			GD.Print($"Calling external Ink function: PickUp: {parameter}");
+			StageNode.PlayerCharacter.PickUp(StageNode.FindObject(parameter));
+			ThingManager.RemoveThing(parameter);
+		};
+		IsInInventory = (parameter) =>
+		{
+			GD.Print($"Calling external Ink function: IsInInventory: {parameter}");
+			return InventoryManager.HasObject(parameter);
+		};
+	}
 
 	public override void _Ready()
 	{
@@ -41,33 +80,43 @@ public partial class Game : Scene
 		var cursor = ResourceLoader.Load("res://Resources/Cursor_64.png");
 		Input.SetCustomMouseCursor(cursor, Input.CursorShape.Arrow, new Vector2(29, 29));
 
-		Verbs = new Verb[]
+		Verbs = new Dictionary<string, string>
 		{
-			new("give", "Give"),
-			new("pick_up", "Pick up"),
-			new("use", "Use"),
-			new("open", "Open"),
-			new("look", "Look "),
-			new("push", "Push"),
-			new("close", "Close"),
-			new("talk_to", "Talk to"),
-			new("pull", "Pull"),
+			{ "give", "Give" },
+			{ "pick_up", "Pick up" },
+			{ "use", "Use" },
+			{ "open", "Open" },
+			{ "look", "Look" },
+			{ "push", "Push" },
+			{ "close", "Close" },
+			{ "talk_to", "Talk to" },
+			{ "pull", "Pull" }
 		};
-
-		foreach (var verb in Verbs)
-			verb.VerbActivated += _OnVerbActivated;
 
 		InterfaceNode = GetNode<Interface>("Interface");
 		InterfaceNode.Init(Verbs);
+		InterfaceNode.InventoryManager = InventoryManager;
+
 		InterfaceNode.GamePanelMouseMotion += _OnGamePanelMouseMotion;
 		InterfaceNode.GamePanelMousePressed += _OnGamePanelMousePressed;
+
+		InterfaceNode.ThingClicked += _OnThingClicked;
+		InterfaceNode.ThingHovered += _OnThingHovered;
+
+		InterfaceNode.VerbClicked += _OnVerbClicked;
+		InterfaceNode.VerbHovered += _OnVerbHovered;
+		InterfaceNode.VerbLeave += _OnVerbLeave;
 
 		InventoryManager.ObjectAdded += InterfaceNode._OnObjectAddedToInventory;
 
 		StageNode = GetNode<Stage>("Stage");
-		StageNode.SetCommandLabel += _OnInterfaceSetCommandLabel;
-		StageNode.ActivateThing += _OnThingActivated;
+
+		StageNode.ThingClicked += _OnThingClicked;
+		StageNode.ThingHovered += _OnThingHovered;
+
 		StageNode.PlayerCharacter.InventoryManager = InventoryManager;
+
+		ThingManager.AddThings(StageNode.CollectThings());
 
 		Camera2DNode = GetNode<Camera2D>("Camera2D");
 
@@ -75,8 +124,12 @@ public partial class Game : Scene
 
 		IngameMenuScene = ResourceLoader.Load<PackedScene>("res://AdventureSystem/IngameMenu.tscn");
 
-		InkStory.BindExternalFunction("display", Display, true);
+		InkStory.BindExternalFunction("display_message", DisplayMessage, true);
+		InkStory.BindExternalFunction("print_error", PrintError, true);
+		InkStory.BindExternalFunction("pick_up", PickUp, true);
+		InkStory.BindExternalFunction("is_in_inventory", IsInInventory, true);
 		InkStory.Continue();
+		// InkStory.EvaluateFunction("verb", "parameter");
 	}
 
 	public override void _Input(InputEvent @event)
@@ -97,12 +150,24 @@ public partial class Game : Scene
 		}
 	}
 
-	public void _OnVerbActivated(Verb verb)
+	public void _OnVerbHovered(string verbID)
 	{
-		GD.Print($"_OnVerbActivated: Verb: {verb.Name} activated");
+		if (CurrentCommandState == CommandState.Idle)
+			InterfaceNode.SetCommandLabel(Verbs[verbID]);
+	}
 
-		InterfaceNode.SetCommandLabel(verb.Name);
-		currentVerb = verb;
+	public void _OnVerbLeave()
+	{
+		if (CurrentCommandState == CommandState.Idle)
+			InterfaceNode.ResetCommandLabel();
+	}
+
+	public void _OnVerbClicked(string verbID)
+	{
+		// GD.Print($"_OnVerbActivated: Verb: {verbID} activated");
+
+		InterfaceNode.SetCommandLabel(Verbs[verbID]);
+		currentVerbID = verbID;
 		CurrentCommandState = CommandState.VerbSelected;
 	}
 
@@ -111,12 +176,12 @@ public partial class Game : Scene
 		if (CurrentCommandState == CommandState.Idle)
 			InterfaceNode.ResetCommandLabel();
 		else if (CurrentCommandState == CommandState.VerbSelected)
-			InterfaceNode.SetCommandLabel($"{currentVerb.Name}");
+			InterfaceNode.SetCommandLabel(Verbs[currentVerbID]);
 	}
 
 	public void _OnGamePanelMousePressed(InputEventMouseButton mouseButtonEvent)
 	{
-		GD.Print($"_OnGamePanelMousePressed: Mouse button pressed: {mouseButtonEvent.ButtonIndex} at {mouseButtonEvent.Position}");
+		// GD.Print($"_OnGamePanelMousePressed: Mouse button pressed: {mouseButtonEvent.ButtonIndex} at {mouseButtonEvent.Position}");
 
 		if (CurrentCommandState == CommandState.Idle)
 		{
@@ -132,71 +197,53 @@ public partial class Game : Scene
 		}
 	}
 
-	public async void _OnThingActivated(Thing thing)
+	public void _OnThingHovered(string thingID)
 	{
-		Vector2 position = Vector2.Zero;
-		if (thing is Object object_)
-			position = object_.Position;
-		else if (thing is HotspotArea hotspotArea)
-			position = hotspotArea.CalculateCenter();
-		else
-			GD.PrintErr($"_OnAreaActivated: Area {thing.ID} is not an Object or a HotspotArea");
+		var thing = ThingManager.GetThing(thingID);
 
-		StageNode.PlayerCharacter.MoveTo(position);
+		if (thing != null)
+		{
+			if (CurrentCommandState == CommandState.Idle)
+				InterfaceNode.SetCommandLabel(MessageDataManager.GetMessages(thingID, "name"));
+			else if (CurrentCommandState == CommandState.VerbSelected)
+				InterfaceNode.SetCommandLabel($"{Verbs[currentVerbID]} {MessageDataManager.GetMessages(thingID, "name")}");
+		}
+	}
 
-		await ToSignal(StageNode.PlayerCharacter, "CharacterMoved");
+	public async void _OnThingClicked(string thingID)
+	{
+		var thing = ThingManager.GetThing(thingID);
 
-		var message = MessageDataManager.GetMessages("default", currentVerb.ID);
+		if (thing != null)
+		{
+			// For objects (that are not in the inventory) and hotspots, move the player character to the object
+			Vector2 position = Vector2.Zero;
+			if (thing is Object object_)
+				position = object_.Position;
+			else if (thing is HotspotArea hotspotArea)
+				position = hotspotArea.CalculateCenter();
+			else
+				GD.PrintErr($"_OnAreaActivated: Area {thing.ID} is not an Object or a HotspotArea");
+
+			StageNode.PlayerCharacter.MoveTo(position);
+
+			await ToSignal(StageNode.PlayerCharacter, "CharacterMoved");
+		}
+
 		if (CurrentCommandState == CommandState.VerbSelected)
 		{
-			GD.Print($"_OnObjectActivated: Verb: {currentVerb.Name}, Object: {MessageDataManager.GetMessages(thing.ID, "name")[0]}");
-			var thingMessages = MessageDataManager.GetMessages(thing.ID, currentVerb.ID);
-
-			if (thingMessages.Count == 0)
-				thingMessages = MessageDataManager.GetMessages(thing.ID, "default");
-
-			for (int i = 0; i < thingMessages.Count; i++)
-			{
-				if (!ParseMessage(thing, thingMessages[i]))
-					StageNode.PlayerCharacter.Talk(new Array<string> { thingMessages[i] });
-			}
+			// Interact with the object
+			if (!InkStory.EvaluateFunction("verb", thingID, currentVerbID).AsBool())
+				StageNode.PlayerCharacter.Talk(new Array<string> { MessageDataManager.GetMessages("default", currentVerbID) });
 
 			CurrentCommandState = CommandState.Idle;
 			return;
 		}
 
-		GD.Print($"_OnObjectActivated: Object: {thing.DisplayedName} activated");
+		// GD.Print($"_OnObjectActivated: Object: {thing.DisplayedName} activated");
 
-		InterfaceNode.SetCommandLabel(thing.DisplayedName);
-		CurrentCommandState = CommandState.VerbSelected;
-	}
-
-	private bool ParseMessage(Thing thing, string message)
-	{
-		message = message.StripEdges();
-
-		if (message.StartsWith("$"))
-		{
-			switch (message)
-			{
-				case "$pick_up":
-					StageNode.PlayerCharacter.PickUp(thing as Object);
-					break;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	public void _OnInterfaceSetCommandLabel(string commandLabel)
-	{
-		if (commandLabel != "")
-			GD.Print($"_OnInterfaceSetCommandLabel: Command label: {commandLabel}");
-
-		if (CurrentCommandState == CommandState.Idle)
-			InterfaceNode.SetCommandLabel(commandLabel);
-		else if (CurrentCommandState == CommandState.VerbSelected)
-			InterfaceNode.SetCommandLabel($"{currentVerb.Name} {commandLabel}");
+		InterfaceNode.SetCommandLabel(MessageDataManager.GetMessages(thingID, "name"));
+		// CurrentCommandState = CommandState.VerbSelected;
 	}
 
 	public override void _Process(double delta)
@@ -212,9 +259,4 @@ public partial class Game : Scene
 				Camera2DNode.Position = new Vector2(StageNode.PlayerCharacter.Position.X - StageNode.GetViewportRect().Size.X / 8, Camera2DNode.Position.Y);
 		}
 	}
-
-	public Action<string> Display = (parameter) =>
-	{
-		GD.Print($"Display: {parameter}");
-	};
 }

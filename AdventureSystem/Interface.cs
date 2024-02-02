@@ -1,18 +1,37 @@
+using Godot.Collections;
 using Godot;
 
 public partial class Interface : CanvasLayer
 {
 	GridContainer VerbGridContainer { get; set; }
 	GridContainer InventoryGridContainer { get; set; }
-	// InventorySlot[] InventorySlots { get; set; }
 	Label CommandLabel { get; set; }
 	GamePanel GamePanel { get; set; }
+	public InventoryManager InventoryManager { get; set; }
 
 	[Signal]
 	public delegate void GamePanelMouseMotionEventHandler();
 
 	[Signal]
 	public delegate void GamePanelMousePressedEventHandler(InputEventMouseButton mouseButtonEvent);
+
+	[Signal]
+	public delegate void ThingHoveredEventHandler(string thingID);
+
+	[Signal]
+	public delegate void ThingLeaveEventHandler();
+
+	[Signal]
+	public delegate void ThingClickedEventHandler(string thingID);
+
+	[Signal]
+	public delegate void VerbHoveredEventHandler(string verbID);
+
+	[Signal]
+	public delegate void VerbLeaveEventHandler();
+
+	[Signal]
+	public delegate void VerbClickedEventHandler(string verbID);
 
 	int Zoom = 4;
 
@@ -38,20 +57,21 @@ public partial class Interface : CanvasLayer
 	{
 		VerbGridContainer = GetNode<GridContainer>("%Verbs");
 		InventoryGridContainer = GetNode<GridContainer>("%Inventory");
-		// InventorySlots = new InventorySlot[8];
 		CommandLabel = GetNode<Label>("%CommandLabel");
 		GamePanel = GetNode<GamePanel>("%GamePanel");
 		GamePanel.GuiInput += _OnGamePanelInputEvent;
 	}
 
-	public void Init(Verb[] verbs)
+	public void Init(Dictionary<string, string> verbs)
 	{
 		foreach (var verb in verbs)
 		{
 			var button = ResourceLoader.Load<PackedScene>("res://AdventureSystem/VerbButton.tscn").Instantiate() as Button;
-			button.Text = verb.Name;
-			button.Pressed += () => verb._OnButtonPressed();
-			button.SetMeta("verb", verb);
+			button.Text = verb.Value;
+			button.MouseEntered += () => EmitSignal(SignalName.VerbHovered, verb.Key);
+			button.MouseExited += () => EmitSignal(SignalName.VerbLeave);
+			button.Pressed += () => EmitSignal(SignalName.VerbClicked, verb.Key);
+			button.SetMeta("verb", verb.Key);
 
 			VerbGridContainer.AddChild(button);
 		}
@@ -61,14 +81,9 @@ public partial class Interface : CanvasLayer
 		for (int i = 0; i < inventoryButtonCount; i++)
 		{
 			var button = ResourceLoader.Load<PackedScene>("res://AdventureSystem/InventoryButton.tscn").Instantiate() as InventoryButton;
-			// var textureRect = button.GetNode<TextureRect>("%TextureRect");
-			// var texture = ResourceLoader.Load<Texture2D>("res://Resources/Item.png");
-			// var image = texture.GetImage();
-			// image.Resize(image.GetWidth() * Zoom, image.GetHeight() * Zoom, Image.Interpolation.Nearest);
-			// var newTexture = ImageTexture.CreateFromImage(image);
-			// button.GetNode<TextureRect>("%TextureRect").Texture = newTexture;
-			button.MouseEntered += () => _OnInventoryButtonMouseEntered(button as InventoryButton);
+			button.MouseEntered += () => _OnInventoryButtonMouseEntered(button);
 			button.MouseExited += _OnInventoryButtonMouseExited;
+			button.Pressed += () => _OnInventoryButtonPressed(button);
 			InventoryGridContainer.AddChild(button);
 		}
 	}
@@ -101,7 +116,11 @@ public partial class Interface : CanvasLayer
 		MessageState = MessageStateEnum.Idle;
 	}
 
-	public void ResetCommandLabel() => SetCommandLabel("");
+	public void ResetCommandLabel()
+	{
+		SetCommandLabel("");
+		ResetFocus();
+	}
 
 	public void _OnObjectAddedToInventory(string thingID, Texture2D texture)
 	{
@@ -122,13 +141,33 @@ public partial class Interface : CanvasLayer
 
 		if (thingID != "")
 		{
-			var messages = MessageDataManager.GetMessages(thingID, "name");
-			SetCommandLabel(messages[0], true);
+			// EmitSignal(SignalName.ThingClicked, thingID);
+			EmitSignal(SignalName.ThingHovered, thingID);
 		}
 	}
 
 	public void _OnInventoryButtonMouseExited()
 	{
-		ResetCommandLabel();
+		// ResetCommandLabel();
+		EmitSignal(SignalName.ThingLeave);
+	}
+
+	public void _OnInventoryButtonPressed(InventoryButton inventoryButton)
+	{
+		var thingID = inventoryButton.GetMeta("thingID").AsString();
+
+		if (thingID != "")
+		{
+			EmitSignal(SignalName.ThingClicked, thingID);
+		}
+	}
+
+	public void ResetFocus()
+	{
+		foreach (var verbButton in VerbGridContainer.GetChildren())
+		{
+			var button = verbButton as Button;
+			button.ReleaseFocus();
+		}
 	}
 }
