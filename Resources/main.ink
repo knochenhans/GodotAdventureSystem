@@ -7,6 +7,8 @@ EXTERNAL set_variable(id, value)
 EXTERNAL get_variable(name)
 EXTERNAL set_name(thing_id, name)
 EXTERNAL wait(time)
+EXTERNAL move_to(x, y)
+EXTERNAL move_relative(x, y)
 
 -> END
 
@@ -19,10 +21,12 @@ EXTERNAL wait(time)
 
         - "look":
             ~ display_message("A cloud high above in the sky…")
-            ~ wait(5)
+            ~ move_relative(75, 20)
             ~ display_message("A cloooooud high above in the skyyyy…")
-            ~ wait(5)
+            ~ move_relative(-50, 0)
             ~ display_message("A cloooooooooooud high above in the skyyyyyyyyy…")
+            ~ move_relative(-25, 0)
+            ~ display_message("Sorry.")
         - "talk_to": ~ display_message("This cloud’s not talking back to me. What a shame!")
         - else: ~ return false
         }

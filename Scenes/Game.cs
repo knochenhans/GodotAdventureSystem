@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
@@ -18,22 +17,21 @@ public partial class ScriptActionMessage : ScriptAction
 	public string Message { get; set; }
 
 	public ScriptActionMessage(Character character, string message) : base(character) { Message = message; }
-	public override Task Execute()
+	public override async Task Execute()
 	{
-		Character.Talk(new Array<string> { Message });
-		return Task.CompletedTask;
+		await Character.Talk(Message);
 	}
 }
 
 public partial class ScriptActionMove : ScriptAction
 {
 	public Vector2 Position { get; set; }
+	public bool IsRelative { get; set; }
 
-	public ScriptActionMove(Character character, Vector2 position) : base(character) { Position = position; }
-	public override Task Execute()
+	public ScriptActionMove(Character character, Vector2 position, bool isRelative = false) : base(character) { Position = position; IsRelative = isRelative; }
+	public override async Task Execute()
 	{
-		Character.MoveTo(Position);
-		return Task.CompletedTask;
+		await Character.MoveTo(Position, IsRelative);
 	}
 }
 
@@ -110,6 +108,8 @@ public partial class Game : Scene
 	Func<string, Variant> GetVariable;
 	Action<string, string> SetThingName;
 	Action<float> Wait;
+	Action<int, int> MoveTo;
+	Action<int, int> MoveRelative;
 
 	public Game()
 	{
@@ -157,11 +157,18 @@ public partial class Game : Scene
 		};
 		Wait = (parameter) =>
 		{
-			// GD.Print($"Calling external Ink function: Wait: {parameter}");
-			// GD.Print($"Waiting for {parameter} seconds");
-			// await DelayMethod(parameter);
-			// GD.Print($"Waited for {parameter} seconds");
+			GD.Print($"Calling external Ink function: Wait: {parameter}");
 			ActionQueue.Add(new ScriptActionWait(StageNode.PlayerCharacter, parameter));
+		};
+		MoveTo = (parameter1, parameter2) =>
+		{
+			GD.Print($"Calling external Ink function: MoveTo: {parameter1}, {parameter2}");
+			ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(parameter1, parameter2)));
+		};
+		MoveRelative = (parameter1, parameter2) =>
+		{
+			GD.Print($"Calling external Ink function: MoveRelative: {parameter1}, {parameter2}");
+			ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(parameter1, parameter2), true));
 		};
 	}
 
@@ -240,6 +247,9 @@ public partial class Game : Scene
 		InkStory.BindExternalFunction("get_variable", GetVariable);
 		InkStory.BindExternalFunction("set_name", SetThingName);
 		InkStory.BindExternalFunction("wait", Wait);
+		InkStory.BindExternalFunction("move_to", MoveTo);
+		InkStory.BindExternalFunction("move_relative", MoveRelative);
+
 		// InkStory.Continue();
 	}
 
@@ -290,11 +300,11 @@ public partial class Game : Scene
 			InterfaceNode.SetCommandLabel(Verbs[currentVerbID]);
 	}
 
-	public void _OnGamePanelMousePressed(InputEventMouseButton mouseButtonEvent)
+	public async void _OnGamePanelMousePressed(InputEventMouseButton mouseButtonEvent)
 	{
 		if (CurrentCommandState == CommandState.Idle)
 		{
-			StageNode.PlayerCharacter.MoveTo(mouseButtonEvent.Position / Camera2DNode.Zoom + Camera2DNode.Position);
+			await StageNode.PlayerCharacter.MoveTo(mouseButtonEvent.Position / Camera2DNode.Zoom + Camera2DNode.Position);
 		}
 		else if (CurrentCommandState == CommandState.VerbSelected)
 		{
@@ -337,9 +347,9 @@ public partial class Game : Scene
 				else
 					GD.PrintErr($"_OnAreaActivated: Area {thing.ID} is not an Object or a HotspotArea");
 
-				StageNode.PlayerCharacter.MoveTo(position);
+				await StageNode.PlayerCharacter.MoveTo(position);
 
-				await ToSignal(StageNode.PlayerCharacter, "CharacterMoved");
+				// await ToSignal(StageNode.PlayerCharacter, "CharacterMoved");
 			}
 		}
 

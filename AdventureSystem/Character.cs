@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
 
@@ -87,12 +88,17 @@ public partial class Character : Node2D
 		CurrentDirection = DirectionEnum.Right;
 	}
 
-	public void MoveTo(Vector2 position)
+	public async Task MoveTo(Vector2 position, bool isRelative = false)
 	{
 		if (CurrentMovementState != MovementStateEnum.Talking)
 		{
-			NavigationAgent2D.TargetPosition = position;
+			if (isRelative)
+				NavigationAgent2D.TargetPosition = Position + position;
+			else
+				NavigationAgent2D.TargetPosition = position;
 			CurrentMovementState = MovementStateEnum.Moving;
+
+			await ToSignal(this, "CharacterMoved");
 		}
 	}
 
@@ -121,23 +127,22 @@ public partial class Character : Node2D
 		}
 	}
 
-	public void Talk(Array<string> messageLines)
+	public async Task Talk(string message)
 	{
 		CurrentMovementState = MovementStateEnum.Talking;
 
-		foreach (string messageLine in messageLines)
-		{
-			var speechBubble = ResourceLoader.Load<PackedScene>("res://AdventureSystem/SpeechBubble.tscn").Instantiate() as SpeechBubble;
-			AddChild(speechBubble);
-			speechBubble.Init(messageLines[0], SpeechColor, new Vector2(0, GetSize().Y));
-			// var height = speechBubble.GetNode<RichTextLabel>("Text").GetContentHeight() / 4;
-			// speechBubble.Position -= new Vector2(speechBubble.Size.X / 2, GetSize().Y + height);
-			speechBubble.Finished += _OnSpeechBubbleFinished;
-			// AnimatedSprite2D.Play("talk");
-			// await ToSignal(speechBubble, "SpeechBubbleFinished");
-		}
+		var speechBubble = ResourceLoader.Load<PackedScene>("res://AdventureSystem/SpeechBubble.tscn").Instantiate() as SpeechBubble;
+		AddChild(speechBubble);
+		speechBubble.Init(message, SpeechColor, new Vector2(0, GetSize().Y));
+		// var height = speechBubble.GetNode<RichTextLabel>("Text").GetContentHeight() / 4;
+		// speechBubble.Position -= new Vector2(speechBubble.Size.X / 2, GetSize().Y + height);
+		// speechBubble.Finished += _OnSpeechBubbleFinished;
+		// AnimatedSprite2D.Play("talk");
+		await ToSignal(speechBubble, "Finished");
+		SetIdle();
 
 		// CurrentMovementState = MovementStateEnum.Idle;
+		// return Task.CompletedTask;
 	}
 
 	public void PickUpObject()
@@ -151,7 +156,12 @@ public partial class Character : Node2D
 		return AnimatedSprite2D.SpriteFrames.GetFrameTexture(AnimatedSprite2D.Animation, AnimatedSprite2D.Frame).GetSize();
 	}
 
-	public void _OnSpeechBubbleFinished()
+	// public void _OnSpeechBubbleFinished()
+	// {
+	// 	CurrentMovementState = MovementStateEnum.Idle;
+	// }
+
+	public void SetIdle()
 	{
 		CurrentMovementState = MovementStateEnum.Idle;
 	}
