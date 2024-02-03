@@ -12,6 +12,9 @@ public partial class SpeechBubble : PanelContainer
 	[Export]
 	public float MinimumLifeTime { get; set; } = 1.0f;
 
+	[Export]
+	public Vector2 Offset { get; set; } = new Vector2(0, -5);
+
 	[Signal]
 	public delegate void FinishedEventHandler();
 
@@ -21,12 +24,15 @@ public partial class SpeechBubble : PanelContainer
 		LifeTimer = GetNode<Timer>("LifeTimer");
 	}
 
-	public void Init(string text, Color color)
+	public void Init(string text, Color color, Vector2 offset)
 	{
 		RichTextLabel.Text = $"[center]{text}[/center]";
 		RichTextLabel.AddThemeColorOverride("font_color", color);
 		LifeTimer.WaitTime = Math.Max(text.Length * LifeTimeLengthMultiplier, MinimumLifeTime);
 		LifeTimer.Start();
+
+		var height = RichTextLabel.GetContentHeight() / GetViewport().GetCamera2D().Zoom.Y;
+		Position -= new Vector2(Size.X / 2, offset.Y + height - Offset.Y);
 	}
 
 	public void _OnLifeTimerTimeout()

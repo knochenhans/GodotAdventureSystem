@@ -20,8 +20,6 @@ public partial class Character : Node2D
 	[Export]
 	public AudioStream PickupSound { get; set; }
 
-	public InventoryManager InventoryManager { get; set; }
-
 	enum MovementStateEnum
 	{
 		Idle,
@@ -79,7 +77,6 @@ public partial class Character : Node2D
 	AudioStreamPlayer2D SoundsNode { get; set; }
 	AudioStreamPlayer2D StepSoundsNode { get; set; }
 
-
 	public override void _Ready()
 	{
 		NavigationAgent2D = GetNode<NavigationAgent2D>("NavigationAgent2D");
@@ -132,8 +129,9 @@ public partial class Character : Node2D
 		{
 			var speechBubble = ResourceLoader.Load<PackedScene>("res://AdventureSystem/SpeechBubble.tscn").Instantiate() as SpeechBubble;
 			AddChild(speechBubble);
-			speechBubble.Init(messageLines[0], SpeechColor);
-			speechBubble.Position -= new Vector2(speechBubble.Size.X / 2, GetSize().Y + 25);
+			speechBubble.Init(messageLines[0], SpeechColor, new Vector2(0, GetSize().Y));
+			// var height = speechBubble.GetNode<RichTextLabel>("Text").GetContentHeight() / 4;
+			// speechBubble.Position -= new Vector2(speechBubble.Size.X / 2, GetSize().Y + height);
 			speechBubble.Finished += _OnSpeechBubbleFinished;
 			// AnimatedSprite2D.Play("talk");
 			// await ToSignal(speechBubble, "SpeechBubbleFinished");
@@ -142,13 +140,10 @@ public partial class Character : Node2D
 		// CurrentMovementState = MovementStateEnum.Idle;
 	}
 
-	public void PickUp(Object object_)
+	public void PickUpObject()
 	{
-		// AnimatedSprite2D.Play("pick_up");
-		InventoryManager.AddObject(object_.ID, object_.GetTexture());
 		SoundsNode.Stream = PickupSound;
 		SoundsNode.Play();
-		object_.QueueFree();
 	}
 
 	public Vector2 GetSize()

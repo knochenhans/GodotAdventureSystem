@@ -1,13 +1,21 @@
 using Godot.Collections;
 using Godot;
+using System;
 
-public class ThingManager
+public partial class ThingManager : GodotObject
 {
+    [Signal]
+    public delegate void AddThingToIventoryEventHandler(string thingID, Texture2D thingTexture);
+
     public Dictionary<string, Thing> Things { get; private set; } = new();
 
-    public void AddThing(string thingID, Thing thing)
+    public void RegisterThing(string thingID, Thing thing)
     {
         Things[thingID] = thing;
+        GD.Print($"ThingManager: Thing {thingID} with name {thing.DisplayedName} registered");
+
+        // if (!thing.Visible)
+        //     GD.Print($"ThingManager: Thing {thingID} is set as invisible");
     }
 
     public Thing GetThing(string thingID)
@@ -18,17 +26,89 @@ public class ThingManager
             return null;
     }
 
-    public void AddThings(Array<Thing> things)
+    public void RegisterThings(Array<Thing> things)
     {
         foreach (var thing in things)
-            AddThing(thing.ID, thing);
+            RegisterThing(thing.ID, thing);
+    }
+
+    public bool IsInInventory(string thingID)
+    {
+        if (Things.ContainsKey(thingID))
+        {
+            var thing = Things[thingID];
+            if (thing is Object object_)
+            {
+                if (!object_.Visible)
+                    return true;
+            }
+        }
+        return false;
     }
 
     public void RemoveThing(string thingID)
     {
         if (Things.ContainsKey(thingID))
+        {
+            var thing = Things[thingID];
             Things.Remove(thingID);
+            thing.QueueFree();
+            GD.Print($"ThingManager: Thing {thingID} removed");
+        }
         else
             GD.PrintErr($"ThingManager: Thing {thingID} not found");
+    }
+
+    public void UpdateThingName(string thingID, string name)
+    {
+        if (Things.ContainsKey(thingID))
+        {
+            Things[thingID].DisplayedName = name;
+            GD.Print($"ThingManager: Thing {thingID} name updated to {name}");
+        }
+        else
+            GD.PrintErr($"ThingManager: Thing {thingID} not found");
+    }
+
+    public string GetThingName(string thingID)
+    {
+        if (Things.ContainsKey(thingID))
+            return Things[thingID].DisplayedName;
+        else
+        {
+            GD.PrintErr($"ThingManager: Thing {thingID} not found");
+            return "";
+        }
+    }
+
+    public void MoveThingToInventory(string thingID)
+    {
+        if (Things.ContainsKey(thingID))
+        {
+            var thing = Things[thingID];
+            if (thing is Object object_)
+            {
+                object_.Visible = false;
+                EmitSignal(SignalName.AddThingToIventory, thingID, object_.GetTexture());
+            }
+            GD.Print($"ThingManager: Thing {thingID} moved to inventory");
+        }
+        else
+            GD.PrintErr($"ThingManager: Thing {thingID} not found");
+    }
+
+    public void LoadThingToInventory(string thingID)
+    {
+        if (!Things.ContainsKey(thingID))
+        {
+            var thing = GD.Load<PackedScene>($"res://Resources/Objects/{thingID}.tscn").Instantiate() as Thing;
+            RegisterThing(thingID, thing);
+            MoveThingToInventory(thingID);
+
+            if (thing == null)
+                GD.PrintErr($"ThingManager: Unable to load thing {thingID} from resouces");
+        }
+        else
+            GD.PrintErr($"ThingManager: Thing {thingID} already loaded");
     }
 }

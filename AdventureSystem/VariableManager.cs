@@ -5,15 +5,21 @@ public class VariableManager
 {
     public static VariableManager Instance { get; } = new VariableManager();
 
-    public Dictionary<string, Variant> Variables { get; } = new();
+    public Dictionary<string, bool> Variables { get; } = new();
 
-    public void SetVariable(string thingID, Variant value)
+    public void SetVariable(string thingID, bool value)
     {
         Variables[thingID] = value;
+        GD.Print($"Set variable {thingID} to {value} with type {value.GetType()}");
     }
 
-    public object GetVariable(string thingID)
+    public bool GetVariable(string thingID)
     {
+        if (!Variables.ContainsKey(thingID))
+        {
+            GD.PrintErr($"Variable {thingID} not found, returning false");
+            return false;
+        }
         return Variables[thingID];
     }
 
@@ -22,11 +28,11 @@ public class VariableManager
         return Variables.ContainsKey(thingID);
     }
 
-    public void SetVerbState(string thingID, string verb, bool state)
-    {
-        if (!Variables.ContainsKey(thingID))
-        {
-            Variables[thingID] = new Dictionary<string, bool>();
-        }
-    }
+    // public void SetVerbState(string thingID, string verb, bool state)
+    // {
+    //     if (!Variables.ContainsKey(thingID))
+    //     {
+    //         Variables[thingID] = new Dictionary<string, bool>();
+    //     }
+    // }
 }

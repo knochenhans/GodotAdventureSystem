@@ -7,7 +7,7 @@ public partial class Interface : CanvasLayer
 	GridContainer InventoryGridContainer { get; set; }
 	Label CommandLabel { get; set; }
 	GamePanel GamePanel { get; set; }
-	public InventoryManager InventoryManager { get; set; }
+	// public InventoryManager InventoryManager { get; set; }
 
 	[Signal]
 	public delegate void GamePanelMouseMotionEventHandler();
@@ -101,7 +101,7 @@ public partial class Interface : CanvasLayer
 		if (MessageState == MessageStateEnum.Idle)
 		{
 			CommandLabel.Text = text;
-			GD.Print($"SetCommandLabel: {text}");
+			// GD.Print($"SetCommandLabel: {text}");
 
 			if (keep)
 				MessageState = MessageStateEnum.Keep;

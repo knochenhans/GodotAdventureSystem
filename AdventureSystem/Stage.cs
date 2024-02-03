@@ -70,7 +70,6 @@ public partial class Stage : Node2D
 			EmitSignal(SignalName.ThingHovered, thing.ID);
 		else if (@event is InputEventMouseButton mouseButtonEvent && mouseButtonEvent.Pressed && mouseButtonEvent.ButtonIndex == MouseButton.Left)
 			EmitSignal(SignalName.ThingClicked, thing.ID);
-		// EmitSignal(SignalName.SetCommandLabel, MessageDataManager.GetMessages(thing.ID, "name"));
 	}
 
 	public Vector2 GetSize()

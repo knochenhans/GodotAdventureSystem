@@ -22,7 +22,7 @@ public partial class InventoryButton : Button
 		SetMeta("thingID", thingID);
 	}
 
-	public void RemoveThing()
+	public void Clear()
 	{
 		TextureRect.Texture = null;
 		SetMeta("thingID", "");
