@@ -27,12 +27,4 @@ public class VariableManager
     {
         return Variables.ContainsKey(thingID);
     }
-
-    // public void SetVerbState(string thingID, string verb, bool state)
-    // {
-    //     if (!Variables.ContainsKey(thingID))
-    //     {
-    //         Variables[thingID] = new Dictionary<string, bool>();
-    //     }
-    // }
 }

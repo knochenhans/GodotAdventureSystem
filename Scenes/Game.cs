@@ -113,68 +113,25 @@ public partial class Game : Scene
 
 	public Game()
 	{
-		DisplayMessage = (parameter) =>
+		DisplayMessage = (message) => ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, message));
+		PrintError = (message) => GD.PrintErr(message);
+		PickUp = (objectID) =>
 		{
-			GD.Print($"Calling external Ink function: Display: {parameter}");
-			// StageNode.PlayerCharacter.Talk(new Array<string> { parameter });
-			ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, parameter));
-		};
-		PrintError = (parameter) =>
-		{
-			GD.PrintErr($"Calling external Ink function: Error: {parameter}");
-		};
-		PickUp = (parameter) =>
-		{
-			GD.Print($"Calling external Ink function: PickUp: {parameter}");
-			ThingManager.MoveThingToInventory(parameter);
+			ThingManager.MoveThingToInventory(objectID);
 			StageNode.PlayerCharacter.PickUpObject();
 		};
-		CreateObject = (parameter) =>
+		CreateObject = (objectID) =>
 		{
-			GD.Print($"Calling external Ink function: CreateObject: {parameter}");
-			ThingManager.LoadThingToInventory(parameter);
+			ThingManager.LoadThingToInventory(objectID);
 			StageNode.PlayerCharacter.PickUpObject();
 		};
-		IsInInventory = (parameter) =>
-		{
-			GD.Print($"Calling external Ink function: IsInInventory: {parameter}");
-			return ThingManager.IsInInventory(parameter);
-		};
-		SetVariable = (parameter, value) =>
-		{
-			GD.Print($"Calling external Ink function: SetVariable: {parameter}");
-			VariableManager.SetVariable(parameter, value);
-		};
-		GetVariable = (parameter) =>
-		{
-			GD.Print($"Calling external Ink function: GetVariable: {parameter}");
-			return VariableManager.GetVariable(parameter);
-		};
-		SetThingName = (parameter, value) =>
-		{
-			GD.Print($"Calling external Ink function: Name: {parameter}");
-			ThingManager.UpdateThingName(parameter, value);
-		};
-		Wait = (parameter) =>
-		{
-			GD.Print($"Calling external Ink function: Wait: {parameter}");
-			ActionQueue.Add(new ScriptActionWait(StageNode.PlayerCharacter, parameter));
-		};
-		MoveTo = (parameter1, parameter2) =>
-		{
-			GD.Print($"Calling external Ink function: MoveTo: {parameter1}, {parameter2}");
-			ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(parameter1, parameter2)));
-		};
-		MoveRelative = (parameter1, parameter2) =>
-		{
-			GD.Print($"Calling external Ink function: MoveRelative: {parameter1}, {parameter2}");
-			ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(parameter1, parameter2), true));
-		};
-	}
-
-	private async Task DelayMethod(float seconds)
-	{
-		await Task.Delay(TimeSpan.FromSeconds(seconds));
+		IsInInventory = (thingID) => ThingManager.IsInInventory(thingID);
+		SetVariable = (variableID, value) => VariableManager.SetVariable(variableID, value);
+		GetVariable = (variableID) => VariableManager.GetVariable(variableID);
+		SetThingName = (thingID, name) => ThingManager.UpdateThingName(thingID, name);
+		Wait = (seconds) => ActionQueue.Add(new ScriptActionWait(StageNode.PlayerCharacter, seconds));
+		MoveTo = (posX, posY) => ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(posX, posY)));
+		MoveRelative = (posX, posY) => ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(posX, posY), true));
 	}
 
 	public override void _Ready()
@@ -212,7 +169,6 @@ public partial class Game : Scene
 
 		InterfaceNode = GetNode<Interface>("Interface");
 		InterfaceNode.Init(Verbs);
-		// InterfaceNode.InventoryManager = InventoryManager;
 
 		InterfaceNode.GamePanelMouseMotion += _OnGamePanelMouseMotion;
 		InterfaceNode.GamePanelMousePressed += _OnGamePanelMousePressed;
@@ -223,8 +179,6 @@ public partial class Game : Scene
 		InterfaceNode.VerbClicked += _OnVerbClicked;
 		InterfaceNode.VerbHovered += _OnVerbHovered;
 		InterfaceNode.VerbLeave += _OnVerbLeave;
-
-		// InventoryManager.ObjectAdded += InterfaceNode._OnObjectAddedToInventory;
 
 		StageNode = GetNode<Stage>("Stage");
 
@@ -238,6 +192,7 @@ public partial class Game : Scene
 
 		IngameMenuScene = ResourceLoader.Load<PackedScene>("res://AdventureSystem/IngameMenu.tscn");
 
+		// Bind Ink functions
 		InkStory.BindExternalFunction("display_message", DisplayMessage);
 		InkStory.BindExternalFunction("print_error", PrintError);
 		InkStory.BindExternalFunction("pick_up", PickUp);
