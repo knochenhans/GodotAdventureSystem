@@ -101,7 +101,7 @@ public partial class ThingManager : GodotObject
     {
         if (!Things.ContainsKey(thingID))
         {
-            var thing = GD.Load<PackedScene>($"res://Resources/Objects/{thingID}.tscn").Instantiate() as Thing;
+            var thing = GD.Load<PackedScene>($"res://resources/objects/{thingID}.tscn").Instantiate() as Thing;
             RegisterThing(thingID, thing);
             MoveThingToInventory(thingID);
 

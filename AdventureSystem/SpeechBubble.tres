@@ -1,7 +1,7 @@
 [gd_resource type="Theme" load_steps=4 format=3 uid="uid://c6f1m287eoebh"]
 
-[ext_resource type="FontFile" uid="uid://pehoko380c83" path="res://Resources/Fonts/dogicapixelbold.ttf" id="1_i5s7g"]
-[ext_resource type="FontFile" uid="uid://c3ti0dvc8hqlo" path="res://Resources/Fonts/dogicapixel.ttf" id="2_75cea"]
+[ext_resource type="FontFile" uid="uid://pehoko380c83" path="res://resources/fonts/dogicapixelbold.ttf" id="1_i5s7g"]
+[ext_resource type="FontFile" uid="uid://c3ti0dvc8hqlo" path="res://resources/fonts/dogicapixel.ttf" id="2_75cea"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jhibm"]
 

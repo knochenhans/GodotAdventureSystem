@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=5 format=3 uid="uid://yqu3myf53n6r"]
 
-[ext_resource type="FontFile" uid="uid://c3ti0dvc8hqlo" path="res://Resources/Fonts/dogicapixel.ttf" id="1_yjbwi"]
+[ext_resource type="FontFile" uid="uid://c3ti0dvc8hqlo" path="res://resources/fonts/dogicapixel.ttf" id="1_yjbwi"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_figpj"]
 content_margin_left = 20.0

@@ -29,7 +29,7 @@ public partial class SceneManager : Node
 			await ToSignal(CurrentScene, "ExitFinished");
 		}
 
-		var newScene = ResourceLoader.Load<PackedScene>($"res://Scenes/{CurrentSceneName}.tscn").Instantiate();
+		var newScene = ResourceLoader.Load<PackedScene>($"res://scenes/{CurrentSceneName}.tscn").Instantiate();
 		GetTree().Root.AddChild(newScene);
 		GetTree().CurrentScene = newScene;
 		CurrentScene = newScene as Scene;

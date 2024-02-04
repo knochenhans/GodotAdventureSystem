@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" path="res://AdventureSystem/Interface.cs" id="1_doeb8"]
 [ext_resource type="Theme" uid="uid://yqu3myf53n6r" path="res://AdventureSystem/MainTheme.tres" id="1_j7ptp"]
-[ext_resource type="Texture2D" uid="uid://cn74628ehsvg" path="res://Resources/ArrowUp_64.png" id="3_6qbsm"]
+[ext_resource type="Texture2D" uid="uid://cn74628ehsvg" path="res://resources/arrow_up_64.png" id="3_6qbsm"]
 [ext_resource type="Script" path="res://AdventureSystem/GamePanel.cs" id="3_npkvw"]
-[ext_resource type="Texture2D" uid="uid://b73lf3rx3rkti" path="res://Resources/ArrowDown_64.png" id="4_sjwgl"]
+[ext_resource type="Texture2D" uid="uid://b73lf3rx3rkti" path="res://resources/arrow_down_64.png" id="5_0jp4p"]
 
 [node name="Interface" type="CanvasLayer"]
 script = ExtResource("1_doeb8")
@@ -72,7 +72,7 @@ icon_alignment = 1
 [node name="DownButton" type="Button" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/InventoryUpDownButtons"]
 layout_mode = 2
 size_flags_vertical = 3
-icon = ExtResource("4_sjwgl")
+icon = ExtResource("5_0jp4p")
 icon_alignment = 1
 
 [node name="Inventory" type="GridContainer" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer"]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dfn31vgvg841"]
 
 [ext_resource type="Script" path="res://AdventureSystem/Stage.cs" id="1_5h3ot"]
-[ext_resource type="Texture2D" uid="uid://dcxqxis21xby2" path="res://Resources/Background.aseprite" id="2_4dmls"]
+[ext_resource type="Texture2D" uid="uid://dcxqxis21xby2" path="res://resources/background.aseprite" id="2_4dmls"]
 
 [node name="Stage" type="Node2D"]
 script = ExtResource("1_5h3ot")

@@ -1,0 +1,14 @@
+[remap]
+
+importer="aseprite_wizard.plugin.noop"
+type="PackedDataContainer"
+uid="uid://thnggj5fgge4"
+path="res://.godot/imported/walking_template.aseprite-77b0304830921ddccd040bc760886e08.res"
+
+[deps]
+
+source_file="res://resources/walking_template.aseprite"
+dest_files=["res://.godot/imported/walking_template.aseprite-77b0304830921ddccd040bc760886e08.res"]
+
+[params]
+
