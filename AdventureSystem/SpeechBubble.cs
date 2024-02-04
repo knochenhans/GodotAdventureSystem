@@ -3,7 +3,7 @@ using System;
 
 public partial class SpeechBubble : PanelContainer
 {
-	public RichTextLabel RichTextLabel { get; set; }
+	public Label Label { get; set; }
 	public Timer LifeTimer { get; set; }
 
 	[Export]
@@ -20,19 +20,19 @@ public partial class SpeechBubble : PanelContainer
 
 	public override void _Ready()
 	{
-		RichTextLabel = GetNode<RichTextLabel>("Text");
+		Label = GetNode<Label>("Label");
 		LifeTimer = GetNode<Timer>("LifeTimer");
 	}
 
 	public void Init(string text, Color color, Vector2 offset)
 	{
-		RichTextLabel.Text = $"[center]{text}[/center]";
-		RichTextLabel.AddThemeColorOverride("font_color", color);
 		LifeTimer.WaitTime = Math.Max(text.Length * LifeTimeLengthMultiplier, MinimumLifeTime);
 		LifeTimer.Start();
 
-		var height = RichTextLabel.GetContentHeight() / GetViewport().GetCamera2D().Zoom.Y;
-		Position -= new Vector2(Size.X / 2, offset.Y + height - Offset.Y);
+		Label.Text = text;
+		Label.AddThemeColorOverride("font_color", color);
+
+		Position -= new Vector2(Size.X / 2, offset.Y + Label.Size.Y - Offset.Y);
 	}
 
 	public void _OnLifeTimerTimeout()
