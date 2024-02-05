@@ -102,31 +102,6 @@ public partial class Character : Node2D
 		}
 	}
 
-	public override void _PhysicsProcess(double delta)
-	{
-		if (CurrentMovementState != MovementStateEnum.Talking)
-		{
-			if (NavigationAgent2D.IsNavigationFinished())
-			{
-				CurrentMovementState = MovementStateEnum.Idle;
-				EmitSignal(SignalName.CharacterMoved);
-			}
-			else
-			{
-				var movementDelta = Speed * delta;
-				var nextPathPosition = NavigationAgent2D.GetNextPathPosition();
-				var newVelocity = Position.DirectionTo(nextPathPosition) * (float)movementDelta;
-				Position = Position.MoveToward(nextPathPosition + newVelocity, (float)movementDelta);
-
-				if (newVelocity.X < 0)
-					CurrentDirection = DirectionEnum.Left;
-				else if (newVelocity.X > 0)
-					CurrentDirection = DirectionEnum.Right;
-				// GD.Print($"New position: {Position}, nextPathPosition: {nextPathPosition}, newVelocity: {newVelocity}");
-			}
-		}
-	}
-
 	public async Task Talk(string message)
 	{
 		CurrentMovementState = MovementStateEnum.Talking;
@@ -145,10 +120,48 @@ public partial class Character : Node2D
 		// return Task.CompletedTask;
 	}
 
+	public async Task PlayAnimation(string animationName)
+	{
+		AnimatedSprite2D.Play(animationName);
+		await ToSignal(AnimatedSprite2D, "animation_finished");
+		AnimatedSprite2D.Play("idle");
+	}
+
 	public void PickUpObject()
 	{
 		SoundsNode.Stream = PickupSound;
 		SoundsNode.Play();
+	}
+
+	public override void _PhysicsProcess(double delta)
+	{
+		if (CurrentMovementState != MovementStateEnum.Talking)
+		{
+			if (NavigationAgent2D.IsNavigationFinished())
+			{
+				// CurrentMovementState = MovementStateEnum.Idle;
+				// EmitSignal(SignalName.CharacterMoved);
+			}
+			else
+			{
+				var movementDelta = Speed * delta;
+				var nextPathPosition = NavigationAgent2D.GetNextPathPosition();
+				var newVelocity = Position.DirectionTo(nextPathPosition) * (float)movementDelta;
+				Position = Position.MoveToward(nextPathPosition + newVelocity, (float)movementDelta);
+
+				if (newVelocity.X < 0)
+					CurrentDirection = DirectionEnum.Left;
+				else if (newVelocity.X > 0)
+					CurrentDirection = DirectionEnum.Right;
+				// GD.Print($"New position: {Position}, nextPathPosition: {nextPathPosition}, newVelocity: {newVelocity}");
+			}
+		}
+	}
+
+	public void _OnNavigationFinished()
+	{
+		CurrentMovementState = MovementStateEnum.Idle;
+		EmitSignal(SignalName.CharacterMoved);
 	}
 
 	public Vector2 GetSize()

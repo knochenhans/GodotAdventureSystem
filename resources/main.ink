@@ -11,13 +11,15 @@ INCLUDE includes.ink
 
         - "look":
             ~ bubble("A cloud high above in the sky…")
-            ~ move_relative(75, 20)
+            ~ move_rel(75, 20)
             ~ bubble("A cloooooud high above in the skyyyy…")
-            ~ move_relative(-50, 0)
+            ~ move_rel(-50, 0)
             ~ bubble("A cloooooooooooud high above in the skyyyyyyyyy…")
-            ~ move_relative(-25, 0)
+            ~ move_rel(-25, 0)
             ~ bubble("Sorry.")
         - "talk_to": ~ bubble("This cloud’s not talking back to me. What a shame!")
+        - "give":
+            ~ play_anim("left_hand_up")
         - else: ~ return false
         }
 
@@ -25,7 +27,10 @@ INCLUDE includes.ink
 
         { verb_id:
 
-        - "look": ~ bubble("Another a cloud high above in the sky.")
+        - "look":
+            ~ bubble("Another.")
+            ~ bubble("Another a cloud high above in the sky.")
+            ~ bubble("Another a cloud high above in the sky. Really. Really. Really.")
         - "talk_to": ~ bubble("This cloud doesn’t seem eager to talk, either.")
         - else: ~ return false
         }
@@ -62,15 +67,15 @@ INCLUDE includes.ink
 
         - "look":
             {
-                - get_variable("bush_looked_once") == false:
+                - get_var("bush_looked_once") == false:
                     ~ bubble("Well, that’s a bush. Looks unsuspecting, right?")
-                    ~ set_variable("bush_looked_once", true)
+                    ~ set_var("bush_looked_once", true)
                 - else:
                     {
-                        - get_variable("bush_looked_twice") == false:
+                        - get_var("bush_looked_twice") == false:
                             ~ bubble("Wait a second, someone left a coin in there!")
-                            ~ create_object("coin")
-                            ~ set_variable("bush_looked_twice", true)
+                            ~ create("coin")
+                            ~ set_var("bush_looked_twice", true)
                             ~ set_name(thing_id, "Generous bush")
                         - else:
                             ~ bubble("I already found the coin in the bush.")

@@ -46,6 +46,17 @@ public partial class ScriptActionWait : ScriptAction
 	}
 }
 
+public partial class ScriptActionPlayAnimation : ScriptAction
+{
+	public string AnimationName { get; set; }
+
+	public ScriptActionPlayAnimation(Character character, string animationID) : base(character) { AnimationName = animationID; }
+	public override async Task Execute()
+	{
+		await Character.PlayAnimation(AnimationName);
+	}
+}
+
 public partial class Game : Scene
 {
 	enum CommandState
@@ -99,7 +110,7 @@ public partial class Game : Scene
 	}
 
 	// Ink external functions
-	Action<string> DisplayMessage;
+	Action<string> DisplayBubble;
 	Action<string> PrintError;
 	Action<string> PickUp;
 	Action<string> CreateObject;
@@ -110,10 +121,11 @@ public partial class Game : Scene
 	Action<float> Wait;
 	Action<int, int> MoveTo;
 	Action<int, int> MoveRelative;
+	Action<string> PlayAnimation;
 
 	public Game()
 	{
-		DisplayMessage = (message) => ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, message));
+		DisplayBubble = (message) => ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, message));
 		PrintError = (message) => GD.PrintErr(message);
 		PickUp = (objectID) =>
 		{
@@ -132,6 +144,7 @@ public partial class Game : Scene
 		Wait = (seconds) => ActionQueue.Add(new ScriptActionWait(StageNode.PlayerCharacter, seconds));
 		MoveTo = (posX, posY) => ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(posX, posY)));
 		MoveRelative = (posX, posY) => ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(posX, posY), true));
+		PlayAnimation = (animationID) => ActionQueue.Add(new ScriptActionPlayAnimation(StageNode.PlayerCharacter, animationID));
 	}
 
 	public override void _Ready()
@@ -193,17 +206,18 @@ public partial class Game : Scene
 		IngameMenuScene = ResourceLoader.Load<PackedScene>("res://AdventureSystem/IngameMenu.tscn");
 
 		// Bind Ink functions
-		InkStory.BindExternalFunction("bubble", DisplayMessage);
+		InkStory.BindExternalFunction("bubble", DisplayBubble);
 		InkStory.BindExternalFunction("print_error", PrintError);
 		InkStory.BindExternalFunction("pick_up", PickUp);
-		InkStory.BindExternalFunction("create_object", CreateObject);
+		InkStory.BindExternalFunction("create", CreateObject);
 		InkStory.BindExternalFunction("is_in_inventory", IsInInventory);
-		InkStory.BindExternalFunction("set_variable", SetVariable);
-		InkStory.BindExternalFunction("get_variable", GetVariable);
+		InkStory.BindExternalFunction("set_var", SetVariable);
+		InkStory.BindExternalFunction("get_var", GetVariable);
 		InkStory.BindExternalFunction("set_name", SetThingName);
 		InkStory.BindExternalFunction("wait", Wait);
 		InkStory.BindExternalFunction("move_to", MoveTo);
-		InkStory.BindExternalFunction("move_relative", MoveRelative);
+		InkStory.BindExternalFunction("move_rel", MoveRelative);
+		InkStory.BindExternalFunction("play_anim", PlayAnimation);
 
 		// InkStory.Continue();
 	}

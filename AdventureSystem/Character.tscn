@@ -34,3 +34,5 @@ path_desired_distance = 1.0
 stream = SubResource("AudioStreamRandomizer_ym6ke")
 
 [node name="Sounds" type="AudioStreamPlayer2D" parent="."]
+
+[connection signal="navigation_finished" from="NavigationAgent2D" to="." method="_OnNavigationFinished"]
