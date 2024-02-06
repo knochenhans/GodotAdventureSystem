@@ -6,9 +6,9 @@ using GodotInk;
 
 public partial class ScriptAction : GodotObject
 {
-	public Character Character { get; set; }
+	public PlayerCharacter Character { get; set; }
 
-	public ScriptAction(Character character) { Character = character; }
+	public ScriptAction(PlayerCharacter character) { Character = character; }
 	public virtual Task Execute() { return Task.CompletedTask; }
 }
 
@@ -16,7 +16,7 @@ public partial class ScriptActionMessage : ScriptAction
 {
 	public string Message { get; set; }
 
-	public ScriptActionMessage(Character character, string message) : base(character) { Message = message; }
+	public ScriptActionMessage(PlayerCharacter character, string message) : base(character) { Message = message; }
 	public override async Task Execute()
 	{
 		await Character.Talk(Message);
@@ -28,10 +28,10 @@ public partial class ScriptActionMove : ScriptAction
 	public Vector2 Position { get; set; }
 	public bool IsRelative { get; set; }
 
-	public ScriptActionMove(Character character, Vector2 position, bool isRelative = false) : base(character) { Position = position; IsRelative = isRelative; }
+	public ScriptActionMove(PlayerCharacter character, Vector2 position, bool isRelative = false) : base(character) { Position = position; IsRelative = isRelative; }
 	public override async Task Execute()
 	{
-		await Character.MoveTo(Position, IsRelative);
+		await Character.MoveTo(Position, 0, IsRelative);
 	}
 }
 
@@ -39,7 +39,7 @@ public partial class ScriptActionWait : ScriptAction
 {
 	public float Seconds { get; set; }
 
-	public ScriptActionWait(Character character, float seconds) : base(character) { Seconds = seconds; }
+	public ScriptActionWait(PlayerCharacter character, float seconds) : base(character) { Seconds = seconds; }
 	public override Task Execute()
 	{
 		return Task.Delay(TimeSpan.FromSeconds(Seconds));
@@ -50,7 +50,7 @@ public partial class ScriptActionPlayAnimation : ScriptAction
 {
 	public string AnimationName { get; set; }
 
-	public ScriptActionPlayAnimation(Character character, string animationID) : base(character) { AnimationName = animationID; }
+	public ScriptActionPlayAnimation(PlayerCharacter character, string animationID) : base(character) { AnimationName = animationID; }
 	public override async Task Execute()
 	{
 		await Character.PlayAnimation(AnimationName);
@@ -66,7 +66,6 @@ public partial class Game : Scene
 	}
 
 	public VariableManager VariableManager { get; set; } = new();
-	// public InventoryManager InventoryManager { get; set; } = new();
 	public ThingManager ThingManager { get; set; } = new();
 
 	public Dictionary<string, string> Verbs { get; set; }
@@ -96,6 +95,9 @@ public partial class Game : Scene
 
 	[Export]
 	InkStory InkStory { get; set; }
+
+	[Export]
+	PackedScene PlayerCharacterScene { get; set; }
 
 	public Array<ScriptAction> ActionQueue { get; set; } = new Array<ScriptAction>();
 
@@ -193,10 +195,14 @@ public partial class Game : Scene
 		InterfaceNode.VerbHovered += _OnVerbHovered;
 		InterfaceNode.VerbLeave += _OnVerbLeave;
 
+		var playerCharacter = PlayerCharacterScene.Instantiate() as PlayerCharacter;
+
 		StageNode = GetNode<Stage>("Stage");
 
 		StageNode.ThingClicked += _OnThingClicked;
 		StageNode.ThingHovered += _OnThingHovered;
+
+		StageNode.InitPlayerCharacter(playerCharacter);
 
 		ThingManager.RegisterThings(StageNode.CollectThings());
 		ThingManager.AddThingToIventory += InterfaceNode._OnObjectAddedToInventory;
@@ -289,7 +295,11 @@ public partial class Game : Scene
 	{
 		var thing = ThingManager.GetThing(thingID);
 
-		if (thing != null)
+		if (thing == null)
+		{ 
+			GD.PrintErr($"_OnThingHovered: Thing {thingID} not registered in ThingManager");
+		}
+		else
 		{
 			// Hovered inventory item
 			if (CurrentCommandState == CommandState.Idle)
@@ -311,12 +321,14 @@ public partial class Game : Scene
 				Vector2 position = Vector2.Zero;
 				if (thing is Object object_)
 					position = object_.Position;
+				else if (thing is Character character)
+					position = character.Position;
 				else if (thing is HotspotArea hotspotArea)
 					position = hotspotArea.CalculateCenter();
 				else
 					GD.PrintErr($"_OnAreaActivated: Area {thing.ID} is not an Object or a HotspotArea");
 
-				await StageNode.PlayerCharacter.MoveTo(position);
+				await StageNode.PlayerCharacter.MoveTo(position, 50);
 
 				// await ToSignal(StageNode.PlayerCharacter, "CharacterMoved");
 			}

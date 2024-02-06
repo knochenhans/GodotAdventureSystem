@@ -31,7 +31,20 @@ INCLUDE includes.ink
             ~ bubble("Another.")
             ~ bubble("Another a cloud high above in the sky.")
             ~ bubble("Another a cloud high above in the sky. Really. Really. Really.")
-        - "talk_to": ~ bubble("This cloud doesn’t seem eager to talk, either.")
+        - "talk_to":
+            ~ wait(2)
+            ~ bubble("I’m controlled by an Ink script!")
+            ~ wait(0.5)
+            ~ bubble("Lets walk a bit to the right…")
+            ~ move_rel(75, 0)
+            ~ wait(0.5)
+            ~ bubble("And now to the left…")
+            ~ move_rel(-150, 0)
+            ~ wait(0.5)
+            ~ bubble("And I can also do custom animations, see?")
+            ~ play_anim("left_hand_up")
+            ~ bubble("It’s great!")
+
         - else: ~ return false
         }
 
@@ -93,6 +106,17 @@ INCLUDE includes.ink
             ~ set_name("coin", "Strange coin")
         - else: ~ return false
         }
+
+    - "robot":
+    
+            { verb_id:
+    
+            - "look":
+                ~ bubble("A robot standing in meadow. It seems to be looking for something or someone.")
+            - "talk_to":
+                ~ bubble("I’m a robot.")
+            - else: ~ return false
+            }
 
     - else:
         ~ print_error("Unknown thing.")

@@ -1,9 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://cgomoes0br310"]
+[gd_scene load_steps=7 format=3 uid="uid://cgomoes0br310"]
 
 [ext_resource type="Script" path="res://AdventureSystem/Character.cs" id="1_auhhc"]
 [ext_resource type="SpriteFrames" uid="uid://boamo1pw4nwro" path="res://resources/character.aseprite" id="2_prt4m"]
 [ext_resource type="AudioStream" uid="uid://dr8bgwfljde4a" path="res://resources/sounds/pick_up.wav" id="2_xe5nj"]
 [ext_resource type="AudioStream" uid="uid://bpedpmxbtyr4n" path="res://resources/sounds/step.ogg" id="4_lhdnk"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sef5o"]
+radius = 7.0
+height = 36.0
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_ym6ke"]
 random_pitch = 1.05
@@ -12,23 +16,26 @@ streams_count = 1
 stream_0/stream = ExtResource("4_lhdnk")
 stream_0/weight = 1.0
 
-[node name="Character" type="Node2D"]
+[node name="Character" type="Area2D"]
 y_sort_enabled = true
 script = ExtResource("1_auhhc")
 Speed = 50.0
-CharacterName = "You"
 PickupSound = ExtResource("2_xe5nj")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 y_sort_enabled = true
 position = Vector2(-12, 0)
 sprite_frames = ExtResource("2_prt4m")
-animation = &"idle"
+animation = &"left_hand_up"
 centered = false
 offset = Vector2(0, -48)
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-path_desired_distance = 1.0
+debug_enabled = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -22)
+shape = SubResource("CapsuleShape2D_sef5o")
 
 [node name="StepSounds" type="AudioStreamPlayer2D" parent="."]
 stream = SubResource("AudioStreamRandomizer_ym6ke")

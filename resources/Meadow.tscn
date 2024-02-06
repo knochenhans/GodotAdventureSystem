@@ -2,9 +2,9 @@
 
 [ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://AdventureSystem/Stage.tscn" id="1_47bt1"]
 [ext_resource type="PackedScene" uid="uid://cdp281ib4s7f4" path="res://AdventureSystem/HotspotPolygon.tscn" id="2_1wibb"]
-[ext_resource type="PackedScene" uid="uid://cgomoes0br310" path="res://AdventureSystem/Character.tscn" id="2_kgksh"]
 [ext_resource type="PackedScene" uid="uid://cbyij1livuxja" path="res://resources/objects/note.tscn" id="3_8b7br"]
 [ext_resource type="PackedScene" uid="uid://dxunhfut7rfqt" path="res://resources/objects/bush.tscn" id="4_f85ht"]
+[ext_resource type="PackedScene" uid="uid://b44hbsyxbbqit" path="res://resources/Robot.tscn" id="6_jm8yb"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_4whn4"]
 vertices = PackedVector2Array(196, 157, 195, 157, 271, 154, 850, 159, 849, 158, 933, 156, 938, 209, 21, 208, 21, 170, 78, 165, 390, 159, 588, 171, 590, 171, 741, 178, 795, 176, 678, 166)
@@ -77,5 +77,8 @@ position = Vector2(618, 193)
 position = Vector2(123, 194)
 DisplayedName = "Bush"
 
-[node name="PlayerCharacter" parent="." index="4" instance=ExtResource("2_kgksh")]
-position = Vector2(56, 190)
+[node name="Robot" parent="Characters" index="0" instance=ExtResource("6_jm8yb")]
+position = Vector2(443, 195)
+
+[node name="Default" parent="Entries" index="0"]
+position = Vector2(222, 187)

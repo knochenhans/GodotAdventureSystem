@@ -6,8 +6,9 @@ public partial class Stage : Node2D
 {
 	public Node2D HotspotPolygonsNode { get; set; }
 	public Interface InterfaceNode { get; set; }
-	public Character PlayerCharacter { get; set; }
 	public TextureRect BackgroundNode { get; set; }
+
+	public PlayerCharacter PlayerCharacter { get; set; }
 
 	// [Signal]
 	// public delegate void SetCommandLabelEventHandler(string commandLabel);
@@ -27,7 +28,6 @@ public partial class Stage : Node2D
 
 		HotspotPolygonsNode = GetNode<Node2D>("HotspotPolygons");
 		InterfaceNode = GetNode<Interface>("../Interface");
-		PlayerCharacter = GetNode<Character>("PlayerCharacter");
 		BackgroundNode = GetNode<TextureRect>("Background");
 
 		// Convert HotspotPolygons to HotspotAreas
@@ -61,6 +61,10 @@ public partial class Stage : Node2D
 			if (object_ is Object objectNode)
 				objectNode.InputEvent += (viewport, @event, shapeIdx) => _OnThingInputEvent(@event, objectNode);
 
+		foreach (var character in GetNode<Node2D>("Characters").GetChildren())
+			if (character is Character characterNode)
+				characterNode.InputEvent += (viewport, @event, shapeIdx) => _OnThingInputEvent(@event, characterNode);
+
 		var navigationregion = GetNode<NavigationRegion2D>("NavigationRegion2D");
 	}
 
@@ -92,9 +96,20 @@ public partial class Stage : Node2D
 		foreach (var objectNode in GetNode<Node2D>("Objects").GetChildren())
 			things.Add(objectNode as Thing);
 
+		foreach (var characterNode in GetNode<Node2D>("Characters").GetChildren())
+			things.Add(characterNode as Thing);
+
 		foreach (var hotspotAreaNode in HotspotPolygonsNode.GetChildren())
 			things.Add(hotspotAreaNode as Thing);
 
 		return things;
+	}
+
+	public void InitPlayerCharacter(PlayerCharacter playerCharacter)
+	{
+		PlayerCharacter = playerCharacter;
+		PlayerCharacter.Position = GetNode<Entry>("Entries/Default").Position;
+
+		AddChild(PlayerCharacter);
 	}
 }

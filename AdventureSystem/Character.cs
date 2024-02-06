@@ -1,18 +1,13 @@
 using System.Threading.Tasks;
 using Godot;
-using Godot.Collections;
 
-public partial class Character : Node2D
+public partial class Character : Thing
 {
 	[Export]
 	public double Speed { get; set; } = 100f;
 
 	[Signal]
 	public delegate void CharacterMovedEventHandler();
-
-	[ExportCategory("Character")]
-	[Export]
-	public string CharacterName { get; set; }
 
 	[Export]
 	public Color SpeechColor { get; set; } = Colors.White;
