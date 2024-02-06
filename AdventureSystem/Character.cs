@@ -80,22 +80,28 @@ public partial class Character : Node2D
 
 	public override void _Ready()
 	{
+		base._Ready();
+
 		NavigationAgent2D = GetNode<NavigationAgent2D>("NavigationAgent2D");
 		AnimatedSprite2D = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		SoundsNode = GetNode<AudioStreamPlayer2D>("Sounds");
 		StepSoundsNode = GetNode<AudioStreamPlayer2D>("StepSounds");
 
 		CurrentDirection = DirectionEnum.Right;
+		CurrentMovementState = MovementStateEnum.Idle;
 	}
 
-	public async Task MoveTo(Vector2 position, bool isRelative = false)
+	public async Task MoveTo(Vector2 position, float desiredDistance = 2f, bool isRelative = false)
 	{
 		if (CurrentMovementState != MovementStateEnum.Talking)
 		{
 			if (isRelative)
 				NavigationAgent2D.TargetPosition = Position + position;
 			else
+			{
 				NavigationAgent2D.TargetPosition = position;
+				// NavigationAgent2D.TargetDesiredDistance = 500f;
+			}
 			CurrentMovementState = MovementStateEnum.Moving;
 
 			await ToSignal(this, "CharacterMoved");
@@ -137,23 +143,25 @@ public partial class Character : Node2D
 	{
 		if (CurrentMovementState != MovementStateEnum.Talking)
 		{
-			if (NavigationAgent2D.IsNavigationFinished())
+			if (NavigationAgent2D != null)
 			{
-				// CurrentMovementState = MovementStateEnum.Idle;
-				// EmitSignal(SignalName.CharacterMoved);
-			}
-			else
-			{
-				var movementDelta = Speed * delta;
-				var nextPathPosition = NavigationAgent2D.GetNextPathPosition();
-				var newVelocity = Position.DirectionTo(nextPathPosition) * (float)movementDelta;
-				Position = Position.MoveToward(nextPathPosition + newVelocity, (float)movementDelta);
+				if (!NavigationAgent2D.IsNavigationFinished())
+				{
+					// GD.Print(NavigationAgent2D.TargetDesiredDistance);
+					var movementDelta = Speed * delta;
+					var nextPathPosition = NavigationAgent2D.GetNextPathPosition();
+					var newVelocity = Position.DirectionTo(nextPathPosition) * (float)movementDelta;
+					GlobalPosition = GlobalPosition.MoveToward(nextPathPosition + newVelocity, (float)movementDelta);
 
-				if (newVelocity.X < 0)
-					CurrentDirection = DirectionEnum.Left;
-				else if (newVelocity.X > 0)
-					CurrentDirection = DirectionEnum.Right;
-				// GD.Print($"New position: {Position}, nextPathPosition: {nextPathPosition}, newVelocity: {newVelocity}");
+					if (newVelocity.X < 0)
+						CurrentDirection = DirectionEnum.Left;
+					else if (newVelocity.X > 0)
+						CurrentDirection = DirectionEnum.Right;
+
+					// GD.Print($"Distance to target: {NavigationAgent2D.DistanceToTarget()}");
+					// GD.Print($"Distance to next path position: {Position.DistanceTo(nextPathPosition)}");
+					// GD.Print($"IsTargetReached: {NavigationAgent2D.IsTargetReached()}");
+				}
 			}
 		}
 	}
