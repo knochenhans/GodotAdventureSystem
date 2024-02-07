@@ -31,7 +31,6 @@ centered = false
 offset = Vector2(0, -48)
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-debug_enabled = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -22)

@@ -1,5 +1,6 @@
 using Godot.Collections;
 using Godot;
+using GodotInk;
 
 public partial class Interface : CanvasLayer
 {
@@ -7,7 +8,9 @@ public partial class Interface : CanvasLayer
 	GridContainer InventoryGridContainer { get; set; }
 	Label CommandLabel { get; set; }
 	GamePanel GamePanel { get; set; }
-	// public InventoryManager InventoryManager { get; set; }
+	Control InterfacePanel { get; set; }
+	Control InterfaceContainer { get; set; }
+	Control InterfaceContainerDialog { get; set; }
 
 	[Signal]
 	public delegate void GamePanelMouseMotionEventHandler();
@@ -33,6 +36,9 @@ public partial class Interface : CanvasLayer
 	[Signal]
 	public delegate void VerbClickedEventHandler(string verbID);
 
+	[Signal]
+	public delegate void DialogOptionClickedEventHandler(InkChoice choice);
+
 	int Zoom = 4;
 
 	enum MessageStateEnum
@@ -53,13 +59,46 @@ public partial class Interface : CanvasLayer
 		}
 	}
 
+	public enum ModeEnum
+	{
+		Normal,
+		Dialog
+	}
+
+	ModeEnum _mode = ModeEnum.Normal;
+	public ModeEnum Mode
+	{
+		get => _mode;
+		set
+		{
+			switch (value)
+			{
+				case ModeEnum.Normal:
+					InterfaceContainer.Visible = true;
+					InterfaceContainerDialog.Visible = false;
+					break;
+				case ModeEnum.Dialog:
+					InterfaceContainer.Visible = false;
+					InterfaceContainerDialog.Visible = true;
+					break;
+			}
+
+			_mode = value;
+		}
+	}
+
 	public override void _Ready()
 	{
-		VerbGridContainer = GetNode<GridContainer>("%Verbs");
-		InventoryGridContainer = GetNode<GridContainer>("%Inventory");
-		CommandLabel = GetNode<Label>("%CommandLabel");
 		GamePanel = GetNode<GamePanel>("%GamePanel");
 		GamePanel.GuiInput += _OnGamePanelInputEvent;
+
+		InterfacePanel = GetNode<Control>("%InterfacePanel");
+
+		InterfaceContainer = InterfacePanel.GetNode<Control>("InterfaceContainer");
+		InterfaceContainerDialog = InterfacePanel.GetNode<Control>("InterfaceContainerDialog");
+		VerbGridContainer = InterfaceContainer.GetNode<GridContainer>("%Verbs");
+		InventoryGridContainer = InterfaceContainer.GetNode<GridContainer>("%Inventory");
+		CommandLabel = InterfaceContainer.GetNode<Label>("%CommandLabel");
 	}
 
 	public void Init(Dictionary<string, string> verbs)
@@ -168,6 +207,27 @@ public partial class Interface : CanvasLayer
 		{
 			var button = verbButton as Button;
 			button.ReleaseFocus();
+		}
+	}
+
+	public void SetDialogChoiceLabels(Array<InkChoice> choices)
+	{
+		var dialogOptionsContainer = InterfaceContainerDialog.GetNode<Control>("%DialogOptionsContainer");
+
+		foreach (var choice in choices)
+		{
+			var choiceLabel = ResourceLoader.Load<PackedScene>("res://AdventureSystem/DialogOptionLabel.tscn").Instantiate() as DialogOptionLabel;
+			choiceLabel.Text = choice.Text;
+			// choiceLabel.MouseEntered += () => EmitSignal(SignalName.VerbHovered, choice.Text);
+			// choiceLabel.MouseExited += () => EmitSignal(SignalName.VerbLeave);
+			choiceLabel.GuiInput += (InputEvent @event) =>
+			{
+				if (@event is InputEventMouseButton mouseButtonEvent && mouseButtonEvent.Pressed)
+					EmitSignal(SignalName.DialogOptionClicked, choice);
+			};
+			choiceLabel.SetMeta("choice", choice);
+
+			dialogOptionsContainer.AddChild(choiceLabel);
 		}
 	}
 }

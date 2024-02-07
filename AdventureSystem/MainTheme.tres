@@ -17,8 +17,8 @@ bg_color = Color(0, 0, 0, 1)
 
 [resource]
 default_font = ExtResource("1_yjbwi")
-default_font_size = 18
-Button/colors/font_color = Color(0.670588, 0.313726, 0.670588, 1)
+default_font_size = 16
+Button/colors/font_color = Color(0.741176, 0.380392, 0.737255, 1)
 Button/colors/font_focus_color = Color(0.670588, 0.313726, 0.670588, 1)
 Button/colors/font_hover_color = Color(0.670588, 0.313726, 0.670588, 1)
 Button/styles/disabled = SubResource("StyleBoxFlat_figpj")

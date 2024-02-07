@@ -1,7 +1,5 @@
 INCLUDE includes.ink
 
--> END
-
 === function verb(thing_id, verb_id) ===
     { thing_id:
     
@@ -114,7 +112,7 @@ INCLUDE includes.ink
             - "look":
                 ~ bubble("A robot standing in meadow. It seems to be looking for something or someone.")
             - "talk_to":
-                ~ bubble("I’m a robot.")
+                ~ dialog(thing_id)
             - else: ~ return false
             }
 
@@ -124,3 +122,32 @@ INCLUDE includes.ink
     }
     
     ~ return true
+
+=== robot ===
+
+Hi there! #player
+
+Hello, fleshperson. #robot
+
+Weird meeting a robot out here in the nature. #player
+
+You think so? #robot
+
+~ play_anim_char("robot", "idle")
+~ wait(0.5)
+
+Well doesn’t seem weird at all to me, you know? #robot
+
+So what do you want, fleshperson? #robot
+
+    * [Who are you?]
+        My name is… err, I have no idea to be honest. No one ever asked me that before. #robot
+
+        Wait, you don’t know your own name? #player
+    * [What are you doing here?]
+        I’m looking for someone. #robot
+
+        ~ play_anim_char("robot", "idle")
+        ~ wait(0.5)
+
+- -> END

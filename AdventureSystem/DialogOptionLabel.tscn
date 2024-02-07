@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://77cijoco3lin"]
+
+[ext_resource type="Script" path="res://AdventureSystem/DialogOptionLabel.cs" id="1_546wn"]
+
+[node name="DialogOptionLabel" type="Label"]
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -18.0
+offset_bottom = 18.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+theme_override_font_sizes/font_size = 26
+text = "Test"
+script = ExtResource("1_546wn")
+
+[connection signal="mouse_entered" from="." to="." method="_OnMouseEnter"]
+[connection signal="mouse_exited" from="." to="." method="_OnMouseExit"]
