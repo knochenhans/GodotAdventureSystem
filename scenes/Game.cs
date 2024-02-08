@@ -64,14 +64,18 @@ public partial class ScriptActionStartDialog : ScriptAction
 	public Game Game { get; set; }
 
 	public ScriptActionStartDialog(PlayerCharacter character, Game game, string knotName) : base(character) { KnotName = knotName; Game = game; }
-	public override async Task Execute()
+	public override Task Execute()
 	{
-		await Game.StartDialog(KnotName);
+		Game.StartDialog(KnotName);
+		return Task.CompletedTask;
 	}
 }
 
 public partial class Game : Scene
 {
+	[Signal]
+	public delegate void DialogFinishedEventHandler();
+
 	enum CommandState
 	{
 		Idle,
@@ -391,8 +395,10 @@ public partial class Game : Scene
 		// CurrentCommandState = CommandState.VerbSelected;
 	}
 
-	public Task StartDialog(string characterID)
+	public void StartDialog(string characterID)
 	{
+		GD.Print($"StartDialog: {characterID}");
+
 		InterfaceNode.Mode = Interface.ModeEnum.Dialog;
 		var character = ThingManager.GetThing(characterID) as Character;
 
@@ -404,44 +410,50 @@ public partial class Game : Scene
 
 		InkStory.ChoosePathString(characterID);
 		InkStory.Continued += _OnDialogContinue;
-		InkStory.MadeChoice += _OnDialogChoiceMade;
+		// InkStory.MadeChoice += _OnDialogChoiceMade;
+		InterfaceNode.DialogOptionClicked += _OnDialogChoiceMade;
 		InkStory.Continue();
-
-		return Task.CompletedTask;
 	}
 
 	public async void _OnDialogContinue()
 	{
-		// Only check first tag for now
-		var tag = InkStory.GetCurrentTags();
+		if (InkStory.CurrentText.StripEdges() != "")
+		{
+			// Only check first tag for now
+			var tag = InkStory.GetCurrentTags();
 
-		Character actingCharacter = StageNode.PlayerCharacter;
+			Character actingCharacter = StageNode.PlayerCharacter;
 
-		if (tag.Count > 0)
-			if (tag[0] != "player")
-				actingCharacter = ThingManager.GetThing(tag[0]) as Character;
+			if (tag.Count > 0)
+				if (tag[0] != "player")
+					actingCharacter = ThingManager.GetThing(tag[0]) as Character;
 
-		ActionQueue.Add(new ScriptActionMessage(actingCharacter, InkStory.CurrentText));
-		ActionQueue.Add(new ScriptActionWait(actingCharacter, 0.5f));
+			ActionQueue.Add(new ScriptActionMessage(actingCharacter, InkStory.CurrentText));
+			ActionQueue.Add(new ScriptActionWait(actingCharacter, 0.3f));
 
-		await RunActionQueue();
+			await RunActionQueue();
+		}
 
 		if (InkStory.CanContinue)
 			InkStory.Continue();
 		else
 		{
-			if (InkStory.GetCurrentChoices().Count > 0)
-			{
-				InterfaceNode.SetDialogChoiceLabels(InkStory.GetCurrentChoices());
-				InterfaceNode.DialogOptionClicked += _OnDialogChoiceMade;
-			}
+			if (InkStory.CurrentChoices.Count > 0)
+				InterfaceNode.SetDialogChoiceLabels(new Array<InkChoice>(InkStory.CurrentChoices.ToArray()));
+			else
+				{
+					// Story has finished
+					InterfaceNode.Mode = Interface.ModeEnum.Normal;
+					// InkStory.ResetState();
+					// InkStory.ResetCallstack();
+				}
 		}
 		// CurrentCommandState = CommandState.Idle;
 	}
 
 	public async void _OnDialogChoiceMade(InkChoice choice)
 	{
-
+		InterfaceNode.ClearDialogChoiceLabels();
 		ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, choice.Text));
 		ActionQueue.Add(new ScriptActionWait(StageNode.PlayerCharacter, 0.5f));
 

@@ -123,6 +123,12 @@ INCLUDE includes.ink
     
     ~ return true
 
+=== test ===
+
+test
+
+-> END
+
 === robot ===
 
 Hi there! #player
@@ -140,36 +146,39 @@ Well doesn’t seem weird to me at all, you know? #robot
 
 So what do you want, fleshperson? #robot
 
--> main_dialog
+Hi there! #player
 
-= main_dialog
+Hello, fleshperson. #robot
+
+Weird meeting a robot out here in the nature. #player
+
+You think so? #robot
+
+Well doesn’t seem weird to me at all, you know? #robot
+
+So what do you want, fleshperson? #robot
 
 * [Beautiful meadow, isn’t it?]
     What’s next, are you going to ask me about the weather? #robot
+    -> END
     
 * [What’s your name?]
     My name is… err, I have no idea to be honest. No one ever asked me that before. #robot
 
     Wait, you don’t know your own name? #player
-
-    Do I need one? #robot
+    -> END
 
 * [What’s a robot like you doing out here?]
-    ~ play_anim_char("robot", "idle")
-
     I’m looking for someone. #robot
 
     And what are *you* doing out here? #robot
 
     * * [Just enjoying the nature.]
-        Just like a fleshperson would. #robot
+        Like a fleshperson would. #robot
 
-    - -
+    - -> END
 
-* [Well, I better get going.]
-
-    Take care, fleshperson. #robot -> END
-        
-- -> main_dialog
++ [Well, I better get going.]
+    Take care, fleshperson. #robot
         
 -> END

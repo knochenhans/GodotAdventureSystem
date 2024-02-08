@@ -189,6 +189,11 @@ public partial class Character : Thing
 		CurrentMovementState = MovementStateEnum.Dialog;
 	}
 
+	public void EndDialog()
+	{
+		CurrentMovementState = MovementStateEnum.Idle;
+	}
+
 	public void LookTo(Vector2 position)
 	{
 		if (position.X < Position.X)

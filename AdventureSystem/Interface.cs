@@ -11,6 +11,7 @@ public partial class Interface : CanvasLayer
 	Control InterfacePanel { get; set; }
 	Control InterfaceContainer { get; set; }
 	Control InterfaceContainerDialog { get; set; }
+	Control DialogOptionsContainer { get; set; }
 
 	[Signal]
 	public delegate void GamePanelMouseMotionEventHandler();
@@ -96,6 +97,7 @@ public partial class Interface : CanvasLayer
 
 		InterfaceContainer = InterfacePanel.GetNode<Control>("InterfaceContainer");
 		InterfaceContainerDialog = InterfacePanel.GetNode<Control>("InterfaceContainerDialog");
+		DialogOptionsContainer = InterfaceContainerDialog.GetNode<Control>("%DialogOptionsContainer");
 		VerbGridContainer = InterfaceContainer.GetNode<GridContainer>("%Verbs");
 		InventoryGridContainer = InterfaceContainer.GetNode<GridContainer>("%Inventory");
 		CommandLabel = InterfaceContainer.GetNode<Label>("%CommandLabel");
@@ -212,8 +214,6 @@ public partial class Interface : CanvasLayer
 
 	public void SetDialogChoiceLabels(Array<InkChoice> choices)
 	{
-		var dialogOptionsContainer = InterfaceContainerDialog.GetNode<Control>("%DialogOptionsContainer");
-
 		foreach (var choice in choices)
 		{
 			var choiceLabel = ResourceLoader.Load<PackedScene>("res://AdventureSystem/DialogOptionLabel.tscn").Instantiate() as DialogOptionLabel;
@@ -227,7 +227,13 @@ public partial class Interface : CanvasLayer
 			};
 			choiceLabel.SetMeta("choice", choice);
 
-			dialogOptionsContainer.AddChild(choiceLabel);
+			DialogOptionsContainer.AddChild(choiceLabel);
 		}
+	}
+
+	public void ClearDialogChoiceLabels()
+	{
+		foreach (var child in DialogOptionsContainer.GetChildren())
+			child.QueueFree();
 	}
 }
