@@ -64,10 +64,9 @@ public partial class ScriptActionStartDialog : ScriptAction
 	public Game Game { get; set; }
 
 	public ScriptActionStartDialog(PlayerCharacter character, Game game, string knotName) : base(character) { KnotName = knotName; Game = game; }
-	public override Task Execute()
+	public async override Task Execute()
 	{
-		Game.StartDialog(KnotName);
-		return Task.CompletedTask;
+		await Game.StartDialog(KnotName);
 	}
 }
 
@@ -133,6 +132,7 @@ public partial class Game : Scene
 			}
 		}
 
+		GD.Print($"Running {ActionQueue.Count} actions in queue");
 		foreach (var action in ActionQueue)
 		{
 			GD.Print($"Running action: {action.GetType()}");
@@ -395,10 +395,9 @@ public partial class Game : Scene
 		// CurrentCommandState = CommandState.VerbSelected;
 	}
 
-	public void StartDialog(string characterID)
+	public async Task StartDialog(string characterID)
 	{
-		GD.Print($"StartDialog: {characterID}");
-
+		GD.Print($"Starting dialog with {characterID}");
 		InterfaceNode.Mode = Interface.ModeEnum.Dialog;
 		var character = ThingManager.GetThing(characterID) as Character;
 
@@ -412,11 +411,16 @@ public partial class Game : Scene
 		InkStory.Continued += _OnDialogContinue;
 		// InkStory.MadeChoice += _OnDialogChoiceMade;
 		InterfaceNode.DialogOptionClicked += _OnDialogChoiceMade;
-		InkStory.Continue();
+		InkStory.ContinueMaximally();
+		// await ToSignal(InkStory, "Continued");
+		//TODO: Should this finish only after the dialog is finished? 
+		GD.Print($"Finished dialog with {characterID}");
+		// return Task.CompletedTask;
 	}
 
 	public async void _OnDialogContinue()
 	{
+		GD.Print($"_OnDialogContinue: {InkStory.CurrentText}");
 		if (InkStory.CurrentText.StripEdges() != "")
 		{
 			// Only check first tag for now
@@ -430,25 +434,35 @@ public partial class Game : Scene
 
 			ActionQueue.Add(new ScriptActionMessage(actingCharacter, InkStory.CurrentText));
 			ActionQueue.Add(new ScriptActionWait(actingCharacter, 0.3f));
-
-			await RunActionQueue();
 		}
 
 		if (InkStory.CanContinue)
 			InkStory.Continue();
 		else
 		{
+			await RunActionQueue();
+
 			if (InkStory.CurrentChoices.Count > 0)
 				InterfaceNode.SetDialogChoiceLabels(new Array<InkChoice>(InkStory.CurrentChoices.ToArray()));
 			else
-				{
-					// Story has finished
-					InterfaceNode.Mode = Interface.ModeEnum.Normal;
-					// InkStory.ResetState();
-					// InkStory.ResetCallstack();
-				}
+			{
+				// Story has finished
+				InterfaceNode.Mode = Interface.ModeEnum.Normal;
+				FinishDialog();
+			}
 		}
 		// CurrentCommandState = CommandState.Idle;
+	}
+
+	public void FinishDialog()
+	{
+		InkStory.CallDeferred("ResetState");
+		InkStory.CallDeferred("ResetCallstack");
+		InterfaceNode.DialogOptionClicked -= _OnDialogChoiceMade;
+		InkStory.Continued -= _OnDialogContinue;
+		InterfaceNode.ClearDialogChoiceLabels();
+		StageNode.PlayerCharacter.EndDialog();
+		InterfaceNode.Mode = Interface.ModeEnum.Normal;
 	}
 
 	public async void _OnDialogChoiceMade(InkChoice choice)
