@@ -31,7 +31,7 @@ public partial class ScriptActionMove : ScriptAction
 	public ScriptActionMove(PlayerCharacter character, Vector2 position, bool isRelative = false) : base(character) { Position = position; IsRelative = isRelative; }
 	public override async Task Execute()
 	{
-		await Character.MoveTo(Position, 0, IsRelative);
+		await Character.MoveTo(Position, 1, IsRelative);
 	}
 }
 
@@ -322,7 +322,7 @@ public partial class Game : Scene
 	{
 		if (CurrentCommandState == CommandState.Idle)
 		{
-			await StageNode.PlayerCharacter.MoveTo(mouseButtonEvent.Position / Camera2DNode.Zoom + Camera2DNode.Position);
+			await StageNode.PlayerCharacter.MoveTo(mouseButtonEvent.Position / Camera2DNode.Zoom + Camera2DNode.Position, 1);
 		}
 		else if (CurrentCommandState == CommandState.VerbSelected)
 		{

@@ -98,7 +98,7 @@ public partial class Character : Thing
 		CurrentMovementState = MovementStateEnum.Idle;
 	}
 
-	public async Task MoveTo(Vector2 position, float desiredDistance = 2f, bool isRelative = false)
+	public async Task MoveTo(Vector2 position, int desiredDistance = 10, bool isRelative = false)
 	{
 		if (CurrentMovementState != MovementStateEnum.SpeechBubble)
 		{
@@ -108,6 +108,7 @@ public partial class Character : Thing
 			{
 				NavigationAgent2D.TargetPosition = position;
 				// NavigationAgent2D.TargetDesiredDistance = 500f;
+				NavigationAgent2D.PathDesiredDistance = desiredDistance;
 			}
 			CurrentMovementState = MovementStateEnum.Moving;
 
