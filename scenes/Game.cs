@@ -75,7 +75,7 @@ public partial class Game : Scene
 		ActionQueue.Clear();
 	}
 
-	// Ink external functions
+	// External Ink functions
 	Action<string> PrintError;
 	Func<string, Variant> InkGetVariable;
 	Action<string, bool> InkSetVariable;
@@ -87,11 +87,14 @@ public partial class Game : Scene
 
 	Action<string> InkStartDialog;
 	Action<string> InkDisplayBubble;
+	Action<string, string> InkDisplayBubbleTo;
 	Action<float> InkWait;
 	Action<int, int> InkMoveTo;
 	Action<int, int> InkMoveRelative;
 	Action<string> InkPlayPlayerAnimation;
 	Action<string, string> InkPlayCharacterAnimation;
+
+	Character CurrentDialogCharacter;
 
 	public Game()
 	{
@@ -117,6 +120,7 @@ public partial class Game : Scene
 		// Script actions
 		InkStartDialog = (characterID) => ActionQueue.Add(new ScriptActionStartDialog(StageNode.PlayerCharacter, this, characterID));
 		InkDisplayBubble = (message) => ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, message));
+		InkDisplayBubbleTo = (message, thingID) => ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, message, ThingManager.GetThing(thingID)));
 		InkWait = (seconds) => ActionQueue.Add(new ScriptActionWait(StageNode.PlayerCharacter, seconds));
 		InkMoveTo = (posX, posY) => ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(posX, posY)));
 		InkMoveRelative = (posX, posY) => ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(posX, posY), true));
@@ -206,8 +210,9 @@ public partial class Game : Scene
 		InkStory.BindExternalFunction("pick_up", InkPickUp);
 		InkStory.BindExternalFunction("create", InkCreateObject);
 
-		InkStory.BindExternalFunction("dialog", InkStartDialog);
-		InkStory.BindExternalFunction("bubble", InkDisplayBubble);
+		InkStory.BindExternalFunction("start_dialog", InkStartDialog);
+		InkStory.BindExternalFunction("talk", InkDisplayBubble);
+		InkStory.BindExternalFunction("talk_to", InkDisplayBubbleTo);
 		InkStory.BindExternalFunction("wait", InkWait);
 		InkStory.BindExternalFunction("move_to", InkMoveTo);
 		InkStory.BindExternalFunction("move_rel", InkMoveRelative);
@@ -343,13 +348,14 @@ public partial class Game : Scene
 	{
 		GD.Print($"Starting dialog with {characterID}");
 		InterfaceNode.Mode = Interface.ModeEnum.Dialog;
-		var character = ThingManager.GetThing(characterID) as Character;
 
-		StageNode.PlayerCharacter.LookTo(character.Position);
+		CurrentDialogCharacter = ThingManager.GetThing(characterID) as Character;
+
+		StageNode.PlayerCharacter.LookTo(CurrentDialogCharacter.Position);
 		StageNode.PlayerCharacter.StartDialog();
 
-		character.LookTo(StageNode.PlayerCharacter.Position);
-		character.StartDialog();
+		CurrentDialogCharacter.LookTo(StageNode.PlayerCharacter.Position);
+		CurrentDialogCharacter.StartDialog();
 
 		InkStory.ChoosePathString(characterID);
 		InkStory.Continued += _OnDialogContinue;
@@ -360,7 +366,7 @@ public partial class Game : Scene
 		//TODO: Should this finish only after the dialog is finished? 
 		GD.Print($"Finished dialog with {characterID}");
 
-		character.ScriptVisits++;
+		CurrentDialogCharacter.ScriptVisits++;
 		// return Task.CompletedTask;
 	}
 
@@ -369,16 +375,20 @@ public partial class Game : Scene
 		GD.Print($"_OnDialogContinue: {InkStory.CurrentText}");
 		if (InkStory.CurrentText.StripEdges() != "")
 		{
-			// Only check first tag for now
 			var tag = InkStory.GetCurrentTags();
 
 			Character actingCharacter = StageNode.PlayerCharacter;
+			Character targetCharacter = CurrentDialogCharacter;
 
+			// First tag defines the currently talking character (and thereby the target character)
 			if (tag.Count > 0)
 				if (tag[0] != "player")
+				{
 					actingCharacter = ThingManager.GetThing(tag[0]) as Character;
+					targetCharacter = StageNode.PlayerCharacter;
+				}
 
-			ActionQueue.Add(new ScriptActionMessage(actingCharacter, InkStory.CurrentText));
+			ActionQueue.Add(new ScriptActionMessage(actingCharacter, InkStory.CurrentText, targetCharacter));
 			ActionQueue.Add(new ScriptActionWait(actingCharacter, 0.3f));
 		}
 
@@ -400,27 +410,32 @@ public partial class Game : Scene
 		// CurrentCommandState = CommandState.Idle;
 	}
 
-	public void FinishDialog()
-	{
-		InkStory.CallDeferred("ResetState");
-		InkStory.CallDeferred("ResetCallstack");
-		InterfaceNode.DialogOptionClicked -= _OnDialogChoiceMade;
-		InkStory.Continued -= _OnDialogContinue;
-		InterfaceNode.ClearDialogChoiceLabels();
-		StageNode.PlayerCharacter.EndDialog();
-		InterfaceNode.Mode = Interface.ModeEnum.Normal;
-	}
-
 	public async void _OnDialogChoiceMade(InkChoice choice)
 	{
 		InterfaceNode.ClearDialogChoiceLabels();
-		ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, choice.Text));
+		ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, choice.Text, CurrentDialogCharacter));
 		ActionQueue.Add(new ScriptActionWait(StageNode.PlayerCharacter, 0.5f));
 
 		await RunActionQueue();
 
 		InkStory.ChooseChoiceIndex(choice.Index);
 		InkStory.Continue();
+	}
+	
+	public void FinishDialog()
+	{
+		InkStory.CallDeferred("ResetState");
+		InkStory.CallDeferred("ResetCallstack");
+		InkStory.Continued -= _OnDialogContinue;
+
+		InterfaceNode.DialogOptionClicked -= _OnDialogChoiceMade;
+		InterfaceNode.ClearDialogChoiceLabels();
+		InterfaceNode.Mode = Interface.ModeEnum.Normal;
+
+		StageNode.PlayerCharacter.EndDialog();
+
+		CurrentDialogCharacter.EndDialog();
+		CurrentDialogCharacter = null;
 	}
 
 	public override void _Process(double delta)
