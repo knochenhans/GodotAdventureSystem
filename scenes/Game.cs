@@ -308,7 +308,7 @@ public partial class Game : Scene
 				else
 					GD.PrintErr($"_OnAreaActivated: Area {thing.ID} is not an Object or a HotspotArea");
 
-				await StageNode.PlayerCharacter.MoveTo(position, 50);
+				await StageNode.PlayerCharacter.MoveTo(position, 20);
 			}
 		}
 
