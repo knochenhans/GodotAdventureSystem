@@ -4,72 +4,6 @@ using Godot;
 using Godot.Collections;
 using GodotInk;
 
-public partial class ScriptAction : GodotObject
-{
-	public Character Character { get; set; }
-
-	public ScriptAction(Character character) { Character = character; }
-	public virtual Task Execute() { return Task.CompletedTask; }
-}
-
-public partial class ScriptActionMessage : ScriptAction
-{
-	public string Message { get; set; }
-
-	public ScriptActionMessage(Character character, string message) : base(character) { Message = message; }
-	public override async Task Execute()
-	{
-		await Character.SpeechBubble(Message);
-	}
-}
-
-public partial class ScriptActionMove : ScriptAction
-{
-	public Vector2 Position { get; set; }
-	public bool IsRelative { get; set; }
-
-	public ScriptActionMove(PlayerCharacter character, Vector2 position, bool isRelative = false) : base(character) { Position = position; IsRelative = isRelative; }
-	public override async Task Execute()
-	{
-		await Character.MoveTo(Position, 1, IsRelative);
-	}
-}
-
-public partial class ScriptActionWait : ScriptAction
-{
-	public float Seconds { get; set; }
-
-	public ScriptActionWait(Character character, float seconds) : base(character) { Seconds = seconds; }
-	public override Task Execute()
-	{
-		GD.Print($"Waiting for {Seconds} seconds");
-		return Task.Delay(TimeSpan.FromSeconds(Seconds));
-	}
-}
-
-public partial class ScriptActionPlayAnimation : ScriptAction
-{
-	public string AnimationName { get; set; }
-
-	public ScriptActionPlayAnimation(Character character, string animationID) : base(character) { AnimationName = animationID; }
-	public override async Task Execute()
-	{
-		await Character.PlayAnimation(AnimationName, false);
-	}
-}
-
-public partial class ScriptActionStartDialog : ScriptAction
-{
-	public string KnotName { get; set; }
-	public Game Game { get; set; }
-
-	public ScriptActionStartDialog(PlayerCharacter character, Game game, string knotName) : base(character) { KnotName = knotName; Game = game; }
-	public async override Task Execute()
-	{
-		await Game.StartDialog(KnotName);
-	}
-}
-
 public partial class Game : Scene
 {
 	[Signal]
@@ -159,18 +93,8 @@ public partial class Game : Scene
 
 	public Game()
 	{
+		InkStartDialog = (characterID) => ActionQueue.Add(new ScriptActionStartDialog(StageNode.PlayerCharacter, this, characterID));
 		DisplayBubble = (message) => ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, message));
-		PrintError = (message) => GD.PrintErr(message);
-		PickUp = (objectID) =>
-		{
-			ThingManager.MoveThingToInventory(objectID);
-			StageNode.PlayerCharacter.PickUpObject();
-		};
-		CreateObject = (objectID) =>
-		{
-			ThingManager.LoadThingToInventory(objectID);
-			StageNode.PlayerCharacter.PickUpObject();
-		};
 		InkIsInInventory = (thingID) => ThingManager.IsInInventory(thingID);
 		InkSetVariable = (variableID, value) => VariableManager.SetVariable(variableID, value);
 		InkGetVariable = (variableID) => VariableManager.GetVariable(variableID);
@@ -179,6 +103,20 @@ public partial class Game : Scene
 		InkMoveTo = (posX, posY) => ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(posX, posY)));
 		InkMoveRelative = (posX, posY) => ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(posX, posY), true));
 		InkPlayPlayerAnimation = (animationID) => ActionQueue.Add(new ScriptActionPlayAnimation(StageNode.PlayerCharacter, animationID));
+		PrintError = (message) => GD.PrintErr(message);
+
+		PickUp = (objectID) =>
+		{
+			ThingManager.MoveThingToInventory(objectID);
+			StageNode.PlayerCharacter.PickUpObject();
+		};
+
+		CreateObject = (objectID) =>
+		{
+			ThingManager.LoadThingToInventory(objectID);
+			StageNode.PlayerCharacter.PickUpObject();
+		};
+
 		InkPlayCharacterAnimation = (string characterID, string animationID) =>
 		{
 			var character = ThingManager.GetThing(characterID);
@@ -188,7 +126,6 @@ public partial class Game : Scene
 			else
 				GD.PrintErr($"InkPlayCharacterAnimation: Thing {characterID} is not a Character");
 		};
-		InkStartDialog = (characterID) => ActionQueue.Add(new ScriptActionStartDialog(StageNode.PlayerCharacter, this, characterID));
 	}
 
 	public override void _Ready()
