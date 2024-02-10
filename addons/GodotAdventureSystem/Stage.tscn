@@ -24,10 +24,7 @@ metadata/_edit_lock_ = true
 [node name="Characters" type="Node2D" parent="."]
 metadata/_edit_lock_ = true
 
-[node name="Entries" type="Node2D" parent="."]
-metadata/_edit_lock_ = true
-
-[node name="Default" type="Marker2D" parent="Entries"]
-position = Vector2(418, 188)
+[node name="DefaultEntry" type="Marker2D" parent="."]
+position = Vector2(222, 187)
 script = ExtResource("3_yiyc1")
 ID = "default"

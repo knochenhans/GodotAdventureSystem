@@ -113,8 +113,19 @@ public partial class Stage : Node2D
 	public void InitPlayerCharacter(PlayerCharacter playerCharacter)
 	{
 		PlayerCharacter = playerCharacter;
-		PlayerCharacter.Position = GetNode<Entry>("Entries/Default").Position;
+		var entries = GetTree().GetNodesInGroup("entry");
 
-		AddChild(PlayerCharacter);
+		var entryFound = false;
+
+		if (entries.Count > 0)
+			if (entries[0] is Entry entry)
+				if (entry.ID == "default")
+				{
+					PlayerCharacter.Position = entry.Position;
+					AddChild(PlayerCharacter);
+					entryFound = true;
+				}
+		if (!entryFound)
+			GD.PrintErr("No entry named 'default' found in the stage, unable to place the player character.");
 	}
 }
