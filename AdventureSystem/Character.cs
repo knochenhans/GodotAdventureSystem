@@ -32,7 +32,7 @@ public partial class Character : Thing
 			switch (value)
 			{
 				case MovementStateEnum.Idle:
-					if (CurrentDirection == LeftRightDirectionEnum.Front)
+					if (CurrentDirection == DirectionEnum.Front)
 						AnimatedSprite2D.Play("idle");
 					else
 						AnimatedSprite2D.Play("idle_side");
@@ -43,7 +43,7 @@ public partial class Character : Thing
 					StepSoundsNode.Play();
 					break;
 				case MovementStateEnum.SpeechBubble:
-					if (CurrentDirection == LeftRightDirectionEnum.Front)
+					if (CurrentDirection == DirectionEnum.Front)
 						AnimatedSprite2D.Play("talk");
 					else
 						AnimatedSprite2D.Play("talk_side");
@@ -59,22 +59,31 @@ public partial class Character : Thing
 		}
 	}
 
-	enum LeftRightDirectionEnum
+	enum DirectionEnum
 	{
 		Left,
 		Right,
 		Front
 	}
 
-	LeftRightDirectionEnum _currentDirection;
-	LeftRightDirectionEnum CurrentDirection
+	DirectionEnum _currentDirection;
+	DirectionEnum CurrentDirection
 	{
 		get => _currentDirection; set
 		{
-			if (value == LeftRightDirectionEnum.Left)
-				AnimatedSprite2D.FlipH = false;
-			else if (value == LeftRightDirectionEnum.Right)
-				AnimatedSprite2D.FlipH = true;
+			switch (value)
+			{
+				case DirectionEnum.Left:
+					AnimatedSprite2D.FlipH = false;
+					break;
+				case DirectionEnum.Right:
+					AnimatedSprite2D.FlipH = true;
+					break;
+				case DirectionEnum.Front:
+					AnimatedSprite2D.FlipH = false;
+					AnimatedSprite2D.Play("idle");
+					break;
+			}
 
 			_currentDirection = value;
 		}
@@ -97,7 +106,7 @@ public partial class Character : Thing
 		SoundsNode = GetNode<AudioStreamPlayer2D>("Sounds");
 		StepSoundsNode = GetNode<AudioStreamPlayer2D>("StepSounds");
 
-		CurrentDirection = LeftRightDirectionEnum.Right;
+		CurrentDirection = DirectionEnum.Right;
 		CurrentMovementState = MovementStateEnum.Idle;
 	}
 
@@ -160,9 +169,9 @@ public partial class Character : Thing
 					GlobalPosition = GlobalPosition.MoveToward(nextPathPosition + newVelocity, (float)movementDelta);
 
 					if (newVelocity.X < 0)
-						CurrentDirection = LeftRightDirectionEnum.Left;
+						CurrentDirection = DirectionEnum.Left;
 					else if (newVelocity.X > 0)
-						CurrentDirection = LeftRightDirectionEnum.Right;
+						CurrentDirection = DirectionEnum.Right;
 
 					// GD.Print($"Distance to target: {NavigationAgent2D.DistanceToTarget()}");
 					// GD.Print($"Distance to next path position: {Position.DistanceTo(nextPathPosition)}");
@@ -200,9 +209,14 @@ public partial class Character : Thing
 
 	public void LookTo(Vector2 position)
 	{
-		if (position.X < Position.X)
-			CurrentDirection = LeftRightDirectionEnum.Left;
-		else if (position.X > Position.X)
-			CurrentDirection = LeftRightDirectionEnum.Right;
+		if (position == Position)
+			CurrentDirection = DirectionEnum.Front;
+		else
+		{
+			if (position.X < Position.X)
+				CurrentDirection = DirectionEnum.Left;
+			else if (position.X > Position.X)
+				CurrentDirection = DirectionEnum.Right;
+		}
 	}
 }

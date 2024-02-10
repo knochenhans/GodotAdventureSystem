@@ -4,7 +4,6 @@ using Godot.Collections;
 
 public partial class Stage : Node2D
 {
-	public Node2D HotspotPolygonsNode { get; set; }
 	public Interface InterfaceNode { get; set; }
 	public TextureRect BackgroundNode { get; set; }
 
@@ -26,36 +25,10 @@ public partial class Stage : Node2D
 	{
 		base._Ready();
 
-		HotspotPolygonsNode = GetNode<Node2D>("HotspotPolygons");
 		InterfaceNode = GetNode<Interface>("../Interface");
 		BackgroundNode = GetNode<TextureRect>("Background");
 
-		// Convert HotspotPolygons to HotspotAreas
-		Array<HotspotArea> hotspotAreas = new();
-
-		var newHotspotAreaScene = ResourceLoader.Load<PackedScene>("res://AdventureSystem/HotspotArea.tscn");
-
-		foreach (var hotspotPolygon in HotspotPolygonsNode.GetChildren())
-		{
-			if (hotspotPolygon is HotspotPolygon hotspotPolygonNode)
-			{
-				var hotspotArea = newHotspotAreaScene.Instantiate() as HotspotArea;
-				hotspotArea.DisplayedName = hotspotPolygonNode.DisplayedName;
-				hotspotArea.ID = hotspotPolygonNode.ID;
-				// hotspotArea.Actions = hotspotPolygonNode.Actions;
-				hotspotArea.GetNode<CollisionPolygon2D>("CollisionPolygon2D").Polygon = hotspotPolygonNode.Polygon;
-				hotspotArea.Transform = hotspotPolygonNode.Transform;
-				HotspotPolygonsNode.RemoveChild(hotspotPolygonNode);
-
-				hotspotAreas.Add(hotspotArea);
-			}
-		}
-
-		foreach (var hotspotArea in hotspotAreas)
-		{
-			hotspotArea.InputEvent += (viewport, @event, shapeIdx) => _OnThingInputEvent(@event, hotspotArea);
-			HotspotPolygonsNode.AddChild(hotspotArea);
-		}
+		CreateHotspotAreas();
 
 		foreach (var object_ in GetNode<Node2D>("Objects").GetChildren())
 			if (object_ is Object objectNode)
@@ -65,7 +38,39 @@ public partial class Stage : Node2D
 			if (character is Character characterNode)
 				characterNode.InputEvent += (viewport, @event, shapeIdx) => _OnThingInputEvent(@event, characterNode);
 
-		var navigationregion = GetNode<NavigationRegion2D>("NavigationRegion2D");
+		var walkableRegion = GetNode<NavigationRegion2D>("WalkableRegion");
+	}
+
+	// Convert Hotspots into HotspotAreas
+	private void CreateHotspotAreas()
+	{
+		var hotspotNodes = GetTree().GetNodesInGroup("hotspot");
+
+		Array<HotspotArea> hotspotAreas = new();
+
+		var newHotspotAreaScene = ResourceLoader.Load<PackedScene>("res://AdventureSystem/HotspotArea.tscn");
+
+		foreach (var _hotspotNode in hotspotNodes)
+		{
+			if (_hotspotNode is Hotspot hotspotNode)
+			{
+				var hotspotArea = newHotspotAreaScene.Instantiate() as HotspotArea;
+				hotspotArea.DisplayedName = hotspotNode.DisplayedName;
+				hotspotArea.ID = hotspotNode.ID;
+				// hotspotArea.Actions = hotspotNode.DefaultReactions;
+				hotspotArea.GetNode<CollisionPolygon2D>("CollisionPolygon2D").Polygon = hotspotNode.Polygon;
+				hotspotArea.Transform = hotspotNode.Transform;
+				RemoveChild(hotspotNode);
+
+				hotspotAreas.Add(hotspotArea);
+			}
+		}
+
+		foreach (var hotspotArea in hotspotAreas)
+		{
+			hotspotArea.InputEvent += (viewport, @event, shapeIdx) => _OnThingInputEvent(@event, hotspotArea);
+			AddChild(hotspotArea);
+		}
 	}
 
 	public void _OnThingInputEvent(InputEvent @event, Thing thing)
@@ -99,7 +104,7 @@ public partial class Stage : Node2D
 		foreach (var characterNode in GetNode<Node2D>("Characters").GetChildren())
 			things.Add(characterNode as Thing);
 
-		foreach (var hotspotAreaNode in HotspotPolygonsNode.GetChildren())
+		foreach (var hotspotAreaNode in GetTree().GetNodesInGroup("hotspot"))
 			things.Add(hotspotAreaNode as Thing);
 
 		return things;

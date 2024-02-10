@@ -1,73 +1,25 @@
 [gd_scene load_steps=7 format=3 uid="uid://dwjqecofhdgta"]
 
 [ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://AdventureSystem/Stage.tscn" id="1_47bt1"]
-[ext_resource type="PackedScene" uid="uid://cdp281ib4s7f4" path="res://AdventureSystem/HotspotPolygon.tscn" id="2_1wibb"]
 [ext_resource type="PackedScene" uid="uid://cbyij1livuxja" path="res://resources/objects/note.tscn" id="3_8b7br"]
 [ext_resource type="PackedScene" uid="uid://dxunhfut7rfqt" path="res://resources/objects/bush.tscn" id="4_f85ht"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/Hotspot.cs" id="6_51qxq"]
 [ext_resource type="PackedScene" uid="uid://b44hbsyxbbqit" path="res://resources/Robot.tscn" id="6_jm8yb"]
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_4whn4"]
-vertices = PackedVector2Array(196, 157, 195, 157, 271, 154, 850, 159, 849, 158, 933, 156, 938, 209, 21, 208, 21, 170, 78, 165, 390, 159, 588, 171, 590, 171, 741, 178, 795, 176, 678, 166)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2), PackedInt32Array(3, 4, 5, 6), PackedInt32Array(6, 7, 8, 9, 0, 2, 10, 11), PackedInt32Array(6, 11, 12, 13), PackedInt32Array(14, 3, 6), PackedInt32Array(13, 14, 6), PackedInt32Array(13, 12, 15)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(11, 161, 77, 155, 195, 147, 271, 144, 390, 149, 589, 161, 680, 156, 742, 168, 793, 166, 847, 149, 942, 146, 950, 220, 11, 218)])
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_3nxf5"]
+vertices = PackedVector2Array(954, 210, 5, 214, 11, 172, 75, 166, 204, 156, 300, 155, 412, 155, 564, 165, 655, 166, 737, 164, 792, 164, 885, 155, 952, 155)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5, 6, 7), PackedInt32Array(0, 7, 8), PackedInt32Array(0, 8, 9, 10), PackedInt32Array(0, 10, 11, 12)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(11, 172, 75, 166, 204, 156, 300, 155, 412, 155, 564, 165, 655, 166, 737, 164, 792, 164, 885, 155, 952, 155, 954, 210, 5, 214)])
 source_geometry_group_name = &"navigation_polygon_source_group"
+agent_radius = 0.0
 
 [node name="Meadow" instance=ExtResource("1_47bt1")]
 y_sort_enabled = true
 
-[node name="cloud1" parent="HotspotPolygons" index="0" instance=ExtResource("2_1wibb")]
-position = Vector2(-3, 0)
-polygon = PackedVector2Array(26, 22, 25, 34, 31, 39, 42, 44, 50, 48, 58, 56, 68, 56, 80, 51, 90, 60, 104, 44, 116, 43, 132, 29, 130, 14, 114, 6, 106, -2, 57, -1, 48, 10, 36, 10)
-ID = "cloud1"
-DisplayedName = "Cloud"
-Actions = {
-"close": "",
-"give": "",
-"look": "A cloud high above in the sky",
-"open": "",
-"pick_up": "",
-"pull": "",
-"push": "",
-"talk_to": "This cloud’s not talking back to me. What a shame!",
-"use": ""
-}
+[node name="WalkableRegion" parent="." index="1"]
+navigation_polygon = SubResource("NavigationPolygon_3nxf5")
 
-[node name="cloud2" parent="HotspotPolygons" index="1" instance=ExtResource("2_1wibb")]
-polygon = PackedVector2Array(306, 57, 314, 72, 322, 80, 340, 73, 348, 80, 367, 85, 382, 84, 413, 88, 426, 82, 447, 78, 455, 71, 478, 62, 480, 50, 465, 36, 441, 26, 403, 19, 367, 22, 340, 35, 320, 40)
-ID = "cloud2"
-DisplayedName = "Another cloud"
-Actions = {
-"close": "",
-"give": "",
-"look": "Another a cloud high above you in the sky",
-"open": "",
-"pick_up": "",
-"pull": "",
-"push": "",
-"talk_to": "This cloud doesn’t seem eager to talk, either",
-"use": ""
-}
-
-[node name="cloud3" parent="HotspotPolygons" index="2" instance=ExtResource("2_1wibb")]
-polygon = PackedVector2Array(702, 68, 690, 85, 692, 96, 707, 114, 737, 120, 771, 121, 832, 133, 853, 118, 895, 118, 912, 93, 938, 73, 953, 57, 949, 33, 928, 21, 889, 19, 863, 16, 841, 25, 818, 18, 805, 30, 782, 28, 758, 1, 739, 3, 724, 22, 719, 35, 701, 41, 698, 56)
-ID = "cloud3"
-DisplayedName = "Yet another cloud"
-Actions = {
-"close": "",
-"give": "",
-"look": "Yet another cloud high above you in the sky",
-"open": "",
-"pick_up": "",
-"pull": "",
-"push": "",
-"talk_to": "",
-"use": ""
-}
-
-[node name="NavigationRegion2D" parent="." index="2"]
-navigation_polygon = SubResource("NavigationPolygon_4whn4")
-
-[node name="Objects" parent="." index="3"]
+[node name="Objects" parent="." index="2"]
 y_sort_enabled = true
 
 [node name="Note" parent="Objects" index="0" instance=ExtResource("3_8b7br")]
@@ -76,6 +28,28 @@ position = Vector2(618, 193)
 [node name="Bush" parent="Objects" index="1" instance=ExtResource("4_f85ht")]
 position = Vector2(123, 194)
 DisplayedName = "Bush"
+
+[node name="cloud1" type="Polygon2D" parent="." index="3"]
+position = Vector2(-3, 0)
+color = Color(0, 1, 1, 0.262745)
+polygon = PackedVector2Array(26, 22, 25, 34, 31, 39, 42, 44, 50, 48, 58, 56, 68, 56, 80, 51, 90, 60, 104, 44, 116, 43, 132, 29, 130, 14, 114, 6, 106, -2, 57, -1, 48, 10, 36, 10)
+script = ExtResource("6_51qxq")
+ID = "cloud1"
+DisplayedName = "Cloud"
+
+[node name="cloud2" type="Polygon2D" parent="." index="4"]
+color = Color(0, 1, 1, 0.262745)
+polygon = PackedVector2Array(306, 57, 314, 72, 322, 80, 340, 73, 348, 80, 367, 85, 382, 84, 413, 88, 426, 82, 447, 78, 455, 71, 478, 62, 480, 50, 465, 36, 441, 26, 403, 19, 367, 22, 340, 35, 320, 40)
+script = ExtResource("6_51qxq")
+ID = "cloud2"
+DisplayedName = "Another cloud"
+
+[node name="cloud3" type="Polygon2D" parent="." index="5"]
+color = Color(0, 1, 1, 0.262745)
+polygon = PackedVector2Array(702, 68, 690, 85, 692, 96, 707, 114, 737, 120, 771, 121, 832, 133, 853, 118, 895, 118, 912, 93, 938, 73, 953, 57, 949, 33, 928, 21, 889, 19, 863, 16, 841, 25, 818, 18, 805, 30, 782, 28, 758, 1, 739, 3, 724, 22, 719, 35, 701, 41, 698, 56)
+script = ExtResource("6_51qxq")
+ID = "cloud3"
+DisplayedName = "Yet another cloud"
 
 [node name="Robot" parent="Characters" index="0" instance=ExtResource("6_jm8yb")]
 position = Vector2(443, 195)

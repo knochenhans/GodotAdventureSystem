@@ -15,10 +15,7 @@ texture = ExtResource("2_4dmls")
 metadata/_edit_use_anchors_ = true
 metadata/_edit_lock_ = true
 
-[node name="HotspotPolygons" type="Node2D" parent="."]
-metadata/_edit_lock_ = true
-
-[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+[node name="WalkableRegion" type="NavigationRegion2D" parent="."]
 metadata/_edit_lock_ = true
 
 [node name="Objects" type="Node2D" parent="."]
