@@ -30,11 +30,11 @@ public partial class Stage : Node2D
 
 		CreateHotspotAreas();
 
-		foreach (var object_ in GetNode<Node2D>("Objects").GetChildren())
+		foreach (var object_ in GetTree().GetNodesInGroup("object"))
 			if (object_ is Object objectNode)
 				objectNode.InputEvent += (viewport, @event, shapeIdx) => _OnThingInputEvent(@event, objectNode);
 
-		foreach (var character in GetNode<Node2D>("Characters").GetChildren())
+		foreach (var character in GetTree().GetNodesInGroup("character"))
 			if (character is Character characterNode)
 				characterNode.InputEvent += (viewport, @event, shapeIdx) => _OnThingInputEvent(@event, characterNode);
 
@@ -88,7 +88,7 @@ public partial class Stage : Node2D
 
 	public Object FindObject(string objectID)
 	{
-		foreach (var object_ in GetNode<Node2D>("Objects").GetChildren())
+		foreach (var object_ in GetTree().GetNodesInGroup("object"))
 			if (object_ is Object objectNode && objectNode.ID == objectID)
 				return objectNode;
 		return null;
@@ -98,10 +98,10 @@ public partial class Stage : Node2D
 	{
 		Array<Thing> things = new();
 
-		foreach (var objectNode in GetNode<Node2D>("Objects").GetChildren())
+		foreach (var objectNode in GetTree().GetNodesInGroup("object"))
 			things.Add(objectNode as Thing);
 
-		foreach (var characterNode in GetNode<Node2D>("Characters").GetChildren())
+		foreach (var characterNode in GetTree().GetNodesInGroup("character"))
 			things.Add(characterNode as Thing);
 
 		foreach (var hotspotAreaNode in GetTree().GetNodesInGroup("hotspot"))

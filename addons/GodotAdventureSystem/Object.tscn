@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Object.cs" id="1_wkkov"]
 
-[node name="Object" type="Area2D"]
+[node name="Object" type="Area2D" groups=["object"]]
 y_sort_enabled = true
 monitorable = false
 script = ExtResource("1_wkkov")

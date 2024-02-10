@@ -16,7 +16,7 @@ streams_count = 1
 stream_0/stream = ExtResource("4_lhdnk")
 stream_0/weight = 1.0
 
-[node name="Character" type="Area2D"]
+[node name="Character" type="Area2D" groups=["character"]]
 y_sort_enabled = true
 script = ExtResource("1_auhhc")
 Speed = 50.0
