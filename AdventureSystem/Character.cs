@@ -111,8 +111,8 @@ public partial class Character : Thing
 			{
 				NavigationAgent2D.TargetPosition = position;
 				// NavigationAgent2D.TargetDesiredDistance = 500f;
-				NavigationAgent2D.PathDesiredDistance = desiredDistance;
 			}
+			NavigationAgent2D.PathDesiredDistance = desiredDistance;
 			CurrentMovementState = MovementStateEnum.Moving;
 
 			await ToSignal(this, "CharacterMoved");
