@@ -17,7 +17,7 @@ public class VariableManager
     {
         if (!Variables.ContainsKey(thingID))
         {
-            GD.PrintErr($"Variable {thingID} not found, returning false");
+            GD.Print($"Variable {thingID} not found, returning false");
             return false;
         }
         return Variables[thingID];
