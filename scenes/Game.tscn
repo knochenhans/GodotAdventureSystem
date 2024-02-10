@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dwjqecofhdgta" path="res://resources/Meadow.tscn" id="3_4m5jx"]
 [ext_resource type="Resource" uid="uid://dmjhj36hjneol" path="res://resources/main.ink" id="3_i2mou"]
 [ext_resource type="PackedScene" uid="uid://dwxanbxgml16l" path="res://resources/PlayerCharacter.tscn" id="4_afvkx"]
-[ext_resource type="PackedScene" uid="uid://ca6ex1hvbacgf" path="res://AdventureSystem/Interface.tscn" id="4_rus0q"]
+[ext_resource type="PackedScene" uid="uid://ca6ex1hvbacgf" path="res://addons/GodotAdventureSystem/Interface.tscn" id="4_rus0q"]
 
 [node name="Game" instance=ExtResource("1_hl7nu")]
 script = ExtResource("2_4jlpu")

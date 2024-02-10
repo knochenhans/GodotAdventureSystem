@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://77cijoco3lin"]
 
-[ext_resource type="Script" path="res://AdventureSystem/DialogOptionLabel.cs" id="1_546wn"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/DialogOptionLabel.cs" id="1_546wn"]
 
 [node name="DialogOptionLabel" type="Label"]
 anchors_preset = 14

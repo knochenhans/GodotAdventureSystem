@@ -48,7 +48,7 @@ public partial class Stage : Node2D
 
 		Array<HotspotArea> hotspotAreas = new();
 
-		var newHotspotAreaScene = ResourceLoader.Load<PackedScene>("res://AdventureSystem/HotspotArea.tscn");
+		var newHotspotAreaScene = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/HotspotArea.tscn");
 
 		foreach (var _hotspotNode in hotspotNodes)
 		{

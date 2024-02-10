@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://ixnru543odku"]
 
-[ext_resource type="Script" path="res://AdventureSystem/IngameMenu.cs" id="1_622od"]
-[ext_resource type="Theme" uid="uid://yqu3myf53n6r" path="res://AdventureSystem/MainTheme.tres" id="2_1msj0"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/IngameMenu.cs" id="1_622od"]
+[ext_resource type="Theme" uid="uid://yqu3myf53n6r" path="res://addons/GodotAdventureSystem/MainTheme.tres" id="2_1msj0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d0tfv"]
 bg_color = Color(0, 0, 0, 1)

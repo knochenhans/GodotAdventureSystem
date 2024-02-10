@@ -198,7 +198,7 @@ public partial class Game : Scene
 
 		Camera2DNode = GetNode<Camera2D>("Camera2D");
 
-		IngameMenuScene = ResourceLoader.Load<PackedScene>("res://AdventureSystem/IngameMenu.tscn");
+		IngameMenuScene = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/IngameMenu.tscn");
 
 		// Bind Ink functions
 		InkStory.BindExternalFunction("print_error", PrintError);

@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://ca6ex1hvbacgf"]
 
-[ext_resource type="Script" path="res://AdventureSystem/Interface.cs" id="1_doeb8"]
-[ext_resource type="Theme" uid="uid://yqu3myf53n6r" path="res://AdventureSystem/MainTheme.tres" id="1_j7ptp"]
-[ext_resource type="Script" path="res://AdventureSystem/GamePanel.cs" id="3_npkvw"]
-[ext_resource type="PackedScene" uid="uid://ck4ungp5s64o7" path="res://AdventureSystem/InterfaceContainer.tscn" id="4_vk6h5"]
-[ext_resource type="PackedScene" uid="uid://cvlvehkpo0v7k" path="res://AdventureSystem/InterfaceContainerDialog.tscn" id="5_ma5o8"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/Interface.cs" id="1_doeb8"]
+[ext_resource type="Theme" uid="uid://yqu3myf53n6r" path="res://addons/GodotAdventureSystem/MainTheme.tres" id="1_j7ptp"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/GamePanel.cs" id="3_npkvw"]
+[ext_resource type="PackedScene" uid="uid://ck4ungp5s64o7" path="res://addons/GodotAdventureSystem/InterfaceContainer.tscn" id="4_vk6h5"]
+[ext_resource type="PackedScene" uid="uid://cvlvehkpo0v7k" path="res://addons/GodotAdventureSystem/InterfaceContainerDialog.tscn" id="5_ma5o8"]
 
 [node name="Interface" type="CanvasLayer"]
 script = ExtResource("1_doeb8")

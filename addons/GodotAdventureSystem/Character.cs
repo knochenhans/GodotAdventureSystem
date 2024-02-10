@@ -132,7 +132,7 @@ public partial class Character : Thing
 	{
 		CurrentMovementState = MovementStateEnum.SpeechBubble;
 
-		var speechBubble = ResourceLoader.Load<PackedScene>("res://AdventureSystem/SpeechBubble.tscn").Instantiate() as SpeechBubble;
+		var speechBubble = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/SpeechBubble.tscn").Instantiate() as SpeechBubble;
 		AddChild(speechBubble);
 		speechBubble.Init(message, SpeechColor, new Vector2(0, GetSize().Y));
 

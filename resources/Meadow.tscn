@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://dwjqecofhdgta"]
 
-[ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://AdventureSystem/Stage.tscn" id="1_47bt1"]
+[ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://addons/GodotAdventureSystem/Stage.tscn" id="1_47bt1"]
 [ext_resource type="PackedScene" uid="uid://cbyij1livuxja" path="res://resources/objects/note.tscn" id="3_8b7br"]
 [ext_resource type="PackedScene" uid="uid://dxunhfut7rfqt" path="res://resources/objects/bush.tscn" id="4_f85ht"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Hotspot.cs" id="6_51qxq"]

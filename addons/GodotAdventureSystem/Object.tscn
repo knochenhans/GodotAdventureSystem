@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b163pg6wsgrfk"]
 
-[ext_resource type="Script" path="res://AdventureSystem/Object.cs" id="1_wkkov"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/Object.cs" id="1_wkkov"]
 
 [node name="Object" type="Area2D"]
 y_sort_enabled = true

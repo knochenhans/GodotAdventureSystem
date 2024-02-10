@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b0cdu6tiac6hh"]
 
-[ext_resource type="Script" path="res://AdventureSystem/InventoryButton.cs" id="1_ojri0"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/InventoryButton.cs" id="1_ojri0"]
 
 [node name="InventoryButton" type="Button"]
 anchors_preset = 15

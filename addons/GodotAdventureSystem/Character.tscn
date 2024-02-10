@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://cgomoes0br310"]
 
-[ext_resource type="Script" path="res://AdventureSystem/Character.cs" id="1_auhhc"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/Character.cs" id="1_auhhc"]
 [ext_resource type="SpriteFrames" uid="uid://boamo1pw4nwro" path="res://resources/character.aseprite" id="2_prt4m"]
 [ext_resource type="AudioStream" uid="uid://dr8bgwfljde4a" path="res://resources/sounds/pick_up.wav" id="2_xe5nj"]
 [ext_resource type="AudioStream" uid="uid://bpedpmxbtyr4n" path="res://resources/sounds/step.ogg" id="4_lhdnk"]

@@ -107,7 +107,7 @@ public partial class Interface : CanvasLayer
 	{
 		foreach (var verb in verbs)
 		{
-			var button = ResourceLoader.Load<PackedScene>("res://AdventureSystem/VerbButton.tscn").Instantiate() as Button;
+			var button = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/VerbButton.tscn").Instantiate() as Button;
 			button.Text = verb.Value;
 			button.MouseEntered += () => EmitSignal(SignalName.VerbHovered, verb.Key);
 			button.MouseExited += () => EmitSignal(SignalName.VerbLeave);
@@ -121,7 +121,7 @@ public partial class Interface : CanvasLayer
 
 		for (int i = 0; i < inventoryButtonCount; i++)
 		{
-			var button = ResourceLoader.Load<PackedScene>("res://AdventureSystem/InventoryButton.tscn").Instantiate() as InventoryButton;
+			var button = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/InventoryButton.tscn").Instantiate() as InventoryButton;
 			button.MouseEntered += () => _OnInventoryButtonMouseEntered(button);
 			button.MouseExited += _OnInventoryButtonMouseExited;
 			button.Pressed += () => _OnInventoryButtonPressed(button);
@@ -216,7 +216,7 @@ public partial class Interface : CanvasLayer
 	{
 		foreach (var choice in choices)
 		{
-			var choiceLabel = ResourceLoader.Load<PackedScene>("res://AdventureSystem/DialogOptionLabel.tscn").Instantiate() as DialogOptionLabel;
+			var choiceLabel = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/DialogOptionLabel.tscn").Instantiate() as DialogOptionLabel;
 			choiceLabel.Text = choice.Text;
 			// choiceLabel.MouseEntered += () => EmitSignal(SignalName.VerbHovered, choice.Text);
 			// choiceLabel.MouseExited += () => EmitSignal(SignalName.VerbLeave);

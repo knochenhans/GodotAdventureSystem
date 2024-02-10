@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://b44hbsyxbbqit"]
 
-[ext_resource type="PackedScene" uid="uid://cgomoes0br310" path="res://AdventureSystem/Character.tscn" id="1_kfwod"]
+[ext_resource type="PackedScene" uid="uid://cgomoes0br310" path="res://addons/GodotAdventureSystem/Character.tscn" id="1_kfwod"]
 [ext_resource type="SpriteFrames" uid="uid://dye00puibd4pn" path="res://resources/robot.aseprite" id="3_em3x8"]
 
 [node name="Robot" instance=ExtResource("1_kfwod")]

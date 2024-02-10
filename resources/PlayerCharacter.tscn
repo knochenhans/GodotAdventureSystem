@@ -1,8 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dwxanbxgml16l"]
 
-[ext_resource type="PackedScene" uid="uid://cgomoes0br310" path="res://AdventureSystem/Character.tscn" id="1_hh37n"]
+[ext_resource type="PackedScene" uid="uid://cgomoes0br310" path="res://addons/GodotAdventureSystem/Character.tscn" id="1_hh37n"]
 [ext_resource type="Script" path="res://resources/PlayerCharacter.cs" id="2_c4xdx"]
 
 [node name="PlayerCharacter" instance=ExtResource("1_hh37n")]
 script = ExtResource("2_c4xdx")
-PickupSound = null

@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://vo75r3wmqxta"]
 
-[ext_resource type="Theme" uid="uid://c6f1m287eoebh" path="res://AdventureSystem/SpeechBubble.tres" id="1_4bq3d"]
-[ext_resource type="Script" path="res://AdventureSystem/SpeechBubble.cs" id="2_3dp3e"]
-[ext_resource type="Theme" uid="uid://yqu3myf53n6r" path="res://AdventureSystem/MainTheme.tres" id="3_wygey"]
+[ext_resource type="Theme" uid="uid://c6f1m287eoebh" path="res://addons/GodotAdventureSystem/SpeechBubble.tres" id="1_4bq3d"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/SpeechBubble.cs" id="2_3dp3e"]
+[ext_resource type="Theme" uid="uid://yqu3myf53n6r" path="res://addons/GodotAdventureSystem/MainTheme.tres" id="3_wygey"]
 
 [node name="SpeechBubble" type="PanelContainer"]
 z_index = 100

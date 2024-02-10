@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dxunhfut7rfqt"]
 
-[ext_resource type="PackedScene" uid="uid://b163pg6wsgrfk" path="res://AdventureSystem/Object.tscn" id="1_ytciw"]
+[ext_resource type="PackedScene" uid="uid://b163pg6wsgrfk" path="res://addons/GodotAdventureSystem/Object.tscn" id="1_ytciw"]
 [ext_resource type="SpriteFrames" uid="uid://c5vbrom4tiqa3" path="res://resources/bush.aseprite" id="2_alhsy"]
 
 [node name="Bush" instance=ExtResource("1_ytciw")]
