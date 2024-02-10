@@ -85,6 +85,9 @@ public partial class Character : Thing
 	AudioStreamPlayer2D SoundsNode { get; set; }
 	AudioStreamPlayer2D StepSoundsNode { get; set; }
 
+	private int _scriptVisits = 0; // How many times this character's story script has been visited by the player
+	public int ScriptVisits { get; set; }
+
 	public override void _Ready()
 	{
 		base._Ready();

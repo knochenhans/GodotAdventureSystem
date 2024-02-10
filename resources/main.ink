@@ -125,24 +125,31 @@ INCLUDE includes.ink
 
 === robot ===
 
-Hi there! #player
+= intro
 
-Hello, fleshperson. #robot
+{ visited("robot") == 0:
+    Hi there! #player
 
-Weird meeting a robot out here in the nature. #player
+    Hello, fleshperson. #robot
 
-You think so? #robot
+    Weird meeting a robot out here in the nature. #player
 
-~ play_anim_char("robot", "front")
-~ wait(0.3)
+    You think so? #robot
 
-Well doesn’t seem weird to me at all, you know? #robot
+    ~ play_anim_char("robot", "front")
+    ~ wait(0.3)
 
-So what do you want, fleshperson? #robot
+    Well doesn’t seem weird to me at all, you know? #robot
 
--> main_dialog
+    So what do you want, fleshperson? #robot
 
-= main_dialog
+- else:
+    Hello again, fleshperson. #robot
+}
+
+-> main
+
+= main
 
 * [Beautiful meadow, isn’t it?]
     What’s next, are you going to ask me about the weather? #robot
@@ -170,6 +177,6 @@ So what do you want, fleshperson? #robot
 
     Take care, fleshperson. #robot -> END
         
-- -> main_dialog
+- -> main
         
 -> END
