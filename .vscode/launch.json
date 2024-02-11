@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "/usr/bin/godot-mono",
+            "program": "C:\\ProgramData\\chocolatey\\bin\\godot.exe",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
