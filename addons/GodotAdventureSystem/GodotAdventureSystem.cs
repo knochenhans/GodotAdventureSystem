@@ -58,10 +58,8 @@ public partial class GodotAdventureSystem : EditorPlugin
 	{
 		// We have to set this here as it's not available in _EnterTree for some reason
 		EditedSceneRoot = EditorInterface.Singleton.GetEditedSceneRoot();
-		GD.Print(EditedSceneRoot);
-		if (EditedSceneRoot is Stage)
+		if (EditedSceneRoot.IsInGroup("stage"))
 		{
-
 			var hotspot = new Hotspot
 			{
 				Name = GetNewNodeName("Hotspot")
@@ -72,6 +70,10 @@ public partial class GodotAdventureSystem : EditorPlugin
 			UndoRedoManager.AddDoReference(hotspot);
 			UndoRedoManager.AddUndoMethod(this, MethodName.UndoAddHotspotNode, hotspot);
 			UndoRedoManager.CommitAction();
+
+			var editorSelection = EditorInterface.Singleton.GetSelection();
+			editorSelection.Clear();
+			editorSelection.AddNode(hotspot);
 		}
 		else
 		{

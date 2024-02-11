@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Entry.cs" id="3_yiyc1"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Hotspot.cs" id="4_q3wx1"]
 
-[node name="Stage" type="Node2D"]
+[node name="Stage" type="Node2D" groups=["stage"]]
 y_sort_enabled = true
 script = ExtResource("1_5h3ot")
 metadata/_edit_lock_ = true
