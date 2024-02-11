@@ -106,14 +106,22 @@ INCLUDE includes.ink
 
     - "robot":
     
-            { verb_id:
-    
-            - "look":
-                ~ talk("A robot standing in meadow. It seems to be looking for something or someone.")
-            - "talk_to":
-                ~ start_dialog(thing_id)
-            - else: ~ return false
-            }
+        { verb_id:
+
+        - "look":
+            ~ talk("A robot standing in meadow. It seems to be looking for something or someone.")
+        - "talk_to":
+            ~ start_dialog(thing_id)
+        - else: ~ return false
+        }
+
+    - "exit_left":
+        
+        { verb_id:
+        - "walk":
+            ~ talk("The path leads to the left.")
+        - else: ~ return false
+        }
 
     - else:
         ~ print_error("Unknown thing.")

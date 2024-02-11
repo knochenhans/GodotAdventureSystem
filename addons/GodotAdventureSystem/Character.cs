@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Godot;
 
+[Icon("res://addons/GodotAdventureSystem/icons/Character.svg")]
 public partial class Character : Thing
 {
 	[Signal]

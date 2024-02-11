@@ -337,6 +337,11 @@ public partial class Game : Scene
 			CurrentCommandState = CommandState.Idle;
 			return;
 		}
+		else
+		{
+			InkStory.EvaluateFunction("verb", thingID, "walk");
+			await RunActionQueue();
+		}
 
 		// GD.Print($"_OnObjectActivated: Object: {thing.DisplayedName} activated");
 
@@ -421,7 +426,7 @@ public partial class Game : Scene
 		InkStory.ChooseChoiceIndex(choice.Index);
 		InkStory.Continue();
 	}
-	
+
 	public void FinishDialog()
 	{
 		InkStory.CallDeferred("ResetState");

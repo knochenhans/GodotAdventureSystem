@@ -14,22 +14,18 @@ source_geometry_group_name = &"navigation_polygon_source_group"
 agent_radius = 0.0
 
 [node name="Meadow" instance=ExtResource("1_47bt1")]
-y_sort_enabled = true
 
-[node name="WalkableRegion" parent="." index="1"]
-navigation_polygon = SubResource("NavigationPolygon_3nxf5")
+[node name="Robot" parent="." index="0" instance=ExtResource("6_jm8yb")]
+position = Vector2(443, 195)
 
-[node name="Objects" parent="." index="2"]
-y_sort_enabled = true
-
-[node name="Note" parent="Objects" index="0" instance=ExtResource("3_8b7br")]
+[node name="Note" parent="." index="1" instance=ExtResource("3_8b7br")]
 position = Vector2(618, 193)
 
-[node name="Bush" parent="Objects" index="1" instance=ExtResource("4_f85ht")]
+[node name="Bush" parent="." index="2" instance=ExtResource("4_f85ht")]
 position = Vector2(123, 194)
 DisplayedName = "Bush"
 
-[node name="cloud1" type="Polygon2D" parent="." index="3"]
+[node name="cloud1" type="Polygon2D" parent="." index="4"]
 position = Vector2(-3, 0)
 color = Color(0, 1, 1, 0.262745)
 polygon = PackedVector2Array(26, 22, 25, 34, 31, 39, 42, 44, 50, 48, 58, 56, 68, 56, 80, 51, 90, 60, 104, 44, 116, 43, 132, 29, 130, 14, 114, 6, 106, -2, 57, -1, 48, 10, 36, 10)
@@ -37,19 +33,25 @@ script = ExtResource("6_51qxq")
 ID = "cloud1"
 DisplayedName = "Cloud"
 
-[node name="cloud2" type="Polygon2D" parent="." index="4"]
+[node name="cloud2" type="Polygon2D" parent="." index="5"]
 color = Color(0, 1, 1, 0.262745)
 polygon = PackedVector2Array(306, 57, 314, 72, 322, 80, 340, 73, 348, 80, 367, 85, 382, 84, 413, 88, 426, 82, 447, 78, 455, 71, 478, 62, 480, 50, 465, 36, 441, 26, 403, 19, 367, 22, 340, 35, 320, 40)
 script = ExtResource("6_51qxq")
 ID = "cloud2"
 DisplayedName = "Another cloud"
 
-[node name="cloud3" type="Polygon2D" parent="." index="5"]
+[node name="cloud3" type="Polygon2D" parent="." index="6"]
 color = Color(0, 1, 1, 0.262745)
 polygon = PackedVector2Array(702, 68, 690, 85, 692, 96, 707, 114, 737, 120, 771, 121, 832, 133, 853, 118, 895, 118, 912, 93, 938, 73, 953, 57, 949, 33, 928, 21, 889, 19, 863, 16, 841, 25, 818, 18, 805, 30, 782, 28, 758, 1, 739, 3, 724, 22, 719, 35, 701, 41, 698, 56)
 script = ExtResource("6_51qxq")
 ID = "cloud3"
 DisplayedName = "Yet another cloud"
 
-[node name="Robot" parent="Characters" index="0" instance=ExtResource("6_jm8yb")]
-position = Vector2(443, 195)
+[node name="WalkableRegion" parent="." index="7"]
+navigation_polygon = SubResource("NavigationPolygon_3nxf5")
+
+[node name="ExitLeft" parent="." index="9"]
+color = Color(0, 1, 1, 0.262745)
+
+[node name="ExitRight" parent="." index="10"]
+color = Color(0, 1, 1, 0.262745)

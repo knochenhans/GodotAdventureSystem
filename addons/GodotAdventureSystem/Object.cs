@@ -1,6 +1,7 @@
 using Godot;
 using System;
 
+[Icon("res://addons/GodotAdventureSystem/icons/Object.svg")]
 public partial class Object : Thing
 {
     public Texture2D GetTexture()

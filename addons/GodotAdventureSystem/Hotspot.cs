@@ -1,6 +1,7 @@
 using Godot;
 
 [Tool]
+[Icon("res://addons/GodotAdventureSystem/icons/Hotspot.svg")]
 public partial class Hotspot : Polygon2D
 {
     [Export]

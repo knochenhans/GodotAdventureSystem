@@ -2,6 +2,7 @@ using Godot;
 using System;
 using Godot.Collections;
 
+[Icon("res://addons/GodotAdventureSystem/icons/Stage.svg")]
 public partial class Stage : Node2D
 {
 	public Interface InterfaceNode { get; set; }
@@ -10,7 +11,7 @@ public partial class Stage : Node2D
 	public PlayerCharacter PlayerCharacter { get; set; }
 
 	// [Signal]
-	// public delegate void SetCommandLabelEventHandler(string commandLabel);
+	// public delegate void SetCommandLabelEventHandler(string commandLabel);f
 
 	[Signal]
 	public delegate void ThingHoveredEventHandler(string thingID);

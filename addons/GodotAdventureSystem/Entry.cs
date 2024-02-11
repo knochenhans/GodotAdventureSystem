@@ -1,6 +1,7 @@
 using Godot;
 
 [Tool]
+[Icon("res://addons/GodotAdventureSystem/icons/Entry.svg")]
 public partial class Entry : Marker2D
 {
 	[Export]
