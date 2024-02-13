@@ -404,7 +404,7 @@ public partial class Game : Scene
 			await RunActionQueue();
 
 			if (InkStory.CurrentChoices.Count > 0)
-				InterfaceNode.SetDialogChoiceLabels(new Array<InkChoice>(InkStory.CurrentChoices.ToArray()));
+				InterfaceNode.SetDialogChoiceLabels(new Array<InkChoice>(InkStory.CurrentChoices));
 			else
 			{
 				// Story has finished
