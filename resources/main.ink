@@ -140,7 +140,7 @@ INCLUDE includes.ink
     
     Hello, fleshperson. #robot
     
-    Weird meeting a robot out here in the nature. #player
+    Weird meeting a robot out here in nature. #player
     
     You think so? #robot
     ~ play_anim_char("robot", "front")
@@ -188,7 +188,7 @@ INCLUDE includes.ink
 
     -> buttcoin
 
-* [Well, I better get going.] -> outro
++ [Well, I better get going.] -> outro
 - -> main
 
 = outro
@@ -201,7 +201,7 @@ Take care, fleshperson. #robot -> END
 * [And a buttcoin is what exactly?]
     Well… #robot
     ~ wait(0.5)
-    One of the failed attempts of the A.R.F. to bring back tangible currency. #robot
+    It was one of the failed attempts of the A.R.F. to bring back tangible currency. #robot
     
     What’s the A.R.F.? #player
 
