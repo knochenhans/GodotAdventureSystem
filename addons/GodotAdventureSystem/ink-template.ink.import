@@ -1,0 +1,16 @@
+[remap]
+
+importer="ink"
+type="Resource"
+uid="uid://c6xmuvk5q7x8o"
+path="res://.godot/imported/ink-template.ink-7372714e36178088b906f7b2ad393055.res"
+
+[deps]
+
+source_file="res://addons/GodotAdventureSystem/ink-template.ink"
+dest_files=["res://.godot/imported/ink-template.ink-7372714e36178088b906f7b2ad393055.res"]
+
+[params]
+
+is_main_file=false
+compress=true
