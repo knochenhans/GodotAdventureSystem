@@ -429,7 +429,7 @@ public partial class Game : Scene
 
 	public void FinishDialog()
 	{
-		InkStory.CallDeferred("ResetState");
+		// InkStory.CallDeferred("ResetState");
 		InkStory.CallDeferred("ResetCallstack");
 		InkStory.Continued -= _OnDialogContinue;
 
