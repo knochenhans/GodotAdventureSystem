@@ -3,14 +3,16 @@ using System;
 
 public partial class PlayerCharacter : Character
 {
-	// Called when the node enters the scene tree for the first time.
+	[Signal]
+	public delegate void SwitchStageEventHandler(string stageID, string entryID);
+
 	public override void _Ready()
 	{
 		base._Ready();
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public void RequestSwitchStage(string stageID, string entryID)
 	{
+		EmitSignal(SignalName.SwitchStage, stageID, entryID);
 	}
 }

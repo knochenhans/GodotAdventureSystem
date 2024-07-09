@@ -2,15 +2,15 @@ using Godot;
 using System;
 using System.Threading.Tasks;
 
-public partial class ScriptAction : GodotObject
+public partial class AbstractScriptAction : GodotObject
 {
     public Character Character { get; set; }
 
-    public ScriptAction(Character character) { Character = character; }
+    public AbstractScriptAction(Character character) { Character = character; }
     public virtual Task Execute() { return Task.CompletedTask; }
 }
 
-public partial class ScriptActionMessage : ScriptAction
+public partial class ScriptActionMessage : AbstractScriptAction
 {
     public string Message { get; set; }
     public Thing Target { get; set; }
@@ -26,7 +26,7 @@ public partial class ScriptActionMessage : ScriptAction
     }
 }
 
-public partial class ScriptActionMove : ScriptAction
+public partial class ScriptActionMove : AbstractScriptAction
 {
     public Vector2 Position { get; set; }
     public bool IsRelative { get; set; }
@@ -38,7 +38,7 @@ public partial class ScriptActionMove : ScriptAction
     }
 }
 
-public partial class ScriptActionWait : ScriptAction
+public partial class ScriptActionWait : AbstractScriptAction
 {
     public float Seconds { get; set; }
 
@@ -50,7 +50,7 @@ public partial class ScriptActionWait : ScriptAction
     }
 }
 
-public partial class ScriptActionPlayAnimation : ScriptAction
+public partial class ScriptActionPlayAnimation : AbstractScriptAction
 {
     public string AnimationName { get; set; }
 
@@ -61,7 +61,7 @@ public partial class ScriptActionPlayAnimation : ScriptAction
     }
 }
 
-public partial class ScriptActionStartDialog : ScriptAction
+public partial class ScriptActionStartDialog : AbstractScriptAction
 {
     public string KnotName { get; set; }
     public Game Game { get; set; }
@@ -70,5 +70,19 @@ public partial class ScriptActionStartDialog : ScriptAction
     public async override Task Execute()
     {
         await Game.StartDialog(KnotName);
+    }
+}
+
+public partial class ScriptActionSwitchStage : AbstractScriptAction
+{
+    public string StageID { get; set; }
+    public string EntryID { get; set; }
+
+    public ScriptActionSwitchStage(PlayerCharacter playerCharacter, string stageID, string entryID = "default") : base(playerCharacter) { StageID = stageID; EntryID = entryID; }
+    public override Task Execute()
+    {
+        if(Character is PlayerCharacter playerCharacter)
+            playerCharacter.RequestSwitchStage(StageID, EntryID);
+        return Task.CompletedTask;
     }
 }

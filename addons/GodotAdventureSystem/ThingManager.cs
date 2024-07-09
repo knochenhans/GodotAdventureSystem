@@ -111,4 +111,12 @@ public partial class ThingManager : GodotObject
         else
             GD.PrintErr($"ThingManager: Thing {thingID} already loaded");
     }
+
+    public void Clear()
+    {
+        // foreach (var thing in Things)
+            // thing.Value.QueueFree();
+        Things.Clear();
+        GD.Print("ThingManager: Cleared");
+    }
 }

@@ -8,10 +8,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="AddHotspot" type="Button" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 31.0
 grow_horizontal = 2
+
+[node name="AddStage" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Add Stage"
+
+[node name="AddHotspot" type="Button" parent="VBoxContainer"]
+layout_mode = 2
 text = "Add Hotspot"

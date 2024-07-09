@@ -118,11 +118,11 @@ INCLUDE includes.ink
         - else: ~ return false
         }
 
-    - "exit_left":
+    - "exit_right":
         
         { verb_id:
         - "walk":
-            ~ talk("The path leads to the left.")
+            ~ switch_stage("Street", "default")
         - else: ~ return false
         }
 

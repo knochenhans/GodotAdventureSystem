@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3 uid="uid://bunmavhhlfrjf"]
+
+[ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://addons/GodotAdventureSystem/Stage.tscn" id="1_68obn"]
+[ext_resource type="Texture2D" uid="uid://caoeii8muscot" path="res://resources/street.aseprite" id="2_l431u"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/Hotspot.cs" id="3_3j87k"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_q6mm5"]
+vertices = PackedVector2Array(961, 220, 4, 222, 4, 217, 447, 130, 961, 124)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(447, 130, 961, 124, 961, 220, 4, 222, 4, 217)])
+source_geometry_group_name = &"navigation_polygon_source_group"
+agent_radius = 0.0
+
+[node name="Street" instance=ExtResource("1_68obn")]
+
+[node name="Background" parent="." index="0"]
+texture = ExtResource("2_l431u")
+
+[node name="WalkableRegion" parent="." index="1"]
+navigation_polygon = SubResource("NavigationPolygon_q6mm5")
+
+[node name="DefaultEntry" parent="." index="2"]
+position = Vector2(54, 216)
+
+[node name="ExitLeft" parent="." index="3"]
+color = Color(0, 1, 1, 0.262745)
+polygon = PackedVector2Array(-9, -8, -6, 229, 5, 228, 3, -8)
+DisplayedName = "To meadow"
+
+[node name="ExitRight" parent="." index="4"]
+color = Color(0, 1, 1, 0.262745)
+
+[node name="Hotspot" type="Polygon2D" parent="." index="5"]
+color = Color(0, 1, 1, 0.262745)
+polygon = PackedVector2Array(196, 132, 196, 179, 223, 175, 223, 127)
+script = ExtResource("3_3j87k")
+ID = "door"
+DisplayedName = "Door"

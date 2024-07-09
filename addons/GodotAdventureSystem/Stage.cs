@@ -111,22 +111,25 @@ public partial class Stage : Node2D
 		return things;
 	}
 
-	public void InitPlayerCharacter(PlayerCharacter playerCharacter)
+	public void InitPlayerCharacter(PlayerCharacter playerCharacter, string entryID = "default")
 	{
 		PlayerCharacter = playerCharacter;
 		var entries = GetTree().GetNodesInGroup("entry");
 
 		var entryFound = false;
 
-		if (entries.Count > 0)
-			if (entries[0] is Entry entry)
-				if (entry.ID == "default")
-				{
-					PlayerCharacter.Position = entry.Position;
-					AddChild(PlayerCharacter);
-					entryFound = true;
-				}
+		foreach (var entryNode in entries)
+		{
+			if (entryNode is Entry entry && entry.ID == entryID && entry.GetParent() == this)
+			{
+				PlayerCharacter.Position = entry.Position;
+				AddChild(PlayerCharacter);
+				entryFound = true;
+				break;
+			}
+		}
+
 		if (!entryFound)
-			GD.PrintErr("No entry named 'default' found in the stage, unable to place the player character.");
+			GD.PrintErr($"No entry named '{entryID}' found in the stage, unable to place the player character.");
 	}
 }

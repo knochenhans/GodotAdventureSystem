@@ -50,7 +50,7 @@ public partial class Game : Scene
 	[Export]
 	PackedScene PlayerCharacterScene { get; set; }
 
-	public Array<ScriptAction> ActionQueue { get; set; } = new Array<ScriptAction>();
+	public Array<AbstractScriptAction> ActionQueue { get; set; } = new Array<AbstractScriptAction>();
 
 	public async Task RunActionQueue()
 	{
@@ -93,6 +93,7 @@ public partial class Game : Scene
 	Action<int, int> InkMoveRelative;
 	Action<string> InkPlayPlayerAnimation;
 	Action<string, string> InkPlayCharacterAnimation;
+	Action<string, string> InkSwitchStage;
 
 	Character CurrentDialogCharacter;
 
@@ -135,6 +136,8 @@ public partial class Game : Scene
 			else
 				GD.PrintErr($"InkPlayCharacterAnimation: Thing {characterID} is not a Character");
 		};
+
+		InkSwitchStage = (stageID, entryID) => ActionQueue.Add(new ScriptActionSwitchStage(StageNode.PlayerCharacter, stageID, entryID));
 	}
 
 	public override void _Ready()
@@ -183,17 +186,8 @@ public partial class Game : Scene
 		InterfaceNode.VerbHovered += _OnVerbHovered;
 		InterfaceNode.VerbLeave += _OnVerbLeave;
 
-		var playerCharacter = PlayerCharacterScene.Instantiate() as PlayerCharacter;
-		// playerCharacter.CharacterStartDialog += _OnDialogStarted();
+		SwitchStage("Meadow");
 
-		StageNode = GetNode<Stage>("Stage");
-
-		StageNode.ThingClicked += _OnThingClicked;
-		StageNode.ThingHovered += _OnThingHovered;
-
-		StageNode.InitPlayerCharacter(playerCharacter);
-
-		ThingManager.RegisterThings(StageNode.CollectThings());
 		ThingManager.AddThingToIventory += InterfaceNode._OnObjectAddedToInventory;
 
 		Camera2DNode = GetNode<Camera2D>("Camera2D");
@@ -218,6 +212,27 @@ public partial class Game : Scene
 		InkStory.BindExternalFunction("move_rel", InkMoveRelative);
 		InkStory.BindExternalFunction("play_anim", InkPlayPlayerAnimation);
 		InkStory.BindExternalFunction("play_anim_char", InkPlayCharacterAnimation);
+		InkStory.BindExternalFunction("switch_stage", InkSwitchStage);
+	}
+
+	private void SwitchStage(string stageID, string entryID = "default")
+	{
+		if (StageNode != null)
+			StageNode.QueueFree();
+
+		StageNode = ResourceLoader.Load<PackedScene>($"res://resources/{stageID}.tscn").Instantiate() as Stage;
+		AddChild(StageNode);
+
+		StageNode.ThingClicked += _OnThingClicked;
+		StageNode.ThingHovered += _OnThingHovered;
+
+		var playerCharacter = PlayerCharacterScene.Instantiate() as PlayerCharacter;
+		playerCharacter.SwitchStage += (stageID, entryID) => SwitchStage(stageID, entryID);
+
+		StageNode.InitPlayerCharacter(playerCharacter, entryID);
+
+		ThingManager.Clear();
+		ThingManager.RegisterThings(StageNode.CollectThings());
 	}
 
 	public override void _Input(InputEvent @event)
@@ -316,7 +331,7 @@ public partial class Game : Scene
 				else if (thing is Character character)
 					position = character.Position;
 				else if (thing is HotspotArea hotspotArea)
-					position = hotspotArea.CalculateCenter();
+					position = hotspotArea.GetClosestPoint(StageNode.PlayerCharacter.Position) + hotspotArea.Position;
 				else
 					GD.PrintErr($"_OnAreaActivated: Area {thing.ID} is not an Object or a HotspotArea");
 

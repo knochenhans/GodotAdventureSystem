@@ -1,15 +1,16 @@
-[gd_scene load_steps=7 format=3 uid="uid://dwjqecofhdgta"]
+[gd_scene load_steps=8 format=3 uid="uid://dwjqecofhdgta"]
 
 [ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://addons/GodotAdventureSystem/Stage.tscn" id="1_47bt1"]
 [ext_resource type="PackedScene" uid="uid://cbyij1livuxja" path="res://resources/objects/note.tscn" id="3_8b7br"]
 [ext_resource type="PackedScene" uid="uid://dxunhfut7rfqt" path="res://resources/objects/bush.tscn" id="4_f85ht"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Hotspot.cs" id="6_51qxq"]
 [ext_resource type="PackedScene" uid="uid://b44hbsyxbbqit" path="res://resources/Robot.tscn" id="6_jm8yb"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/Entry.cs" id="6_nfp73"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_3nxf5"]
-vertices = PackedVector2Array(954, 210, 5, 214, 11, 172, 75, 166, 204, 156, 300, 155, 412, 155, 564, 165, 655, 166, 737, 164, 792, 164, 885, 155, 952, 155)
+vertices = PackedVector2Array(957, 217, 5, 214, 11, 172, 75, 166, 204, 156, 300, 155, 412, 155, 564, 165, 655, 166, 737, 164, 792, 164, 873, 142, 958, 144)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5, 6, 7), PackedInt32Array(0, 7, 8), PackedInt32Array(0, 8, 9, 10), PackedInt32Array(0, 10, 11, 12)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(11, 172, 75, 166, 204, 156, 300, 155, 412, 155, 564, 165, 655, 166, 737, 164, 792, 164, 885, 155, 952, 155, 954, 210, 5, 214)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(11, 172, 75, 166, 204, 156, 300, 155, 412, 155, 564, 165, 655, 166, 737, 164, 792, 164, 873, 142, 958, 144, 957, 217, 5, 214)])
 source_geometry_group_name = &"navigation_polygon_source_group"
 agent_radius = 0.0
 
@@ -50,8 +51,14 @@ DisplayedName = "Yet another cloud"
 [node name="WalkableRegion" parent="." index="7"]
 navigation_polygon = SubResource("NavigationPolygon_3nxf5")
 
-[node name="ExitLeft" parent="." index="9"]
+[node name="EntryRight" type="Marker2D" parent="." index="9"]
+position = Vector2(222, 187)
+script = ExtResource("6_nfp73")
+ID = "right"
+
+[node name="ExitLeft" parent="." index="10"]
 color = Color(0, 1, 1, 0.262745)
 
-[node name="ExitRight" parent="." index="10"]
+[node name="ExitRight" parent="." index="11"]
 color = Color(0, 1, 1, 0.262745)
+DisplayedName = "To street"
