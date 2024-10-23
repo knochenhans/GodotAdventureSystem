@@ -109,6 +109,8 @@ public partial class Game : Scene
 		IngameMenuScene = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/IngameMenu.tscn");
 
 		ScriptManager = new CustomScriptManager(this);
+
+		DialogFinished += OnFinishDialog;
 	}
 
 	private void SwitchStage(string stageID, string entryID = "default")
@@ -231,7 +233,7 @@ public partial class Game : Scene
 					Logger.Log($"_OnAreaActivated: Area {thing.ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
 
 				if (position.DistanceTo(StageNode.PlayerCharacter.Position) > 20)
-				await StageNode.PlayerCharacter.MoveTo(position, 20);
+					await StageNode.PlayerCharacter.MoveTo(position, 20);
 			}
 		}
 
@@ -281,11 +283,10 @@ public partial class Game : Scene
 		// InkStory.MadeChoice += _OnDialogChoiceMade;
 		InterfaceNode.DialogOptionClicked += _OnDialogChoiceMade;
 		InkStory.ContinueMaximally();
-		// await ToSignal(InkStory, "Continued");
+		await ToSignal(this, SignalName.DialogFinished);
 		//TODO: Should this finish only after the dialog is finished? 
 		Logger.Log($"Finished dialog with {characterID}", Logger.LogTypeEnum.Script);
 
-		CurrentDialogCharacter.ScriptVisits++;
 		// return Task.CompletedTask;
 	}
 
@@ -323,7 +324,7 @@ public partial class Game : Scene
 			{
 				// Story has finished
 				InterfaceNode.Mode = Interface.ModeEnum.Normal;
-				FinishDialog();
+				EmitSignal(SignalName.DialogFinished);
 			}
 		}
 		// CurrentCommandState = CommandState.Idle;
@@ -341,7 +342,7 @@ public partial class Game : Scene
 		InkStory.Continue();
 	}
 
-	public void FinishDialog()
+	public void OnFinishDialog()
 	{
 		// InkStory.CallDeferred("ResetState");
 		InkStory.CallDeferred("ResetCallstack");
@@ -354,6 +355,7 @@ public partial class Game : Scene
 		StageNode.PlayerCharacter.EndDialog();
 
 		CurrentDialogCharacter.EndDialog();
+		CurrentDialogCharacter.ScriptVisits++;
 		CurrentDialogCharacter = null;
 	}
 
