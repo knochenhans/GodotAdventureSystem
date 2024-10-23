@@ -36,6 +36,23 @@ public partial class CustomScriptManager : ScriptManager
 			BindExternalFunction(item.Key, new Callable(this, item.Value));
 	}
 
+	public override async Task RunActionQueue()
+	{
+		// Special case for dialog
+		if (ScriptActionQueue.Count == 1)
+		{
+			if (ScriptActionQueue[0] is ScriptActionStartDialog)
+			{
+				var action = ScriptActionQueue[0] as ScriptActionStartDialog;
+				ScriptActionQueue.Clear();
+				await action.Execute();
+				return;
+			}
+		}
+
+		await base.RunActionQueue();
+	}
+
     public Variant GetVar(string varName)
     {
        return Game.VariableManager.GetVariable(varName);
@@ -62,7 +79,7 @@ public partial class CustomScriptManager : ScriptManager
 		Game.ThingManager.LoadThingToInventory(objectID);
 		Game.StageNode.PlayerCharacter.PickUpObject();
 	}
-	public async void StartDialog(string characterID) => await Game.StartDialog(characterID);
+	public void StartDialog(string characterID) => ScriptActionQueue.Add(new ScriptActionStartDialog(Game.StageNode.PlayerCharacter, Game, characterID));
 	public void DisplayBubble(string message) => ScriptActionQueue.Add(new ScriptActionMessage(Game.StageNode.PlayerCharacter, message));
 	public void DisplayBubbleTo(string message, string thingID) => ScriptActionQueue.Add(new ScriptActionMessage(Game.StageNode.PlayerCharacter, message, Game.ThingManager.GetThing(thingID)));
 	public void CharacterWait(float seconds) => ScriptActionQueue.Add(new ScriptActionCharacterWait(Game.StageNode.PlayerCharacter, seconds));
@@ -123,29 +140,6 @@ public partial class Game : Scene
 	[Export] public InkStory InkStory { get; set; }
 	[Export] PackedScene PlayerCharacterScene { get; set; }
 	public ScriptManager ScriptManager { get; set; }
-
-	// public async Task RunActionQueue()
-	// {
-	// 	// Special case for dialog
-	// 	if (ActionQueue.Count == 1)
-	// 	{
-	// 		if (ActionQueue[0] is ScriptActionStartDialog)
-	// 		{
-	// 			var action = ActionQueue[0] as ScriptActionStartDialog;
-	// 			ActionQueue.Clear();
-	// 			await action.Execute();
-	// 			return;
-	// 		}
-	// 	}
-
-	// 	GD.Print($"Running {ActionQueue.Count} actions in queue");
-	// 	foreach (var action in ActionQueue)
-	// 	{
-	// 		GD.Print($"Running action: {action.GetType()}");
-	// 		await action.Execute();
-	// 	}
-	// 	ActionQueue.Clear();
-	// }
 
 	Character CurrentDialogCharacter;
 
