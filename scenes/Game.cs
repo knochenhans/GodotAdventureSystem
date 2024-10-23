@@ -53,22 +53,22 @@ public partial class CustomScriptManager : ScriptManager
 		await base.RunActionQueue();
 	}
 
-    public Variant GetVar(string varName)
-    {
-       return Game.VariableManager.GetVariable(varName);
-    }
+	public Variant GetVar(string varName)
+	{
+		return Game.VariableManager.GetVariable(varName);
+	}
 
-    public void SetVar(string varName, bool value) => Game.VariableManager.SetVariable(varName, value);	
+	public void SetVar(string varName, bool value) => Game.VariableManager.SetVariable(varName, value);
 	public int GetScriptVisits(string characterID)
 	{
 		return Game.ThingManager.GetThing(characterID) is Character character ? character.ScriptVisits : 0;
 	}
-    public Variant IsInInventory(string thingID)
-    {
-        return Game.ThingManager.IsInInventory(thingID);
-    }
+	public Variant IsInInventory(string thingID)
+	{
+		return Game.ThingManager.IsInInventory(thingID);
+	}
 
-    public void SetThingName(string thingID, string name) => Game.ThingManager.UpdateThingName(thingID, name);
+	public void SetThingName(string thingID, string name) => Game.ThingManager.UpdateThingName(thingID, name);
 	public void PickUp(string objectID)
 	{
 		Game.ThingManager.MoveThingToInventory(objectID);
