@@ -16,6 +16,7 @@ public partial class DialogManager : GodotObject
 	{
 		Logger.Log($"Starting dialog with {characterID}", Logger.LogTypeEnum.Script);
 		Game.InterfaceNode.Mode = Interface.ModeEnum.Dialog;
+		Game.CurrentCommandState = Game.CommandStateEnum.Dialog;
 
 		CurrentDialogCharacter = Game.ThingManager.GetThing(characterID) as Character;
 
@@ -89,6 +90,7 @@ public partial class DialogManager : GodotObject
 		Game.InterfaceNode.DialogOptionClicked -= _OnDialogChoiceMade;
 		Game.InterfaceNode.ClearDialogChoiceLabels();
 		Game.InterfaceNode.Mode = Interface.ModeEnum.Normal;
+		Game.CurrentCommandState = Game.CommandStateEnum.Idle;
 
 		Game.StageNode.PlayerCharacter.EndDialog();
 

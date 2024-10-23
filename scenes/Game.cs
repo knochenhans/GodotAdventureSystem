@@ -11,7 +11,7 @@ public partial class Game : Scene
 	[Export] public InkStory InkStory { get; set; }
 	[Export] PackedScene PlayerCharacterScene { get; set; }
 
-	enum CommandState
+	public enum CommandStateEnum
 	{
 		Idle,
 		VerbSelected,
@@ -28,8 +28,8 @@ public partial class Game : Scene
 
 	PackedScene IngameMenuScene => ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/IngameMenu.tscn");
 
-	CommandState _currentCommandState = CommandState.Idle;
-	private CommandState CurrentCommandState
+	CommandStateEnum _currentCommandState = CommandStateEnum.Idle;
+	public CommandStateEnum CurrentCommandState
 	{
 		get => _currentCommandState;
 		set
@@ -76,9 +76,9 @@ public partial class Game : Scene
 		InterfaceNode.VerbLeave += OnVerbLeave;
 	}
 
-	private void CommandStateChanged(CommandState value)
+	private void CommandStateChanged(CommandStateEnum value)
 	{
-		if (value == CommandState.Idle)
+		if (value == CommandStateEnum.Idle)
 		{
 			InterfaceNode.ResetCommandLabel();
 			currentVerbID = "";
@@ -87,7 +87,7 @@ public partial class Game : Scene
 
 	private void SwitchStage(string stageID, string entryID = "default")
 	{
-		if (CurrentCommandState == CommandState.Idle)
+		if (CurrentCommandState == CommandStateEnum.Idle)
 		{
 			StageNode?.QueueFree();
 
@@ -127,13 +127,13 @@ public partial class Game : Scene
 
 	public void OnVerbHovered(string verbID)
 	{
-		if (CurrentCommandState == CommandState.Idle)
+		if (CurrentCommandState == CommandStateEnum.Idle)
 			InterfaceNode.SetCommandLabel(GameResource.Verbs[verbID]);
 	}
 
 	public void OnVerbLeave()
 	{
-		if (CurrentCommandState == CommandState.Idle)
+		if (CurrentCommandState == CommandStateEnum.Idle)
 			InterfaceNode.ResetCommandLabel();
 	}
 
@@ -143,28 +143,28 @@ public partial class Game : Scene
 
 		InterfaceNode.SetCommandLabel(GameResource.Verbs[verbID]);
 		currentVerbID = verbID;
-		CurrentCommandState = CommandState.VerbSelected;
+		CurrentCommandState = CommandStateEnum.VerbSelected;
 	}
 
 	public void OnGamePanelMouseMotion()
 	{
-		if (CurrentCommandState == CommandState.Idle)
+		if (CurrentCommandState == CommandStateEnum.Idle)
 			InterfaceNode.ResetCommandLabel();
-		else if (CurrentCommandState == CommandState.VerbSelected)
+		else if (CurrentCommandState == CommandStateEnum.VerbSelected)
 			InterfaceNode.SetCommandLabel(GameResource.Verbs[currentVerbID]);
 	}
 
 	public async void OnGamePanelMousePressed(InputEventMouseButton mouseButtonEvent)
 	{
-		if (CurrentCommandState == CommandState.Idle)
+		if (CurrentCommandState == CommandStateEnum.Idle)
 		{
 			await StageNode.PlayerCharacter.MoveTo(mouseButtonEvent.Position / Camera2DNode.Zoom + Camera2DNode.Position, 1);
 		}
-		else if (CurrentCommandState == CommandState.VerbSelected)
+		else if (CurrentCommandState == CommandStateEnum.VerbSelected)
 		{
 			if (mouseButtonEvent.ButtonIndex == MouseButton.Right)
 			{
-				CurrentCommandState = CommandState.Idle;
+				CurrentCommandState = CommandStateEnum.Idle;
 				InterfaceNode.ResetCommandLabel();
 			}
 		}
@@ -172,7 +172,7 @@ public partial class Game : Scene
 
 	public void OnThingHovered(string thingID)
 	{
-		if (CurrentCommandState != CommandState.Dialog)
+		if (CurrentCommandState != CommandStateEnum.Dialog)
 		{
 			var thing = ThingManager.GetThing(thingID);
 
@@ -183,9 +183,9 @@ public partial class Game : Scene
 			else
 			{
 				// Hovered inventory item
-				if (CurrentCommandState == CommandState.Idle)
+				if (CurrentCommandState == CommandStateEnum.Idle)
 					InterfaceNode.SetCommandLabel(ThingManager.GetThingName(thingID));
-				else if (CurrentCommandState == CommandState.VerbSelected)
+				else if (CurrentCommandState == CommandStateEnum.VerbSelected)
 					InterfaceNode.SetCommandLabel($"{GameResource.Verbs[currentVerbID]} {ThingManager.GetThingName(thingID)}");
 			}
 		}
@@ -193,7 +193,7 @@ public partial class Game : Scene
 
 	public async void OnThingClicked(string thingID)
 	{
-		if (CurrentCommandState != CommandState.Dialog)
+		if (CurrentCommandState != CommandStateEnum.Dialog)
 		{
 			var thing = ThingManager.GetThing(thingID);
 
@@ -217,7 +217,7 @@ public partial class Game : Scene
 				}
 			}
 
-			if (CurrentCommandState == CommandState.VerbSelected)
+			if (CurrentCommandState == CommandStateEnum.VerbSelected)
 			{
 				// Interact with the object
 
@@ -230,7 +230,7 @@ public partial class Game : Scene
 				}
 				await ScriptManager.RunActionQueue();
 
-				CurrentCommandState = CommandState.Idle;
+				CurrentCommandState = CommandStateEnum.Idle;
 				return;
 			}
 			else
