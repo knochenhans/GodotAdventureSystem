@@ -1,0 +1,18 @@
+[gd_resource type="Resource" load_steps=5 format=3 uid="uid://bow66gnn2d17f"]
+
+[ext_resource type="AudioStream" uid="uid://bpedpmxbtyr4n" path="res://resources/sounds/step.ogg" id="1_8yj43"]
+[ext_resource type="AudioStream" uid="uid://dr8bgwfljde4a" path="res://resources/sounds/pick_up.wav" id="2_8ocqb"]
+[ext_resource type="SpriteFrames" uid="uid://dye00puibd4pn" path="res://resources/robot.aseprite" id="3_544eh"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/CharacterResource.cs" id="4_32ou7"]
+
+[resource]
+script = ExtResource("4_32ou7")
+InitialOrientation = 2
+ID = "Robot"
+MovementSpeed = 50.0
+SpeechColor = Color(0.611765, 0.670588, 0.694118, 1)
+SpriteFrames = ExtResource("3_544eh")
+IdlePrefix = "idle"
+MovementPrefix = "move"
+MovementSound = ExtResource("1_8yj43")
+PickupSound = ExtResource("2_8ocqb")

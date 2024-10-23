@@ -1,7 +1,7 @@
-using System.Threading.Tasks;
 using Godot;
-using Godot.Collections;
+using System.Threading.Tasks;
 using GodotInk;
+using Godot.Collections;
 
 public partial class Game : Scene
 {
@@ -20,15 +20,37 @@ public partial class Game : Scene
 	public VariableManager VariableManager { get; set; } = new();
 	public ThingManager ThingManager { get; set; } = new();
 
-	public Dictionary<string, string> Verbs { get; set; }
-	public Dictionary<string, string> DefaultVerbReactions { get; set; }
+	public Dictionary<string, string> Verbs = new()
+	{
+		{ "give", "Give" },
+		{ "pick_up", "Pick up" },
+		{ "use", "Use" },
+		{ "open", "Open" },
+		{ "look", "Look" },
+		{ "push", "Push" },
+		{ "close", "Close" },
+		{ "talk_to", "Talk to" },
+		{ "pull", "Pull" }
+	};
+	public Dictionary<string, string> DefaultVerbReactions = new()
+	{
+		{ "give", "There’s no one to give anything to." },
+		{ "pick_up", "I can’t pick that up." },
+		{ "use", "I can’t use that." },
+		{ "open", "I can’t open that." },
+		{ "look", "I see nothing special." },
+		{ "push", "I can’t push that." },
+		{ "close", "I can’t close that." },
+		{ "talk_to", "There’s no one to talk to." },
+		{ "pull", "I can’t pull that." }
+	};
 
-	public Interface InterfaceNode { get; set; }
+	public Interface InterfaceNode => GetNode<Interface>("Interface");
 	public Stage StageNode { get; set; }
-	public string currentVerbID { get; set; }
-	public Camera2D Camera2DNode { get; set; }
+	public string currentVerbID;
+	public Camera2D Camera2DNode => GetNode<Camera2D>("Camera2D");
 
-	PackedScene IngameMenuScene { get; set; }
+	PackedScene IngameMenuScene => ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/IngameMenu.tscn");
 
 	CommandState _currentCommandState = CommandState.Idle;
 	private CommandState CurrentCommandState
@@ -36,81 +58,55 @@ public partial class Game : Scene
 		get => _currentCommandState;
 		set
 		{
-			if (value == CommandState.Idle)
-			{
-				InterfaceNode.ResetCommandLabel();
-				currentVerbID = "";
-			}
+			CommandStateChanged(value);
 			_currentCommandState = value;
 		}
 	}
 
 	public ScriptManager ScriptManager { get; set; }
-
-	Character CurrentDialogCharacter;
-
-	public Game()
-	{
-
-	}
+	public DialogManager DialogManager { get; set; }
 
 	public override void _Ready()
+    {
+        base._Ready();
+
+        var cursor = ResourceLoader.Load("res://resources/cursor_64.png");
+        Input.SetCustomMouseCursor(cursor, Input.CursorShape.Arrow, new Vector2(29, 29));
+
+        SetupInterface();
+
+        SwitchStage("Meadow");
+
+        ThingManager.AddThingToIventory += InterfaceNode._OnObjectAddedToInventory;
+
+        ScriptManager = new CustomScriptManager(this);
+
+        DialogManager = new DialogManager(this);
+        DialogFinished += DialogManager.OnFinishDialog;
+    }
+
+    private void SetupInterface()
+    {
+        InterfaceNode.Init(Verbs);
+
+        InterfaceNode.GamePanelMouseMotion += _OnGamePanelMouseMotion;
+        InterfaceNode.GamePanelMousePressed += _OnGamePanelMousePressed;
+
+        InterfaceNode.ThingClicked += _OnThingClicked;
+        InterfaceNode.ThingHovered += _OnThingHovered;
+
+        InterfaceNode.VerbClicked += _OnVerbClicked;
+        InterfaceNode.VerbHovered += _OnVerbHovered;
+        InterfaceNode.VerbLeave += _OnVerbLeave;
+    }
+
+    private void CommandStateChanged(CommandState value)
 	{
-		base._Ready();
-
-		var cursor = ResourceLoader.Load("res://resources/cursor_64.png");
-		Input.SetCustomMouseCursor(cursor, Input.CursorShape.Arrow, new Vector2(29, 29));
-
-		Verbs = new Dictionary<string, string>
+		if (value == CommandState.Idle)
 		{
-			{ "give", "Give" },
-			{ "pick_up", "Pick up" },
-			{ "use", "Use" },
-			{ "open", "Open" },
-			{ "look", "Look" },
-			{ "push", "Push" },
-			{ "close", "Close" },
-			{ "talk_to", "Talk to" },
-			{ "pull", "Pull" }
-		};
-
-		DefaultVerbReactions = new Dictionary<string, string>()
-		{
-			{ "give", "There’s no one to give anything to." },
-			{ "pick_up", "I can’t pick that up." },
-			{ "use", "I can’t use that." },
-			{ "open", "I can’t open that." },
-			{ "look", "I see nothing special." },
-			{ "push", "I can’t push that." },
-			{ "close", "I can’t close that." },
-			{ "talk_to", "There’s no one to talk to." },
-			{ "pull", "I can’t pull that." }
-		};
-
-		InterfaceNode = GetNode<Interface>("Interface");
-		InterfaceNode.Init(Verbs);
-
-		InterfaceNode.GamePanelMouseMotion += _OnGamePanelMouseMotion;
-		InterfaceNode.GamePanelMousePressed += _OnGamePanelMousePressed;
-
-		InterfaceNode.ThingClicked += _OnThingClicked;
-		InterfaceNode.ThingHovered += _OnThingHovered;
-
-		InterfaceNode.VerbClicked += _OnVerbClicked;
-		InterfaceNode.VerbHovered += _OnVerbHovered;
-		InterfaceNode.VerbLeave += _OnVerbLeave;
-
-		SwitchStage("Meadow");
-
-		ThingManager.AddThingToIventory += InterfaceNode._OnObjectAddedToInventory;
-
-		Camera2DNode = GetNode<Camera2D>("Camera2D");
-
-		IngameMenuScene = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/IngameMenu.tscn");
-
-		ScriptManager = new CustomScriptManager(this);
-
-		DialogFinished += OnFinishDialog;
+			InterfaceNode.ResetCommandLabel();
+			currentVerbID = "";
+		}
 	}
 
 	private void SwitchStage(string stageID, string entryID = "default")
@@ -230,7 +226,7 @@ public partial class Game : Scene
 				else if (thing is HotspotArea hotspotArea)
 					position = hotspotArea.GetClosestPoint(StageNode.PlayerCharacter.Position) + hotspotArea.Position;
 				else
-					Logger.Log($"_OnAreaActivated: Area {thing.ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
+					Logger.Log($"_OnAreaActivated: Area {thing.ThingResource.ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
 
 				if (position.DistanceTo(StageNode.PlayerCharacter.Position) > 20)
 					await StageNode.PlayerCharacter.MoveTo(position, 20);
@@ -267,96 +263,7 @@ public partial class Game : Scene
 
 	public async Task StartDialog(string characterID)
 	{
-		Logger.Log($"Starting dialog with {characterID}", Logger.LogTypeEnum.Script);
-		InterfaceNode.Mode = Interface.ModeEnum.Dialog;
-
-		CurrentDialogCharacter = ThingManager.GetThing(characterID) as Character;
-
-		StageNode.PlayerCharacter.LookTo(CurrentDialogCharacter.Position);
-		StageNode.PlayerCharacter.StartDialog();
-
-		CurrentDialogCharacter.LookTo(StageNode.PlayerCharacter.Position);
-		CurrentDialogCharacter.StartDialog();
-
-		InkStory.ChoosePathString(characterID);
-		InkStory.Continued += _OnDialogContinue;
-		// InkStory.MadeChoice += _OnDialogChoiceMade;
-		InterfaceNode.DialogOptionClicked += _OnDialogChoiceMade;
-		InkStory.ContinueMaximally();
-		await ToSignal(this, SignalName.DialogFinished);
-		//TODO: Should this finish only after the dialog is finished? 
-		Logger.Log($"Finished dialog with {characterID}", Logger.LogTypeEnum.Script);
-
-		// return Task.CompletedTask;
-	}
-
-	public async void _OnDialogContinue()
-	{
-		Logger.Log($"_OnDialogContinue: {InkStory.CurrentText}", Logger.LogTypeEnum.Script);
-		if (InkStory.CurrentText.StripEdges() != "")
-		{
-			var tag = InkStory.GetCurrentTags();
-
-			Character actingCharacter = StageNode.PlayerCharacter;
-			Character targetCharacter = CurrentDialogCharacter;
-
-			// First tag defines the currently talking character (and thereby the target character)
-			if (tag.Count > 0)
-				if (tag[0] != "player")
-				{
-					actingCharacter = ThingManager.GetThing(tag[0]) as Character;
-					targetCharacter = StageNode.PlayerCharacter;
-				}
-
-			ScriptManager.ScriptActionQueue.Add(new ScriptActionMessage(actingCharacter, InkStory.CurrentText, targetCharacter));
-			ScriptManager.ScriptActionQueue.Add(new ScriptActionCharacterWait(actingCharacter, 0.3f));
-		}
-
-		if (InkStory.CanContinue)
-			InkStory.Continue();
-		else
-		{
-			await ScriptManager.RunActionQueue();
-
-			if (InkStory.CurrentChoices.Count > 0)
-				InterfaceNode.SetDialogChoiceLabels(new Array<InkChoice>(InkStory.CurrentChoices));
-			else
-			{
-				// Story has finished
-				InterfaceNode.Mode = Interface.ModeEnum.Normal;
-				EmitSignal(SignalName.DialogFinished);
-			}
-		}
-		// CurrentCommandState = CommandState.Idle;
-	}
-
-	public async void _OnDialogChoiceMade(InkChoice choice)
-	{
-		InterfaceNode.ClearDialogChoiceLabels();
-		ScriptManager.ScriptActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, choice.Text, CurrentDialogCharacter));
-		ScriptManager.ScriptActionQueue.Add(new ScriptActionCharacterWait(StageNode.PlayerCharacter, 0.5f));
-
-		await ScriptManager.RunActionQueue();
-
-		InkStory.ChooseChoiceIndex(choice.Index);
-		InkStory.Continue();
-	}
-
-	public void OnFinishDialog()
-	{
-		// InkStory.CallDeferred("ResetState");
-		InkStory.CallDeferred("ResetCallstack");
-		InkStory.Continued -= _OnDialogContinue;
-
-		InterfaceNode.DialogOptionClicked -= _OnDialogChoiceMade;
-		InterfaceNode.ClearDialogChoiceLabels();
-		InterfaceNode.Mode = Interface.ModeEnum.Normal;
-
-		StageNode.PlayerCharacter.EndDialog();
-
-		CurrentDialogCharacter.EndDialog();
-		CurrentDialogCharacter.ScriptVisits++;
-		CurrentDialogCharacter = null;
+		await DialogManager.StartDialog(characterID);
 	}
 
 	public override void _Process(double delta)

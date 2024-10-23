@@ -4,18 +4,8 @@ using Godot;
 [Icon("res://addons/GodotAdventureSystem/icons/Character.svg")]
 public partial class Character : Thing
 {
-	[Signal]
-	public delegate void CharacterMovedEventHandler();
-
-	[Export]
-	public double Speed { get; set; } = 100f;
-
-	[Export]
-	public Color SpeechColor { get; set; } = Colors.White;
-
-	[ExportCategory("Sounds")]
-	[Export]
-	public AudioStream PickupSound { get; set; }
+	[Signal] public delegate void MovementFinishedEventHandler();
+	[Export] public CharacterResource CharacterResource;
 
 	enum MovementStateEnum
 	{
@@ -30,31 +20,7 @@ public partial class Character : Thing
 	{
 		get => _currentMovementState; set
 		{
-			switch (value)
-			{
-				case MovementStateEnum.Idle:
-					if (CurrentDirection == DirectionEnum.Front)
-						AnimatedSprite2D.Play("idle");
-					else
-						AnimatedSprite2D.Play("idle_side");
-					StepSoundsNode.Stop();
-					break;
-				case MovementStateEnum.Moving:
-					AnimatedSprite2D.Play("walk");
-					StepSoundsNode.Play();
-					break;
-				case MovementStateEnum.SpeechBubble:
-					if (CurrentDirection == DirectionEnum.Front)
-						AnimatedSprite2D.Play("talk");
-					else
-						AnimatedSprite2D.Play("talk_side");
-					StepSoundsNode.Stop();
-					break;
-				case MovementStateEnum.Dialog:
-					AnimatedSprite2D.Play("idle_side");
-					StepSoundsNode.Stop();
-					break;
-			}
+			MovementStateChanged(value);
 
 			_currentMovementState = value;
 		}
@@ -90,10 +56,10 @@ public partial class Character : Thing
 		}
 	}
 
-	NavigationAgent2D NavigationAgent2D { get; set; }
-	AnimatedSprite2D AnimatedSprite2D { get; set; }
-	AudioStreamPlayer2D SoundsNode { get; set; }
-	AudioStreamPlayer2D StepSoundsNode { get; set; }
+	NavigationAgent2D NavigationAgent2D => GetNode<NavigationAgent2D>("NavigationAgent2D");
+	AnimatedSprite2D AnimatedSprite2D => GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+	AudioStreamPlayer2D SoundPlayer => GetNode<AudioStreamPlayer2D>("Sounds");
+	AudioStreamPlayer2D StepSoundPlayer => GetNode<AudioStreamPlayer2D>("StepSounds");
 
 	private int _scriptVisits = 0; // How many times this character's story script has been visited by the player
 	public int ScriptVisits { get; set; }
@@ -102,13 +68,39 @@ public partial class Character : Thing
 	{
 		base._Ready();
 
-		NavigationAgent2D = GetNode<NavigationAgent2D>("NavigationAgent2D");
-		AnimatedSprite2D = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-		SoundsNode = GetNode<AudioStreamPlayer2D>("Sounds");
-		StepSoundsNode = GetNode<AudioStreamPlayer2D>("StepSounds");
-
 		CurrentDirection = DirectionEnum.Right;
 		CurrentMovementState = MovementStateEnum.Idle;
+
+		AnimatedSprite2D.SpriteFrames = CharacterResource.SpriteFrames;
+	}
+
+	private void MovementStateChanged(MovementStateEnum value)
+	{
+		switch (value)
+		{
+			case MovementStateEnum.Idle:
+				if (CurrentDirection == DirectionEnum.Front)
+					AnimatedSprite2D.Play("idle");
+				else
+					AnimatedSprite2D.Play("idle_side");
+				StepSoundPlayer.Stop();
+				break;
+			case MovementStateEnum.Moving:
+				AnimatedSprite2D.Play("walk");
+				StepSoundPlayer.Play();
+				break;
+			case MovementStateEnum.SpeechBubble:
+				if (CurrentDirection == DirectionEnum.Front)
+					AnimatedSprite2D.Play("talk");
+				else
+					AnimatedSprite2D.Play("talk_side");
+				StepSoundPlayer.Stop();
+				break;
+			case MovementStateEnum.Dialog:
+				AnimatedSprite2D.Play("idle_side");
+				StepSoundPlayer.Stop();
+				break;
+		}
 	}
 
 	public async Task MoveTo(Vector2 position, int desiredDistance = 10, bool isRelative = false)
@@ -125,7 +117,7 @@ public partial class Character : Thing
 			NavigationAgent2D.PathDesiredDistance = desiredDistance;
 			CurrentMovementState = MovementStateEnum.Moving;
 
-			await ToSignal(this, "CharacterMoved");
+			await ToSignal(this, SignalName.MovementFinished);
 		}
 	}
 
@@ -135,7 +127,7 @@ public partial class Character : Thing
 
 		var speechBubble = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/SpeechBubble.tscn").Instantiate() as SpeechBubble;
 		AddChild(speechBubble);
-		speechBubble.Init(message, SpeechColor, new Vector2(0, GetSize().Y));
+		speechBubble.Init(message, CharacterResource.SpeechColor, new Vector2(0, GetSize().Y));
 
 		await ToSignal(speechBubble, "Finished");
 		SetIdle();
@@ -151,8 +143,8 @@ public partial class Character : Thing
 
 	public void PickUpObject()
 	{
-		SoundsNode.Stream = PickupSound;
-		SoundsNode.Play();
+		SoundPlayer.Stream = CharacterResource.PickupSound;
+		SoundPlayer.Play();
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -164,7 +156,7 @@ public partial class Character : Thing
 				if (!NavigationAgent2D.IsNavigationFinished())
 				{
 					// GD.Print(NavigationAgent2D.TargetDesiredDistance);
-					var movementDelta = Speed * delta;
+					var movementDelta = CharacterResource.MovementSpeed * delta;
 					var nextPathPosition = NavigationAgent2D.GetNextPathPosition();
 					var newVelocity = Position.DirectionTo(nextPathPosition) * (float)movementDelta;
 					GlobalPosition = GlobalPosition.MoveToward(nextPathPosition + newVelocity, (float)movementDelta);
@@ -185,7 +177,7 @@ public partial class Character : Thing
 	public void _OnNavigationFinished()
 	{
 		CurrentMovementState = MovementStateEnum.Idle;
-		EmitSignal(SignalName.CharacterMoved);
+		EmitSignal(SignalName.MovementFinished);
 	}
 
 	public Vector2 GetSize()

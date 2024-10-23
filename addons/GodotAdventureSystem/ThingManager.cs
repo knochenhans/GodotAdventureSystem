@@ -12,7 +12,7 @@ public partial class ThingManager : GodotObject
     public void RegisterThing(string thingID, Thing thing)
     {
         Things[thingID] = thing;
-        GD.Print($"ThingManager: Thing {thingID} with name {thing.DisplayedName} registered");
+        GD.Print($"ThingManager: Thing {thingID} with name {thing.ThingResource.DisplayedName} registered");
 
         // if (!thing.Visible)
         //     GD.Print($"ThingManager: Thing {thingID} is set as invisible");
@@ -29,7 +29,7 @@ public partial class ThingManager : GodotObject
     public void RegisterThings(Array<Thing> things)
     {
         foreach (var thing in things)
-            RegisterThing(thing.ID, thing);
+            RegisterThing(thing.ThingResource.ID, thing);
     }
 
     public bool IsInInventory(string thingID)
@@ -63,7 +63,7 @@ public partial class ThingManager : GodotObject
     {
         if (Things.ContainsKey(thingID))
         {
-            Things[thingID].DisplayedName = name;
+            Things[thingID].ThingResource.DisplayedName = name;
             GD.Print($"ThingManager: Thing {thingID} name updated to {name}");
         }
         else
@@ -73,7 +73,7 @@ public partial class ThingManager : GodotObject
     public string GetThingName(string thingID)
     {
         if (Things.ContainsKey(thingID))
-            return Things[thingID].DisplayedName;
+            return Things[thingID].ThingResource.DisplayedName;
         else
         {
             GD.PrintErr($"ThingManager: Thing {thingID} not found");

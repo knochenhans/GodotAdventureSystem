@@ -1,11 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://j362jhfoubrc"]
+[gd_scene load_steps=5 format=3 uid="uid://j362jhfoubrc"]
 
 [ext_resource type="PackedScene" uid="uid://b163pg6wsgrfk" path="res://addons/GodotAdventureSystem/Object.tscn" id="1_ujosb"]
 [ext_resource type="SpriteFrames" uid="uid://15057we2rqc6" path="res://resources/coin.aseprite" id="2_0botd"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/ThingResource.cs" id="2_4svfb"]
 
-[node name="Coin" instance=ExtResource("1_ujosb")]
+[sub_resource type="Resource" id="Resource_0etpe"]
+resource_local_to_scene = true
+script = ExtResource("2_4svfb")
 ID = "coin"
 DisplayedName = "Coin"
+
+[node name="Coin" instance=ExtResource("1_ujosb")]
+ThingResource = SubResource("Resource_0etpe")
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 sprite_frames = ExtResource("2_0botd")

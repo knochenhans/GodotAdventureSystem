@@ -1,10 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://dwxanbxgml16l"]
+[gd_scene load_steps=6 format=3 uid="uid://dwxanbxgml16l"]
 
 [ext_resource type="PackedScene" uid="uid://cgomoes0br310" path="res://addons/GodotAdventureSystem/Character.tscn" id="1_hh37n"]
 [ext_resource type="Script" path="res://resources/PlayerCharacter.cs" id="2_c4xdx"]
+[ext_resource type="Resource" uid="uid://50gmtotops84" path="res://resources/Player.tres" id="3_27ra2"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/ThingResource.cs" id="4_8q4bt"]
+
+[sub_resource type="Resource" id="Resource_0psjt"]
+script = ExtResource("4_8q4bt")
+ID = "player"
+DisplayedName = "Player"
 
 [node name="PlayerCharacter" instance=ExtResource("1_hh37n")]
 script = ExtResource("2_c4xdx")
+CharacterResource = ExtResource("3_27ra2")
+ThingResource = SubResource("Resource_0psjt")
 
 [node name="NavigationAgent2D" parent="." index="1"]
 target_desired_distance = 1.0

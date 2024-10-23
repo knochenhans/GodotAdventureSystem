@@ -1,11 +1,24 @@
-[gd_scene load_steps=8 format=3 uid="uid://dwjqecofhdgta"]
+[gd_scene load_steps=11 format=3 uid="uid://dwjqecofhdgta"]
 
 [ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://addons/GodotAdventureSystem/Stage.tscn" id="1_47bt1"]
 [ext_resource type="PackedScene" uid="uid://cbyij1livuxja" path="res://resources/objects/note.tscn" id="3_8b7br"]
 [ext_resource type="PackedScene" uid="uid://dxunhfut7rfqt" path="res://resources/objects/bush.tscn" id="4_f85ht"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/ThingResource.cs" id="5_aqpt4"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Hotspot.cs" id="6_51qxq"]
 [ext_resource type="PackedScene" uid="uid://b44hbsyxbbqit" path="res://resources/Robot.tscn" id="6_jm8yb"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Entry.cs" id="6_nfp73"]
+
+[sub_resource type="Resource" id="Resource_bf26b"]
+resource_local_to_scene = true
+script = ExtResource("5_aqpt4")
+ID = "note"
+DisplayedName = "Note"
+
+[sub_resource type="Resource" id="Resource_4cp8r"]
+resource_local_to_scene = true
+script = ExtResource("5_aqpt4")
+ID = "bush"
+DisplayedName = "Bush"
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_3nxf5"]
 vertices = PackedVector2Array(957, 217, 5, 214, 11, 172, 75, 166, 204, 156, 300, 155, 412, 155, 564, 165, 655, 166, 737, 164, 792, 164, 873, 142, 958, 144)
@@ -21,10 +34,11 @@ position = Vector2(443, 195)
 
 [node name="Note" parent="." index="1" instance=ExtResource("3_8b7br")]
 position = Vector2(618, 193)
+ThingResource = SubResource("Resource_bf26b")
 
 [node name="Bush" parent="." index="2" instance=ExtResource("4_f85ht")]
 position = Vector2(123, 194)
-DisplayedName = "Bush"
+ThingResource = SubResource("Resource_4cp8r")
 
 [node name="cloud1" type="Polygon2D" parent="." index="4"]
 position = Vector2(-3, 0)

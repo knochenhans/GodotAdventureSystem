@@ -1,11 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://b163pg6wsgrfk"]
+[gd_scene load_steps=4 format=3 uid="uid://b163pg6wsgrfk"]
 
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Object.cs" id="1_wkkov"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/ThingResource.cs" id="2_77vrl"]
+
+[sub_resource type="Resource" id="Resource_tg52f"]
+resource_local_to_scene = true
+script = ExtResource("2_77vrl")
+ID = ""
+DisplayedName = ""
 
 [node name="Object" type="Area2D" groups=["object"]]
 y_sort_enabled = true
 monitorable = false
 script = ExtResource("1_wkkov")
+ThingResource = SubResource("Resource_tg52f")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 y_sort_enabled = true
