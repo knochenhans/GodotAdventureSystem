@@ -76,7 +76,7 @@ public partial class CustomScriptManager : ScriptManager
 		if (character is Character)
 			ScriptActionQueue.Add(new ScriptActionPlayAnimation(character as Character, animationID));
 		else
-			GD.PrintErr($"InkPlayCharacterAnimation: Thing {characterID} is not a Character");
+			Logger.Log($"InkPlayCharacterAnimation: Thing {characterID} is not a Character", Logger.LogTypeEnum.Error);
 	}
 	public void InkSwitchStage(string stageID, string entryID) => ScriptActionQueue.Add(new ScriptActionSwitchStage(Game.StageNode.PlayerCharacter, stageID, entryID));
 }
@@ -263,7 +263,7 @@ public partial class Game : Scene
 
 	public void _OnVerbClicked(string verbID)
 	{
-		// GD.Print($"_OnVerbActivated: Verb: {verbID} activated");
+		// Logger.Log($"_OnVerbActivated: Verb: {verbID} activated", Logger.LogTypeEnum.Script);
 
 		InterfaceNode.SetCommandLabel(Verbs[verbID]);
 		currentVerbID = verbID;
@@ -300,7 +300,7 @@ public partial class Game : Scene
 
 		if (thing == null)
 		{
-			GD.PrintErr($"_OnThingHovered: Thing {thingID} not registered in ThingManager");
+			Logger.Log($"_OnThingHovered: Thing {thingID} not registered in ThingManager", Logger.LogTypeEnum.Error);
 		}
 		else
 		{
@@ -329,7 +329,7 @@ public partial class Game : Scene
 				else if (thing is HotspotArea hotspotArea)
 					position = hotspotArea.GetClosestPoint(StageNode.PlayerCharacter.Position) + hotspotArea.Position;
 				else
-					GD.PrintErr($"_OnAreaActivated: Area {thing.ID} is not an Object or a HotspotArea");
+					Logger.Log($"_OnAreaActivated: Area {thing.ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
 
 				await StageNode.PlayerCharacter.MoveTo(position, 20);
 			}
@@ -357,7 +357,7 @@ public partial class Game : Scene
 			await ScriptManager.RunActionQueue();
 		}
 
-		// GD.Print($"_OnObjectActivated: Object: {thing.DisplayedName} activated");
+		// Logger.Log($"_OnObjectActivated: Object: {thing.DisplayedName} activated", Logger.LogTypeEnum.Script);
 
 		InterfaceNode.SetCommandLabel(ThingManager.GetThingName(thingID));
 		// CurrentCommandState = CommandState.VerbSelected;
@@ -365,7 +365,7 @@ public partial class Game : Scene
 
 	public async Task StartDialog(string characterID)
 	{
-		GD.Print($"Starting dialog with {characterID}");
+		Logger.Log($"Starting dialog with {characterID}", Logger.LogTypeEnum.Script);
 		InterfaceNode.Mode = Interface.ModeEnum.Dialog;
 
 		CurrentDialogCharacter = ThingManager.GetThing(characterID) as Character;
@@ -383,7 +383,7 @@ public partial class Game : Scene
 		InkStory.ContinueMaximally();
 		// await ToSignal(InkStory, "Continued");
 		//TODO: Should this finish only after the dialog is finished? 
-		GD.Print($"Finished dialog with {characterID}");
+		Logger.Log($"Finished dialog with {characterID}", Logger.LogTypeEnum.Script);
 
 		CurrentDialogCharacter.ScriptVisits++;
 		// return Task.CompletedTask;
@@ -391,7 +391,7 @@ public partial class Game : Scene
 
 	public async void _OnDialogContinue()
 	{
-		GD.Print($"_OnDialogContinue: {InkStory.CurrentText}");
+		Logger.Log($"_OnDialogContinue: {InkStory.CurrentText}", Logger.LogTypeEnum.Script);
 		if (InkStory.CurrentText.StripEdges() != "")
 		{
 			var tag = InkStory.GetCurrentTags();
