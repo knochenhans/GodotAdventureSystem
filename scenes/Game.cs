@@ -4,10 +4,86 @@ using Godot;
 using Godot.Collections;
 using GodotInk;
 
+public partial class CustomScriptManager : ScriptManager
+{
+	public Game Game;
+
+	public CustomScriptManager(Game game) : base(game.InkStory)
+	{
+		Game = game;
+
+		var dict = new Dictionary<string, string>
+			{
+				{ "get_var", MethodName.GetVar },
+				{ "set_var", MethodName.SetVar },
+				{ "visited", MethodName.GetScriptVisits },
+				{ "is_in_inventory", MethodName.IsInInventory },
+				{ "set_name", MethodName.SetThingName },
+				{ "pick_up", MethodName.PickUp },
+				{ "create", MethodName.CreateObject },
+				{ "start_dialog", MethodName.StartDialog },
+				{ "talk", MethodName.DisplayBubble },
+				{ "talk_to", MethodName.DisplayBubbleTo },
+				{ "wait", MethodName.CharacterWait },
+				{ "move_to", MethodName.MoveTo },
+				{ "move_rel", MethodName.MoveRelative },
+				{ "play_anim", MethodName.PlayPlayerAnimation },
+				{ "play_anim_char", MethodName.PlayCharacterAnimation },
+				{ "switch_stage", MethodName.InkSwitchStage }
+			};
+
+		foreach (var item in dict)
+			BindExternalFunction(item.Key, new Callable(this, item.Value));
+	}
+
+    public Variant GetVar(string varName)
+    {
+       return Game.VariableManager.GetVariable(varName);
+    }
+
+    public void SetVar(string varName, bool value) => Game.VariableManager.SetVariable(varName, value);	
+	public int GetScriptVisits(string characterID)
+	{
+		return Game.ThingManager.GetThing(characterID) is Character character ? character.ScriptVisits : 0;
+	}
+    public Variant IsInInventory(string thingID)
+    {
+        return Game.ThingManager.IsInInventory(thingID);
+    }
+
+    public void SetThingName(string thingID, string name) => Game.ThingManager.UpdateThingName(thingID, name);
+	public void PickUp(string objectID)
+	{
+		Game.ThingManager.MoveThingToInventory(objectID);
+		Game.StageNode.PlayerCharacter.PickUpObject();
+	}
+	public void CreateObject(string objectID)
+	{
+		Game.ThingManager.LoadThingToInventory(objectID);
+		Game.StageNode.PlayerCharacter.PickUpObject();
+	}
+	public async void StartDialog(string characterID) => await Game.StartDialog(characterID);
+	public void DisplayBubble(string message) => ScriptActionQueue.Add(new ScriptActionMessage(Game.StageNode.PlayerCharacter, message));
+	public void DisplayBubbleTo(string message, string thingID) => ScriptActionQueue.Add(new ScriptActionMessage(Game.StageNode.PlayerCharacter, message, Game.ThingManager.GetThing(thingID)));
+	public void CharacterWait(float seconds) => ScriptActionQueue.Add(new ScriptActionCharacterWait(Game.StageNode.PlayerCharacter, seconds));
+	public void MoveTo(int posX, int posY) => ScriptActionQueue.Add(new ScriptActionMove(Game.StageNode.PlayerCharacter, new Vector2(posX, posY)));
+	public void MoveRelative(int posX, int posY) => ScriptActionQueue.Add(new ScriptActionMove(Game.StageNode.PlayerCharacter, new Vector2(posX, posY), true));
+	public void PlayPlayerAnimation(string animationID) => ScriptActionQueue.Add(new ScriptActionPlayAnimation(Game.StageNode.PlayerCharacter, animationID));
+	public void PlayCharacterAnimation(string characterID, string animationID)
+	{
+		var character = Game.ThingManager.GetThing(characterID);
+
+		if (character is Character)
+			ScriptActionQueue.Add(new ScriptActionPlayAnimation(character as Character, animationID));
+		else
+			GD.PrintErr($"InkPlayCharacterAnimation: Thing {characterID} is not a Character");
+	}
+	public void InkSwitchStage(string stageID, string entryID) => ScriptActionQueue.Add(new ScriptActionSwitchStage(Game.StageNode.PlayerCharacter, stageID, entryID));
+}
+
 public partial class Game : Scene
 {
-	[Signal]
-	public delegate void DialogFinishedEventHandler();
+	[Signal] public delegate void DialogFinishedEventHandler();
 
 	enum CommandState
 	{
@@ -44,100 +120,38 @@ public partial class Game : Scene
 		}
 	}
 
-	[Export]
-	InkStory InkStory { get; set; }
+	[Export] public InkStory InkStory { get; set; }
+	[Export] PackedScene PlayerCharacterScene { get; set; }
+	public ScriptManager ScriptManager { get; set; }
 
-	[Export]
-	PackedScene PlayerCharacterScene { get; set; }
+	// public async Task RunActionQueue()
+	// {
+	// 	// Special case for dialog
+	// 	if (ActionQueue.Count == 1)
+	// 	{
+	// 		if (ActionQueue[0] is ScriptActionStartDialog)
+	// 		{
+	// 			var action = ActionQueue[0] as ScriptActionStartDialog;
+	// 			ActionQueue.Clear();
+	// 			await action.Execute();
+	// 			return;
+	// 		}
+	// 	}
 
-	public Array<AbstractScriptAction> ActionQueue { get; set; } = new Array<AbstractScriptAction>();
-
-	public async Task RunActionQueue()
-	{
-		// Special case for dialog
-		if (ActionQueue.Count == 1)
-		{
-			if (ActionQueue[0] is ScriptActionStartDialog)
-			{
-				var action = ActionQueue[0] as ScriptActionStartDialog;
-				ActionQueue.Clear();
-				await action.Execute();
-				return;
-			}
-		}
-
-		GD.Print($"Running {ActionQueue.Count} actions in queue");
-		foreach (var action in ActionQueue)
-		{
-			GD.Print($"Running action: {action.GetType()}");
-			await action.Execute();
-		}
-		ActionQueue.Clear();
-	}
-
-	// External Ink functions
-	Action<string> PrintError;
-	Func<string, Variant> InkGetVariable;
-	Action<string, bool> InkSetVariable;
-	Func<string, Variant> InkGetScriptVisits;
-	Func<string, Variant> InkIsInInventory;
-	Action<string, string> InkSetThingName;
-	Action<string> InkPickUp;
-	Action<string> InkCreateObject;
-
-	Action<string> InkStartDialog;
-	Action<string> InkDisplayBubble;
-	Action<string, string> InkDisplayBubbleTo;
-	Action<float> InkWait;
-	Action<int, int> InkMoveTo;
-	Action<int, int> InkMoveRelative;
-	Action<string> InkPlayPlayerAnimation;
-	Action<string, string> InkPlayCharacterAnimation;
-	Action<string, string> InkSwitchStage;
+	// 	GD.Print($"Running {ActionQueue.Count} actions in queue");
+	// 	foreach (var action in ActionQueue)
+	// 	{
+	// 		GD.Print($"Running action: {action.GetType()}");
+	// 		await action.Execute();
+	// 	}
+	// 	ActionQueue.Clear();
+	// }
 
 	Character CurrentDialogCharacter;
 
 	public Game()
 	{
-		PrintError = (message) => GD.PrintErr(message);
-		InkGetVariable = (variableID) => VariableManager.GetVariable(variableID);
-		InkSetVariable = (variableID, value) => VariableManager.SetVariable(variableID, value);
-		InkGetScriptVisits = (characterID) => { return ThingManager.GetThing(characterID) is Character character ? character.ScriptVisits : 0; };
-		InkIsInInventory = (thingID) => ThingManager.IsInInventory(thingID);
-		InkSetThingName = (thingID, name) => ThingManager.UpdateThingName(thingID, name);
 
-		InkPickUp = (objectID) =>
-		{
-			ThingManager.MoveThingToInventory(objectID);
-			StageNode.PlayerCharacter.PickUpObject();
-		};
-
-		InkCreateObject = (objectID) =>
-		{
-			ThingManager.LoadThingToInventory(objectID);
-			StageNode.PlayerCharacter.PickUpObject();
-		};
-
-		// Script actions
-		InkStartDialog = (characterID) => ActionQueue.Add(new ScriptActionStartDialog(StageNode.PlayerCharacter, this, characterID));
-		InkDisplayBubble = (message) => ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, message));
-		InkDisplayBubbleTo = (message, thingID) => ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, message, ThingManager.GetThing(thingID)));
-		InkWait = (seconds) => ActionQueue.Add(new ScriptActionWait(StageNode.PlayerCharacter, seconds));
-		InkMoveTo = (posX, posY) => ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(posX, posY)));
-		InkMoveRelative = (posX, posY) => ActionQueue.Add(new ScriptActionMove(StageNode.PlayerCharacter, new Vector2(posX, posY), true));
-		InkPlayPlayerAnimation = (animationID) => ActionQueue.Add(new ScriptActionPlayAnimation(StageNode.PlayerCharacter, animationID));
-
-		InkPlayCharacterAnimation = (string characterID, string animationID) =>
-		{
-			var character = ThingManager.GetThing(characterID);
-
-			if (character is Character)
-				ActionQueue.Add(new ScriptActionPlayAnimation(character as Character, animationID));
-			else
-				GD.PrintErr($"InkPlayCharacterAnimation: Thing {characterID} is not a Character");
-		};
-
-		InkSwitchStage = (stageID, entryID) => ActionQueue.Add(new ScriptActionSwitchStage(StageNode.PlayerCharacter, stageID, entryID));
 	}
 
 	public override void _Ready()
@@ -194,25 +208,7 @@ public partial class Game : Scene
 
 		IngameMenuScene = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/IngameMenu.tscn");
 
-		// Bind Ink functions
-		InkStory.BindExternalFunction("print_error", PrintError);
-		InkStory.BindExternalFunction("get_var", InkGetVariable);
-		InkStory.BindExternalFunction("set_var", InkSetVariable);
-		InkStory.BindExternalFunction("visited", InkGetScriptVisits);
-		InkStory.BindExternalFunction("is_in_inventory", InkIsInInventory);
-		InkStory.BindExternalFunction("set_name", InkSetThingName);
-		InkStory.BindExternalFunction("pick_up", InkPickUp);
-		InkStory.BindExternalFunction("create", InkCreateObject);
-
-		InkStory.BindExternalFunction("start_dialog", InkStartDialog);
-		InkStory.BindExternalFunction("talk", InkDisplayBubble);
-		InkStory.BindExternalFunction("talk_to", InkDisplayBubbleTo);
-		InkStory.BindExternalFunction("wait", InkWait);
-		InkStory.BindExternalFunction("move_to", InkMoveTo);
-		InkStory.BindExternalFunction("move_rel", InkMoveRelative);
-		InkStory.BindExternalFunction("play_anim", InkPlayPlayerAnimation);
-		InkStory.BindExternalFunction("play_anim_char", InkPlayCharacterAnimation);
-		InkStory.BindExternalFunction("switch_stage", InkSwitchStage);
+		ScriptManager = new CustomScriptManager(this);
 	}
 
 	private void SwitchStage(string stageID, string entryID = "default")
@@ -342,12 +338,15 @@ public partial class Game : Scene
 		if (CurrentCommandState == CommandState.VerbSelected)
 		{
 			// Interact with the object
+
+			// var result = InkStory.EvaluateFunction("verb", thingID, currentVerbID);
+
 			if (!InkStory.EvaluateFunction("verb", thingID, currentVerbID).AsBool())
 			{
 				// No scripted reaction found, use the default one
-				ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, DefaultVerbReactions[currentVerbID]));
+				ScriptManager.ScriptActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, DefaultVerbReactions[currentVerbID]));
 			}
-			await RunActionQueue();
+			await ScriptManager.RunActionQueue();
 
 			CurrentCommandState = CommandState.Idle;
 			return;
@@ -355,7 +354,7 @@ public partial class Game : Scene
 		else
 		{
 			InkStory.EvaluateFunction("verb", thingID, "walk");
-			await RunActionQueue();
+			await ScriptManager.RunActionQueue();
 		}
 
 		// GD.Print($"_OnObjectActivated: Object: {thing.DisplayedName} activated");
@@ -408,15 +407,15 @@ public partial class Game : Scene
 					targetCharacter = StageNode.PlayerCharacter;
 				}
 
-			ActionQueue.Add(new ScriptActionMessage(actingCharacter, InkStory.CurrentText, targetCharacter));
-			ActionQueue.Add(new ScriptActionWait(actingCharacter, 0.3f));
+			ScriptManager.ScriptActionQueue.Add(new ScriptActionMessage(actingCharacter, InkStory.CurrentText, targetCharacter));
+			ScriptManager.ScriptActionQueue.Add(new ScriptActionCharacterWait(actingCharacter, 0.3f));
 		}
 
 		if (InkStory.CanContinue)
 			InkStory.Continue();
 		else
 		{
-			await RunActionQueue();
+			await ScriptManager.RunActionQueue();
 
 			if (InkStory.CurrentChoices.Count > 0)
 				InterfaceNode.SetDialogChoiceLabels(new Array<InkChoice>(InkStory.CurrentChoices));
@@ -433,10 +432,10 @@ public partial class Game : Scene
 	public async void _OnDialogChoiceMade(InkChoice choice)
 	{
 		InterfaceNode.ClearDialogChoiceLabels();
-		ActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, choice.Text, CurrentDialogCharacter));
-		ActionQueue.Add(new ScriptActionWait(StageNode.PlayerCharacter, 0.5f));
+		ScriptManager.ScriptActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, choice.Text, CurrentDialogCharacter));
+		ScriptManager.ScriptActionQueue.Add(new ScriptActionCharacterWait(StageNode.PlayerCharacter, 0.5f));
 
-		await RunActionQueue();
+		await ScriptManager.RunActionQueue();
 
 		InkStory.ChooseChoiceIndex(choice.Index);
 		InkStory.Continue();

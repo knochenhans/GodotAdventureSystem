@@ -1,16 +1,27 @@
-using Godot;
 using System;
 using System.Threading.Tasks;
+using Godot;
+using Godot.Collections;
 
-public partial class AbstractScriptAction : GodotObject
+public partial class CharacterScriptAction : AbstractScriptAction
 {
     public Character Character { get; set; }
 
-    public AbstractScriptAction(Character character) { Character = character; }
-    public virtual Task Execute() { return Task.CompletedTask; }
+    public CharacterScriptAction(Character character) { Character = character; }
 }
 
-public partial class ScriptActionMessage : AbstractScriptAction
+public partial class ScriptActionCharacterWait : CharacterScriptAction
+{
+    public float Seconds { get; set; }
+
+    public ScriptActionCharacterWait(Character character, float seconds) : base(character) { Seconds = seconds; }
+    public override Task Execute()
+    {
+        return Task.Delay(TimeSpan.FromSeconds(Seconds));
+    }
+}
+
+public partial class ScriptActionMessage : CharacterScriptAction
 {
     public string Message { get; set; }
     public Thing Target { get; set; }
@@ -26,7 +37,7 @@ public partial class ScriptActionMessage : AbstractScriptAction
     }
 }
 
-public partial class ScriptActionMove : AbstractScriptAction
+public partial class ScriptActionMove : CharacterScriptAction
 {
     public Vector2 Position { get; set; }
     public bool IsRelative { get; set; }
@@ -38,19 +49,7 @@ public partial class ScriptActionMove : AbstractScriptAction
     }
 }
 
-public partial class ScriptActionWait : AbstractScriptAction
-{
-    public float Seconds { get; set; }
-
-    public ScriptActionWait(Character character, float seconds) : base(character) { Seconds = seconds; }
-    public override Task Execute()
-    {
-        GD.Print($"Waiting for {Seconds} seconds");
-        return Task.Delay(TimeSpan.FromSeconds(Seconds));
-    }
-}
-
-public partial class ScriptActionPlayAnimation : AbstractScriptAction
+public partial class ScriptActionPlayAnimation : CharacterScriptAction
 {
     public string AnimationName { get; set; }
 
@@ -61,7 +60,7 @@ public partial class ScriptActionPlayAnimation : AbstractScriptAction
     }
 }
 
-public partial class ScriptActionStartDialog : AbstractScriptAction
+public partial class ScriptActionStartDialog : CharacterScriptAction
 {
     public string KnotName { get; set; }
     public Game Game { get; set; }
@@ -73,7 +72,7 @@ public partial class ScriptActionStartDialog : AbstractScriptAction
     }
 }
 
-public partial class ScriptActionSwitchStage : AbstractScriptAction
+public partial class ScriptActionSwitchStage : CharacterScriptAction
 {
     public string StageID { get; set; }
     public string EntryID { get; set; }
@@ -81,8 +80,29 @@ public partial class ScriptActionSwitchStage : AbstractScriptAction
     public ScriptActionSwitchStage(PlayerCharacter playerCharacter, string stageID, string entryID = "default") : base(playerCharacter) { StageID = stageID; EntryID = entryID; }
     public override Task Execute()
     {
-        if(Character is PlayerCharacter playerCharacter)
+        if (Character is PlayerCharacter playerCharacter)
             playerCharacter.RequestSwitchStage(StageID, EntryID);
         return Task.CompletedTask;
     }
+}
+
+public partial class ScriptActionPrint : ScriptObjectControllerAction
+{
+	public string Message { get; set; }
+
+	public ScriptActionPrint(Array<ScriptObjectController> scriptObjectControllers, string objectControllerID, string message) : base(scriptObjectControllers, objectControllerID)
+	{
+		Message = message;
+	}
+
+	public override Task Execute()
+	{
+		Logger.Log($"Printing message: {Message}", Logger.LogTypeEnum.Script);
+
+		var scriptObjectController = GetScriptObjectController();
+
+		scriptObjectController?.OnPrint(Message);
+
+		return Task.CompletedTask;
+	}
 }
