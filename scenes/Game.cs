@@ -7,6 +7,9 @@ public partial class Game : Scene
 {
 	[Signal] public delegate void DialogFinishedEventHandler();
 
+	[Export] public InkStory InkStory { get; set; }
+	[Export] PackedScene PlayerCharacterScene { get; set; }
+
 	enum CommandState
 	{
 		Idle,
@@ -42,8 +45,6 @@ public partial class Game : Scene
 		}
 	}
 
-	[Export] public InkStory InkStory { get; set; }
-	[Export] PackedScene PlayerCharacterScene { get; set; }
 	public ScriptManager ScriptManager { get; set; }
 
 	Character CurrentDialogCharacter;
@@ -112,8 +113,7 @@ public partial class Game : Scene
 
 	private void SwitchStage(string stageID, string entryID = "default")
 	{
-		if (StageNode != null)
-			StageNode.QueueFree();
+		StageNode?.QueueFree();
 
 		StageNode = ResourceLoader.Load<PackedScene>($"res://resources/{stageID}.tscn").Instantiate() as Stage;
 		AddChild(StageNode);
