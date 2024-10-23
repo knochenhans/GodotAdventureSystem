@@ -15,7 +15,6 @@ public partial class CharacterResource : Resource
     [Export] public float MovementSpeed { get; set; }
     [Export] public Color SpeechColor { get; set; } = Colors.White;
 
-
     [ExportGroup("Sprite")]
     [Export] public SpriteFrames SpriteFrames { get; set; } = new();
     [Export] public string IdlePrefix { get; set; } = "idle";

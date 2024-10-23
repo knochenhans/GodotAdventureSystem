@@ -16,7 +16,6 @@ ThingResource = SubResource("Resource_2du7t")
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 sprite_frames = ExtResource("3_em3x8")
-animation = &"idle"
 
 [node name="CollisionShape2D" parent="." index="2"]
 position = Vector2(0, -18)

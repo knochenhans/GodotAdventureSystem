@@ -3,26 +3,14 @@ using System;
 
 public partial class SpeechBubble : PanelContainer
 {
-	public Label Label { get; set; }
-	public Timer LifeTimer { get; set; }
+	[Export] public float LifeTimeLengthMultiplier { get; set; } = 0.05f;
+	[Export] public float MinimumLifeTime { get; set; } = 1.0f;
+	[Export] public Vector2 Offset { get; set; } = new Vector2(0, -5);
 
-	[Export]
-	public float LifeTimeLengthMultiplier { get; set; } = 0.05f;
+	[Signal] public delegate void FinishedEventHandler();
 
-	[Export]
-	public float MinimumLifeTime { get; set; } = 1.0f;
-
-	[Export]
-	public Vector2 Offset { get; set; } = new Vector2(0, -5);
-
-	[Signal]
-	public delegate void FinishedEventHandler();
-
-	public override void _Ready()
-	{
-		Label = GetNode<Label>("Label");
-		LifeTimer = GetNode<Timer>("LifeTimer");
-	}
+	public Label Label => GetNode<Label>("Label");
+	public Timer LifeTimer => GetNode<Timer>("LifeTimer");
 
 	public void Init(string text, Color color, Vector2 offset)
 	{

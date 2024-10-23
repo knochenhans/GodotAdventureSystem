@@ -115,6 +115,10 @@ INCLUDE includes.ink
             ~ talk("A robot standing in meadow. It seems to be looking for something or someone.")
         - "talk_to":
             ~ start_dialog(thing_id)
+        - "use":
+            ~ talk("Erm...")
+            ~ wait(1.0)
+            ~ talk("It’s not *that* kind of robot.")
         - else: ~ return false
         }
 

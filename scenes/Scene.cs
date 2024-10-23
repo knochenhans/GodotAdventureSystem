@@ -25,7 +25,7 @@ public partial class Scene : Node
 		var fade = FadeScene.Instantiate<Fade>();
 		GetTree().Root.AddChild(fade);
 		fade.Run(direction, time);
-		await ToSignal(fade, "FadeFinished");
+		await ToSignal(fade, global::Fade.SignalName.FadeFinished);
 	}
 	
 	public async override void _Ready()

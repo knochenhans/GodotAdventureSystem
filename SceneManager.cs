@@ -26,7 +26,7 @@ public partial class SceneManager : Node
 		if (CurrentScene != null)
 		{
 			CurrentScene.Exit();
-			await ToSignal(CurrentScene, "ExitFinished");
+			await ToSignal(CurrentScene, Scene.SignalName.ExitFinished);
 		}
 
 		var newScene = ResourceLoader.Load<PackedScene>($"res://scenes/{CurrentSceneName}.tscn").Instantiate();
@@ -42,7 +42,7 @@ public partial class SceneManager : Node
 		if (CurrentScene != null)
 		{
 			CurrentScene.Exit();
-			await ToSignal(CurrentScene, "ExitFinished");
+			await ToSignal(CurrentScene, Scene.SignalName.ExitFinished);
 		}
 
 		GetTree().Quit();

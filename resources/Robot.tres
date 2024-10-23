@@ -8,7 +8,6 @@
 [resource]
 script = ExtResource("4_32ou7")
 InitialOrientation = 2
-ID = "Robot"
 MovementSpeed = 50.0
 SpeechColor = Color(0.611765, 0.670588, 0.694118, 1)
 SpriteFrames = ExtResource("3_544eh")

@@ -21,7 +21,7 @@ public partial class Fade : ColorRect
 		AnimationPlayerNode.Play(animationName);
 		AnimationPlayerNode.Seek(0, true);
 		AnimationPlayerNode.SpeedScale = 1 / time;
-		await ToSignal(AnimationPlayerNode, "animation_finished");
+		await ToSignal(AnimationPlayerNode, AnimationPlayer.SignalName.AnimationFinished);
 		EmitSignal(SignalName.FadeFinished);
 		QueueFree();
 	}

@@ -108,12 +108,12 @@ public partial class Character : Thing
 		if (CurrentMovementState != MovementStateEnum.SpeechBubble)
 		{
 			NavigationAgent2D.TargetDesiredDistance = desiredDistance;
-			
+
 			if (isRelative)
 				NavigationAgent2D.TargetPosition = Position + position;
 			else
 				NavigationAgent2D.TargetPosition = position;
-				
+
 			CurrentMovementState = MovementStateEnum.Moving;
 
 			await ToSignal(this, SignalName.MovementFinished);
@@ -128,16 +128,23 @@ public partial class Character : Thing
 		AddChild(speechBubble);
 		speechBubble.Init(message, CharacterResource.SpeechColor, new Vector2(0, GetSize().Y));
 
-		await ToSignal(speechBubble, "Finished");
+		await ToSignal(speechBubble, global::SpeechBubble.SignalName.Finished);
 		SetIdle();
 	}
 
 	public async Task PlayAnimation(string animationName, bool loop = false)
 	{
-		AnimatedSprite2D.Play(animationName);
-		AnimatedSprite2D.SpriteFrames.SetAnimationLoop(animationName, loop);
-		await ToSignal(AnimatedSprite2D, "animation_finished");
-		AnimatedSprite2D.Play("idle");
+		if (AnimatedSprite2D.SpriteFrames.HasAnimation(animationName))
+		{
+			AnimatedSprite2D.Play(animationName);
+			AnimatedSprite2D.SpriteFrames.SetAnimationLoop(animationName, loop);
+			await ToSignal(AnimatedSprite2D, AnimatedSprite2D.SignalName.AnimationFinished);
+			AnimatedSprite2D.Play("idle");
+		}
+		else
+		{
+			Logger.Log($"Animation \"{animationName}\" not found in {ThingResource.ID}", Logger.LogTypeEnum.Error);
+		}
 	}
 
 	public void PickUpObject()
