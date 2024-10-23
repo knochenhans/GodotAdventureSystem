@@ -10,14 +10,14 @@ public class VariableManager
     public void SetVariable(string thingID, bool value)
     {
         Variables[thingID] = value;
-        GD.Print($"Set variable {thingID} to {value} with type {value.GetType()}");
+        Logger.Log($"Set variable {thingID} to {value} with type {value.GetType()}", Logger.LogTypeEnum.Info);
     }
 
     public bool GetVariable(string thingID)
     {
         if (!Variables.ContainsKey(thingID))
         {
-            GD.Print($"Variable {thingID} not found, returning false");
+            Logger.Log($"Variable {thingID} not found, returning false", Logger.LogTypeEnum.Warning);
             return false;
         }
         return Variables[thingID];

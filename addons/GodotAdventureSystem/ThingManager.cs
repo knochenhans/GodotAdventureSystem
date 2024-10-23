@@ -4,18 +4,17 @@ using System;
 
 public partial class ThingManager : GodotObject
 {
-    [Signal]
-    public delegate void AddThingToIventoryEventHandler(string thingID, Texture2D thingTexture);
+    [Signal] public delegate void AddThingToIventoryEventHandler(string thingID, Texture2D thingTexture);
 
     public Dictionary<string, Thing> Things { get; private set; } = new();
 
     public void RegisterThing(string thingID, Thing thing)
     {
         Things[thingID] = thing;
-        GD.Print($"ThingManager: Thing {thingID} with name {thing.ThingResource.DisplayedName} registered");
+        Logger.Log($"ThingManager: Thing {thingID} with name {thing.ThingResource.DisplayedName} registered", Logger.LogTypeEnum.World);
 
         // if (!thing.Visible)
-        //     GD.Print($"ThingManager: Thing {thingID} is set as invisible");
+        //     Logger.Log($"ThingManager: Thing {thingID} is set as invisible", Logger.LogTypeEnum.World);
     }
 
     public Thing GetThing(string thingID)
@@ -53,10 +52,10 @@ public partial class ThingManager : GodotObject
             var thing = Things[thingID];
             Things.Remove(thingID);
             thing.QueueFree();
-            GD.Print($"ThingManager: Thing {thingID} removed");
+            Logger.Log($"ThingManager: Thing {thingID} removed", Logger.LogTypeEnum.World);
         }
         else
-            GD.PrintErr($"ThingManager: Thing {thingID} not found");
+            Logger.Log($"ThingManager: Thing {thingID} not found", Logger.LogTypeEnum.Error);
     }
 
     public void UpdateThingName(string thingID, string name)
@@ -64,10 +63,10 @@ public partial class ThingManager : GodotObject
         if (Things.ContainsKey(thingID))
         {
             Things[thingID].ThingResource.DisplayedName = name;
-            GD.Print($"ThingManager: Thing {thingID} name updated to {name}");
+            Logger.Log($"ThingManager: Thing {thingID} name updated to {name}", Logger.LogTypeEnum.World);
         }
         else
-            GD.PrintErr($"ThingManager: Thing {thingID} not found");
+            Logger.Log($"ThingManager: Thing {thingID} not found", Logger.LogTypeEnum.Error);
     }
 
     public string GetThingName(string thingID)
@@ -76,7 +75,7 @@ public partial class ThingManager : GodotObject
             return Things[thingID].ThingResource.DisplayedName;
         else
         {
-            GD.PrintErr($"ThingManager: Thing {thingID} not found");
+            Logger.Log($"ThingManager: Thing {thingID} not found", Logger.LogTypeEnum.Error);
             return "";
         }
     }
@@ -91,10 +90,10 @@ public partial class ThingManager : GodotObject
                 object_.Visible = false;
                 EmitSignal(SignalName.AddThingToIventory, thingID, object_.GetTexture());
             }
-            GD.Print($"ThingManager: Thing {thingID} moved to inventory");
+            Logger.Log($"ThingManager: Thing {thingID} moved to inventory", Logger.LogTypeEnum.World);
         }
         else
-            GD.PrintErr($"ThingManager: Thing {thingID} not found");
+            Logger.Log($"ThingManager: Thing {thingID} not found", Logger.LogTypeEnum.Error);
     }
 
     public void LoadThingToInventory(string thingID)
@@ -106,17 +105,17 @@ public partial class ThingManager : GodotObject
             MoveThingToInventory(thingID);
 
             if (thing == null)
-                GD.PrintErr($"ThingManager: Unable to load thing {thingID} from resouces");
+                Logger.Log($"ThingManager: Unable to load thing {thingID} from resources", Logger.LogTypeEnum.Error);
         }
         else
-            GD.PrintErr($"ThingManager: Thing {thingID} already loaded");
+            Logger.Log($"ThingManager: Thing {thingID} already loaded", Logger.LogTypeEnum.Error);
     }
 
     public void Clear()
     {
         // foreach (var thing in Things)
-            // thing.Value.QueueFree();
+        // thing.Value.QueueFree();
         Things.Clear();
-        GD.Print("ThingManager: Cleared");
+        Logger.Log("ThingManager: Cleared", Logger.LogTypeEnum.World);
     }
 }

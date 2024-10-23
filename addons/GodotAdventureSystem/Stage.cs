@@ -10,9 +10,6 @@ public partial class Stage : Node2D
 
 	public PlayerCharacter PlayerCharacter { get; set; }
 
-	// [Signal]
-	// public delegate void SetCommandLabelEventHandler(string commandLabel);f
-
 	[Signal]
 	public delegate void ThingHoveredEventHandler(string thingID);
 
@@ -58,7 +55,6 @@ public partial class Stage : Node2D
 				var hotspotArea = newHotspotAreaScene.Instantiate() as HotspotArea;
 				hotspotArea.ThingResource.DisplayedName = hotspotNode.DisplayedName;
 				hotspotArea.ThingResource.ID = hotspotNode.ID;
-				// hotspotArea.Actions = hotspotNode.DefaultReactions;
 				hotspotArea.GetNode<CollisionPolygon2D>("CollisionPolygon2D").Polygon = hotspotNode.Polygon;
 				hotspotArea.Transform = hotspotNode.Transform;
 				RemoveChild(hotspotNode);
@@ -130,6 +126,6 @@ public partial class Stage : Node2D
 		}
 
 		if (!entryFound)
-			GD.PrintErr($"No entry named '{entryID}' found in the stage, unable to place the player character.");
+			Logger.Log($"No entry named '{entryID}' found in the stage, unable to place the player character.", Logger.LogTypeEnum.Error);
 	}
 }
