@@ -14,6 +14,3 @@ DisplayedName = "Player"
 script = ExtResource("2_c4xdx")
 CharacterResource = ExtResource("3_27ra2")
 ThingResource = SubResource("Resource_0psjt")
-
-[node name="NavigationAgent2D" parent="." index="1"]
-target_desired_distance = 1.0

@@ -107,14 +107,13 @@ public partial class Character : Thing
 	{
 		if (CurrentMovementState != MovementStateEnum.SpeechBubble)
 		{
+			NavigationAgent2D.TargetDesiredDistance = desiredDistance;
+			
 			if (isRelative)
 				NavigationAgent2D.TargetPosition = Position + position;
 			else
-			{
 				NavigationAgent2D.TargetPosition = position;
-				// NavigationAgent2D.TargetDesiredDistance = 500f;
-			}
-			NavigationAgent2D.PathDesiredDistance = desiredDistance;
+				
 			CurrentMovementState = MovementStateEnum.Moving;
 
 			await ToSignal(this, SignalName.MovementFinished);

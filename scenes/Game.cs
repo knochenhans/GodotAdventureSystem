@@ -212,8 +212,8 @@ public partial class Game : Scene
 					else
 						Logger.Log($"_OnAreaActivated: Area {thing.ThingResource.ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
 
-					if (position.DistanceTo(StageNode.PlayerCharacter.Position) > 20)
-						await StageNode.PlayerCharacter.MoveTo(position, 20);
+					// if (position.DistanceTo(StageNode.PlayerCharacter.Position) > 20)
+					await StageNode.PlayerCharacter.MoveTo(position, 20);
 				}
 			}
 
