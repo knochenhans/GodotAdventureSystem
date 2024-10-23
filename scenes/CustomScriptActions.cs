@@ -15,10 +15,7 @@ public partial class ScriptActionCharacterWait : CharacterScriptAction
     public float Seconds { get; set; }
 
     public ScriptActionCharacterWait(Character character, float seconds) : base(character) { Seconds = seconds; }
-    public override Task Execute()
-    {
-        return Task.Delay(TimeSpan.FromSeconds(Seconds));
-    }
+    public override Task Execute() => Task.Delay(TimeSpan.FromSeconds(Seconds));
 }
 
 public partial class ScriptActionMessage : CharacterScriptAction
@@ -43,10 +40,7 @@ public partial class ScriptActionMove : CharacterScriptAction
     public bool IsRelative { get; set; }
 
     public ScriptActionMove(PlayerCharacter character, Vector2 position, bool isRelative = false) : base(character) { Position = position; IsRelative = isRelative; }
-    public override async Task Execute()
-    {
-        await Character.MoveTo(Position, 1, IsRelative);
-    }
+    public override async Task Execute() => await Character.MoveTo(Position, 1, IsRelative);
 }
 
 public partial class ScriptActionPlayAnimation : CharacterScriptAction
@@ -54,10 +48,7 @@ public partial class ScriptActionPlayAnimation : CharacterScriptAction
     public string AnimationName { get; set; }
 
     public ScriptActionPlayAnimation(Character character, string animationID) : base(character) { AnimationName = animationID; }
-    public override async Task Execute()
-    {
-        await Character.PlayAnimation(AnimationName, false);
-    }
+    public override async Task Execute() => await Character.PlayAnimation(AnimationName, false);
 }
 
 public partial class ScriptActionStartDialog : CharacterScriptAction
@@ -66,10 +57,7 @@ public partial class ScriptActionStartDialog : CharacterScriptAction
     public Game Game { get; set; }
 
     public ScriptActionStartDialog(PlayerCharacter character, Game game, string knotName) : base(character) { KnotName = knotName; Game = game; }
-    public async override Task Execute()
-    {
-        await Game.StartDialog(KnotName);
-    }
+    public async override Task Execute() => await Game.StartDialog(KnotName);
 }
 
 public partial class ScriptActionSwitchStage : CharacterScriptAction
@@ -90,12 +78,9 @@ public partial class ScriptActionPrint : ScriptObjectControllerAction
 {
 	public string Message { get; set; }
 
-	public ScriptActionPrint(Array<ScriptObjectController> scriptObjectControllers, string objectControllerID, string message) : base(scriptObjectControllers, objectControllerID)
-	{
-		Message = message;
-	}
+    public ScriptActionPrint(Array<ScriptObjectController> scriptObjectControllers, string objectControllerID, string message) : base(scriptObjectControllers, objectControllerID) => Message = message;
 
-	public override Task Execute()
+    public override Task Execute()
 	{
 		Logger.Log($"Printing message: {Message}", Logger.LogTypeEnum.Script);
 
