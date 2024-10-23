@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://do52muaa3u88d"]
-
-[ext_resource type="Script" path="res://SceneManager.cs" id="1_wfiiq"]
-
-[node name="SceneManager" type="Node"]
-script = ExtResource("1_wfiiq")
-SceneNames = Array[String](["Intro", "Menu", "Game", "Options", "Credits"])
-InitialSceneName = "Game"

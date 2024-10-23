@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="Adventure System"
-run/main_scene="res://SceneManager.tscn"
+run/main_scene="res://Main.tscn"
 config/features=PackedStringArray("4.3", "C#", "Mobile")
 config/icon="res://icon.svg"
+
+[autoload]
+
+SceneManagerNode="*res://addons/SceneManager/SceneManagerNode.tscn"
 
 [display]
 
@@ -30,14 +34,14 @@ project/assembly_name="AdventureSystem"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/AsepriteWizard/plugin.cfg", "res://addons/GodotAdventureSystem/plugin.cfg", "res://addons/GodotInk/plugin.cfg", "res://addons/plugin_refresher/plugin.cfg")
+enabled=PackedStringArray("res://addons/AsepriteWizard/plugin.cfg", "res://addons/GodotAdventureSystem/plugin.cfg", "res://addons/GodotInk/plugin.cfg", "res://addons/Logger/plugin.cfg", "res://addons/SceneManager/plugin.cfg", "res://addons/plugin_refresher/plugin.cfg")
 
 [file_customization]
 
 folder_colors={
+"res://Scenes/": "orange",
 "res://addons/": "gray",
-"res://resources/": "yellow",
-"res://scenes/": "orange"
+"res://resources/": "yellow"
 }
 
 [rendering]

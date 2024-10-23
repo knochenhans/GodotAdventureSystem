@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://fiu4i8obc6yd"]
 
-[ext_resource type="PackedScene" uid="uid://bawrmdt67ohun" path="res://scenes/Scene.tscn" id="1_46wa8"]
-[ext_resource type="Script" path="res://scenes/Menu.cs" id="2_ny36q"]
+[ext_resource type="PackedScene" uid="uid://bawrmdt67ohun" path="res://addons/SceneManager/Scene.tscn" id="1_46wa8"]
+[ext_resource type="Script" path="res://Scenes/Menu.cs" id="2_ny36q"]
 
 [node name="Menu" instance=ExtResource("1_46wa8")]
 script = ExtResource("2_ny36q")
@@ -46,6 +46,6 @@ size_flags_horizontal = 4
 size_flags_vertical = 8
 text = "Exit"
 
-[connection signal="pressed" from="ColorRect/MarginContainer/CenterContainer/VBoxContainer/StartButton" to="." method="_OnStartButtonPressed"]
-[connection signal="pressed" from="ColorRect/MarginContainer/CenterContainer/VBoxContainer/OptionsButton" to="." method="_OnOptionsButtonPressed"]
-[connection signal="pressed" from="ColorRect/MarginContainer/CenterContainer/VBoxContainer/ExitButton" to="." method="_OnExitButtonPressed"]
+[connection signal="pressed" from="ColorRect/MarginContainer/CenterContainer/VBoxContainer/StartButton" to="." method="OnStartButtonPressed"]
+[connection signal="pressed" from="ColorRect/MarginContainer/CenterContainer/VBoxContainer/OptionsButton" to="." method="OnOptionsButtonPressed"]
+[connection signal="pressed" from="ColorRect/MarginContainer/CenterContainer/VBoxContainer/ExitButton" to="." method="OnExitButtonPressed"]

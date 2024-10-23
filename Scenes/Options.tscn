@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://by7hokk5l6fh4"]
 
-[ext_resource type="PackedScene" uid="uid://bawrmdt67ohun" path="res://scenes/Scene.tscn" id="1_sarmc"]
-[ext_resource type="Script" path="res://scenes/Options.cs" id="2_dgqmq"]
+[ext_resource type="PackedScene" uid="uid://bawrmdt67ohun" path="res://addons/SceneManager/Scene.tscn" id="1_sarmc"]
+[ext_resource type="Script" path="res://Scenes/Options.cs" id="2_dgqmq"]
 
 [node name="Options" instance=ExtResource("1_sarmc")]
 script = ExtResource("2_dgqmq")
@@ -38,4 +38,4 @@ size_flags_horizontal = 4
 size_flags_vertical = 8
 text = "Exit"
 
-[connection signal="pressed" from="ColorRect/MarginContainer/CenterContainer/VBoxContainer/ExitButton" to="." method="_OnButtonPressed"]
+[connection signal="pressed" from="ColorRect/MarginContainer/CenterContainer/VBoxContainer/ExitButton" to="." method="OnButtonPressed"]

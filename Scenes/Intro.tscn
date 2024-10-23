@@ -1,11 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://kdapt7s0edwl"]
+[gd_scene load_steps=3 format=3 uid="uid://cha1cbiyoi3gn"]
 
-[ext_resource type="PackedScene" uid="uid://bawrmdt67ohun" path="res://scenes/Scene.tscn" id="1_8dig6"]
-[ext_resource type="Script" path="res://scenes/Credits.cs" id="2_5en6x"]
+[ext_resource type="PackedScene" uid="uid://bawrmdt67ohun" path="res://addons/SceneManager/Scene.tscn" id="1_p0jng"]
+[ext_resource type="Script" path="res://Scenes/Intro.cs" id="2_2us8m"]
 
-[node name="Credits" instance=ExtResource("1_8dig6")]
-script = ExtResource("2_5en6x")
-FadeOutTime = 0.0
+[node name="Intro" instance=ExtResource("1_p0jng")]
+script = ExtResource("2_2us8m")
 
 [node name="ColorRect" type="ColorRect" parent="." index="0"]
 anchors_preset = 15
@@ -28,4 +27,4 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="ColorRect/MarginContainer/CenterContainer" index="0"]
 layout_mode = 2
-text = "Credits"
+text = "Intro"
