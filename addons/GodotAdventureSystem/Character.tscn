@@ -14,7 +14,6 @@ random_pitch = 1.05
 random_volume_offset_db = 0.4
 streams_count = 1
 stream_0/stream = ExtResource("4_lhdnk")
-stream_0/weight = 1.0
 
 [node name="Character" type="Area2D" groups=["character"]]
 y_sort_enabled = true

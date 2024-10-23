@@ -1,10 +1,7 @@
 @tool
 extends RefCounted
 
-var _config
-
-func init(config):
-	_config = config
+var _config = preload("../config/config.gd").new()
 
 #
 # Output:
@@ -107,7 +104,29 @@ func _add_ignore_layer_arguments(file_name: String, arguments: Array, exception_
 			arguments.push_front(l)
 			arguments.push_front('--ignore-layer')
 
+
 func _add_sheet_type_arguments(arguments: Array, options : Dictionary):
+	if options.has("column_count"):
+		_old_sheet_type_config(arguments, options)
+		return
+
+	var sheet_type = options.get("sheet_type", "packed")
+	var item_count = options.get("sheet_columns", 0)
+
+	if (sheet_type == "columns" or sheet_type == "rows") and item_count == 0:
+		sheet_type = "packed"
+	elif options.get("sheet_merge_duplicates", true):
+		arguments.push_back("--merge-duplicates")
+
+	if sheet_type == "columns":
+		arguments.push_back("--sheet-columns")
+		arguments.push_back(item_count)
+	else:
+		arguments.push_back("--sheet-type")
+		arguments.push_back(sheet_type)
+
+
+func _old_sheet_type_config(arguments: Array, options : Dictionary):
 	var column_count : int = options.get("column_count", 0)
 	if column_count > 0:
 		arguments.push_back("--merge-duplicates") # Yes, this is undocumented
@@ -155,10 +174,32 @@ func list_layers(file_name: String, only_visible = false) -> Array:
 	return sanitized
 
 
+func list_slices(file_name: String) -> Array:
+	var output = []
+	var arguments = ["-b", "--list-slices", file_name]
+
+	var exit_code = _execute(arguments, output)
+
+	if exit_code != 0:
+		printerr('aseprite: failed listing slices')
+		printerr(output)
+		return []
+
+	if output.is_empty():
+		return output
+
+	var raw = output[0].split('\n')
+	var sanitized = []
+	for s in raw:
+		sanitized.append(s.strip_edges())
+	return sanitized
+
+
 func _export_command_common_arguments(source_name: String, data_path: String, spritesheet_path: String) -> Array:
 	return [
 		"-b",
 		"--list-tags",
+		"--list-slices",
 		"--data",
 		data_path,
 		"--format",
@@ -205,6 +246,17 @@ func get_content_frames(content):
 	return content.frames if typeof(content.frames) == TYPE_ARRAY  else content.frames.values()
 
 
+func get_slice_rect(content: Dictionary, slice_name: String) -> Variant:
+	if not content.has("meta") or not content.meta.has("slices"):
+		return null
+	for slice in content.meta.slices:
+		if slice.name == slice_name:
+			if slice.keys.size() > 0:
+				var p = slice.keys[0].bounds
+				return Rect2(p.x, p.y, p.w, p.h)
+	return null
+
+
 ##
 ## Exports tileset layers
 ##
@@ -235,6 +287,8 @@ func export_tileset_texture(file_name: String, output_folder: String, options: D
 
 	if not only_visible_layers:
 		arguments.push_front("--all-layers")
+
+	_add_sheet_type_arguments(arguments, options)
 
 	_add_ignore_layer_arguments(file_name, arguments, exception_pattern)
 
