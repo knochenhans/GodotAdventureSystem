@@ -107,7 +107,7 @@ public partial class Stage : Node2D
 		return things;
 	}
 
-	public void InitPlayerCharacter(PlayerCharacter playerCharacter, string entryID = "default")
+	public void SetupPlayerCharacter(PlayerCharacter playerCharacter, string entryID = "default")
 	{
 		PlayerCharacter = playerCharacter;
 		var entries = GetTree().GetNodesInGroup("entry");
