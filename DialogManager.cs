@@ -23,20 +23,20 @@ public partial class DialogManager : GodotObject
 		Game.StageNode.PlayerCharacter.LookAt(CurrentDialogCharacter.Position);
 		Game.StageNode.PlayerCharacter.StartDialog();
 
-		CurrentDialogCharacter.LookTo(Game.StageNode.PlayerCharacter.Position);
+		CurrentDialogCharacter.LookAt(Game.StageNode.PlayerCharacter.Position);
 		CurrentDialogCharacter.StartDialog();
 
 		Game.InkStory.ChoosePathString(characterID);
-		Game.InkStory.Continued += _OnDialogContinue;
-		Game.InterfaceNode.DialogOptionClicked += _OnDialogChoiceMade;
+		Game.InkStory.Continued += OnDialogContinue;
+		Game.InterfaceNode.DialogOptionClicked += OnDialogChoiceMade;
 		Game.InkStory.ContinueMaximally();
 		await ToSignal(this, SignalName.DialogFinished);
 		Logger.Log($"Finished dialog with {characterID}", Logger.LogTypeEnum.Script);
 	}
 
-	private async void _OnDialogContinue()
+	private async void OnDialogContinue()
 	{
-		Logger.Log($"_OnDialogContinue: {Game.InkStory.CurrentText}", Logger.LogTypeEnum.Script);
+		Logger.Log($"OnDialogContinue: {Game.InkStory.CurrentText}", Logger.LogTypeEnum.Script);
 		if (Game.InkStory.CurrentText.StripEdges() != "")
 		{
 			var tag = Game.InkStory.GetCurrentTags();
@@ -70,7 +70,7 @@ public partial class DialogManager : GodotObject
 		}
 	}
 
-	private async void _OnDialogChoiceMade(InkChoice choice)
+	private async void OnDialogChoiceMade(InkChoice choice)
 	{
 		Game.InterfaceNode.ClearDialogChoiceLabels();
 		Game.ScriptManager.ScriptActionQueue.Add(new ScriptActionMessage(Game.StageNode.PlayerCharacter, choice.Text, CurrentDialogCharacter));
@@ -85,9 +85,9 @@ public partial class DialogManager : GodotObject
 	public void OnFinishDialog()
 	{
 		Game.InkStory.CallDeferred("ResetCallstack");
-		Game.InkStory.Continued -= _OnDialogContinue;
+		Game.InkStory.Continued -= OnDialogContinue;
 
-		Game.InterfaceNode.DialogOptionClicked -= _OnDialogChoiceMade;
+		Game.InterfaceNode.DialogOptionClicked -= OnDialogChoiceMade;
 		Game.InterfaceNode.ClearDialogChoiceLabels();
 		Game.InterfaceNode.Mode = Interface.ModeEnum.Normal;
 		Game.CurrentCommandState = Game.CommandStateEnum.Idle;

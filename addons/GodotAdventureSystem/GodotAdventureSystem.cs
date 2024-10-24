@@ -23,10 +23,10 @@ public partial class GodotAdventureSystem : EditorPlugin
 		AddControlToDock(DockSlot.LeftUl, Dock);
 
 		var addHotspotButton = Dock.GetNode<Button>("VBoxContainer/AddHotspot");
-		addHotspotButton.Pressed += _OnAddHotspotButtonPressed;
+		addHotspotButton.Pressed += OnAddHotspotButtonPressed;
 
 		var addStageButton = Dock.GetNode<Button>("VBoxContainer/AddStage");
-		addStageButton.Pressed += _OnAddStageButtonPressed;
+		addStageButton.Pressed += OnAddStageButtonPressed;
 
 		UndoRedoManager = GetUndoRedo();
 	}
@@ -62,7 +62,7 @@ public partial class GodotAdventureSystem : EditorPlugin
 		return "";
 	}
 
-	public void _OnAddStageButtonPressed()
+	public void OnAddStageButtonPressed()
 	{
 		// var stage = new Stage
 		// {
@@ -107,7 +107,7 @@ public partial class GodotAdventureSystem : EditorPlugin
 		stage.QueueFree();
 	}
 
-	public void _OnAddHotspotButtonPressed()
+	public void OnAddHotspotButtonPressed()
 	{
 		// We have to set this here as it's not available in _EnterTree for some reason
 		EditedSceneRoot = EditorInterface.Singleton.GetEditedSceneRoot();

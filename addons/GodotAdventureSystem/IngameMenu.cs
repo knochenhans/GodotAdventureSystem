@@ -6,27 +6,27 @@ public partial class IngameMenu : CanvasLayer
 	[Signal]
 	public delegate void QuitButtonPressedEventHandler();
 
-	public void _OnSaveButtonPressed()
+	public void OnSaveButtonPressed()
 	{
 
 	}
 
-	public void _OnLoadButtonPressed()
+	public void OnLoadButtonPressed()
 	{
 
 	}
 
-	public void _OnContinueButtonPressed()
+	public void OnContinueButtonPressed()
 	{
 		QueueFree();
 	}
 
-	public void _OnOptionsButtonPressed()
+	public void OnOptionsButtonPressed()
 	{
 
 	}
 
-	public void _OnQuitButtonPressed()
+	public void OnQuitButtonPressed()
 	{
 		EmitSignal(SignalName.QuitButtonPressed);
 	}

@@ -23,7 +23,7 @@ public partial class SpeechBubble : PanelContainer
 		Position -= new Vector2(Size.X / 2, offset.Y + Label.Size.Y - Offset.Y);
 	}
 
-	public void _OnLifeTimerTimeout()
+	public void OnLifeTimerTimeout()
 	{
 		EmitSignal(SignalName.Finished);
 		QueueFree();

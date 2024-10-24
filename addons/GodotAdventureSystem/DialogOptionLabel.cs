@@ -3,12 +3,12 @@ using System;
 
 public partial class DialogOptionLabel : Label
 {
-	public void _OnMouseEnter()
+	public void OnMouseEnter()
 	{
 		AddThemeColorOverride("font_color", new Color("c686c5"));
 	}
 
-	public void _OnMouseExit()
+	public void OnMouseExit()
 	{
 		RemoveThemeColorOverride("font_color");
 	}

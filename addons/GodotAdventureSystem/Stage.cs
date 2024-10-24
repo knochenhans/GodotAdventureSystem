@@ -30,11 +30,11 @@ public partial class Stage : Node2D
 
 		foreach (var object_ in GetTree().GetNodesInGroup("object"))
 			if (object_ is Object objectNode)
-				objectNode.InputEvent += (viewport, @event, shapeIdx) => _OnThingInputEvent(@event, objectNode);
+				objectNode.InputEvent += (viewport, @event, shapeIdx) => OnThingInputEvent(@event, objectNode);
 
 		foreach (var character in GetTree().GetNodesInGroup("character"))
 			if (character is Character characterNode)
-				characterNode.InputEvent += (viewport, @event, shapeIdx) => _OnThingInputEvent(@event, characterNode);
+				characterNode.InputEvent += (viewport, @event, shapeIdx) => OnThingInputEvent(@event, characterNode);
 
 		var walkableRegion = GetNode<NavigationRegion2D>("WalkableRegion");
 	}
@@ -65,12 +65,12 @@ public partial class Stage : Node2D
 
 		foreach (var hotspotArea in hotspotAreas)
 		{
-			hotspotArea.InputEvent += (viewport, @event, shapeIdx) => _OnThingInputEvent(@event, hotspotArea);
+			hotspotArea.InputEvent += (viewport, @event, shapeIdx) => OnThingInputEvent(@event, hotspotArea);
 			AddChild(hotspotArea);
 		}
 	}
 
-	public void _OnThingInputEvent(InputEvent @event, Thing thing)
+	public void OnThingInputEvent(InputEvent @event, Thing thing)
 	{
 		if (@event is InputEventMouseMotion mouseMotionEvent)
 			EmitSignal(SignalName.ThingHovered, thing.ThingResource.ID);

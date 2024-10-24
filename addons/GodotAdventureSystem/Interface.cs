@@ -91,7 +91,7 @@ public partial class Interface : CanvasLayer
 	public override void _Ready()
 	{
 		GamePanel = GetNode<GamePanel>("%GamePanel");
-		GamePanel.GuiInput += _OnGamePanelInputEvent;
+		GamePanel.GuiInput += OnGamePanelInputEvent;
 
 		InterfacePanel = GetNode<Control>("%InterfacePanel");
 
@@ -122,14 +122,14 @@ public partial class Interface : CanvasLayer
 		for (int i = 0; i < inventoryButtonCount; i++)
 		{
 			var button = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/InventoryButton.tscn").Instantiate() as InventoryButton;
-			button.MouseEntered += () => _OnInventoryButtonMouseEntered(button);
-			button.MouseExited += _OnInventoryButtonMouseExited;
-			button.Pressed += () => _OnInventoryButtonPressed(button);
+			button.MouseEntered += () => OnInventoryButtonMouseEntered(button);
+			button.MouseExited += OnInventoryButtonMouseExited;
+			button.Pressed += () => OnInventoryButtonPressed(button);
 			InventoryGridContainer.AddChild(button);
 		}
 	}
 
-	public void _OnGamePanelInputEvent(InputEvent @event)
+	public void OnGamePanelInputEvent(InputEvent @event)
 	{
 		if (@event is InputEventMouseMotion mouseMotionEvent)
 			EmitSignal(SignalName.GamePanelMouseMotion);
@@ -151,7 +151,7 @@ public partial class Interface : CanvasLayer
 		}
 	}
 
-	public void _OnMessageTimerTimeout()
+	public void OnMessageTimerTimeout()
 	{
 		SetCommandLabel("");
 		MessageState = MessageStateEnum.Idle;
@@ -163,7 +163,7 @@ public partial class Interface : CanvasLayer
 		ResetFocus();
 	}
 
-	public void _OnObjectAddedToInventory(string thingID, Texture2D texture)
+	public void OnObjectAddedToInventory(string thingID, Texture2D texture)
 	{
 		foreach (var inventoryButton in InventoryGridContainer.GetChildren())
 		{
@@ -176,7 +176,7 @@ public partial class Interface : CanvasLayer
 		}
 	}
 
-	public void _OnInventoryButtonMouseEntered(InventoryButton inventoryButton)
+	public void OnInventoryButtonMouseEntered(InventoryButton inventoryButton)
 	{
 		var thingID = inventoryButton.GetMeta("thingID").AsString();
 
@@ -187,13 +187,13 @@ public partial class Interface : CanvasLayer
 		}
 	}
 
-	public void _OnInventoryButtonMouseExited()
+	public void OnInventoryButtonMouseExited()
 	{
 		// ResetCommandLabel();
 		EmitSignal(SignalName.ThingLeave);
 	}
 
-	public void _OnInventoryButtonPressed(InventoryButton inventoryButton)
+	public void OnInventoryButtonPressed(InventoryButton inventoryButton)
 	{
 		var thingID = inventoryButton.GetMeta("thingID").AsString();
 

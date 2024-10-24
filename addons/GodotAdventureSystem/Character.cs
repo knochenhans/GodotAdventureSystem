@@ -180,7 +180,7 @@ public partial class Character : Thing
 		}
 	}
 
-	public void _OnNavigationFinished()
+	public void OnNavigationFinished()
 	{
 		CurrentMovementState = MovementStateEnum.Idle;
 		EmitSignal(SignalName.MovementFinished);

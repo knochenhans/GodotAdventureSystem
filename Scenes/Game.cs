@@ -52,7 +52,7 @@ public partial class Game : Scene
 
 		SwitchStage("Meadow");
 
-		ThingManager.AddThingToIventory += InterfaceNode._OnObjectAddedToInventory;
+		ThingManager.AddThingToIventory += InterfaceNode.OnObjectAddedToInventory;
 
 		ScriptManager = new CustomScriptManager(this);
 
@@ -177,7 +177,7 @@ public partial class Game : Scene
 
 			if (thing == null)
 			{
-				Logger.Log($"_OnThingHovered: Thing {thingID} not registered in ThingManager", Logger.LogTypeEnum.Error);
+				Logger.Log($"OnThingHovered: Thing {thingID} not registered in ThingManager", Logger.LogTypeEnum.Error);
 			}
 			else
 			{
@@ -209,7 +209,7 @@ public partial class Game : Scene
 					else if (thing is HotspotArea hotspotArea)
 						position = hotspotArea.GetClosestPoint(StageNode.PlayerCharacter.Position) + hotspotArea.Position;
 					else
-						Logger.Log($"_OnAreaActivated: Area {thing.ThingResource.ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
+						Logger.Log($"OnAreaActivated: Area {thing.ThingResource.ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
 
 					// if (position.DistanceTo(StageNode.PlayerCharacter.Position) > 20)
 					await StageNode.PlayerCharacter.MoveTo(position, 20);
