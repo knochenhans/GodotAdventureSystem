@@ -10,7 +10,7 @@ public partial class CustomScriptManager : ScriptManager
 	{
 		Game = game;
 
-		var dict = new Dictionary<string, string>
+		var functionMappings = new Dictionary<string, string>
 			{
 				{ "get_var", MethodName.GetVar },
 				{ "set_var", MethodName.SetVar },
@@ -29,10 +29,11 @@ public partial class CustomScriptManager : ScriptManager
 				{ "move_rel", MethodName.MoveRelative },
 				{ "play_anim", MethodName.PlayAnimation },
 				{ "play_anim_c", MethodName.CharacterPlayAnimation },
-				{ "switch_stage", MethodName.InkSwitchStage }
+				{ "switch_stage", MethodName.InkSwitchStage },
+				{ "get_action_count", MethodName.GetActionCounter },
 			};
 
-		foreach (var item in dict)
+		foreach (var item in functionMappings)
 			BindExternalFunction(item.Key, new Callable(this, item.Value));
 	}
 
@@ -83,4 +84,5 @@ public partial class CustomScriptManager : ScriptManager
 	public void PlayAnimation(string animationID) => AddToQueue(new ScriptActionPlayAnimation(Game.StageNode.PlayerCharacter, animationID));
 	public void CharacterPlayAnimation(string characterID, string animationID) => AddToQueue(new ScriptActionPlayAnimation(Game.ThingManager.GetCharacter(characterID), animationID));
 	public void InkSwitchStage(string stageID, string entryID) => AddToQueue(new ScriptActionSwitchStage(Game.StageNode.PlayerCharacter, stageID, entryID));
+	public int GetActionCounter(string thingID, string actionID) => Game.ThingActionCounter.GetActionCounter(thingID, actionID);
 }

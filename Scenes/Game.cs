@@ -40,6 +40,7 @@ public partial class Game : Scene
 
 	public ScriptManager ScriptManager { get; set; }
 	public DialogManager DialogManager { get; set; }
+	public ThingActionCounter ThingActionCounter = new();
 
 	public override void _Ready()
 	{
@@ -99,7 +100,7 @@ public partial class Game : Scene
 			var playerCharacter = PlayerCharacterScene.Instantiate() as PlayerCharacter;
 			playerCharacter.SwitchStage += (stageID, entryID) => SwitchStage(stageID, entryID);
 
-			StageNode.InitPlayerCharacter(playerCharacter, entryID);
+			StageNode.SetupPlayerCharacter(playerCharacter, entryID);
 
 			ThingManager.Clear();
 			ThingManager.RegisterThings(StageNode.CollectThings());
@@ -193,59 +194,72 @@ public partial class Game : Scene
 	public async void OnThingClicked(string thingID)
 	{
 		if (CurrentCommandState != CommandStateEnum.Dialog)
-		{
-			var thing = ThingManager.GetThing(thingID);
+        {
+            var thing = ThingManager.GetThing(thingID);
 
-			if (thing != null)
-			{
-				// For objects (that are not in the inventory) and hotspots, move the player character to the object
-				if (!ThingManager.IsInInventory(thingID))
-				{
-					Vector2 position = Vector2.Zero;
-					if (thing is Object object_)
-						position = object_.Position;
-					else if (thing is Character character)
-						position = character.Position;
-					else if (thing is HotspotArea hotspotArea)
-						position = hotspotArea.GetClosestPoint(StageNode.PlayerCharacter.Position) + hotspotArea.Position;
-					else
-						Logger.Log($"OnAreaActivated: Area {thing.ThingResource.ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
+            if (thing != null)
+            {
+                // For objects (that are not in the inventory) and hotspots, move the player character to the object
+                if (!ThingManager.IsInInventory(thingID))
+                    await MovePlayerToThing(thing);
+            }
 
-					// if (position.DistanceTo(StageNode.PlayerCharacter.Position) > 20)
-					await StageNode.PlayerCharacter.MoveTo(position, 20);
-				}
-			}
+            await PerformVerbAction(thingID);
 
-			if (CurrentCommandState == CommandStateEnum.VerbSelected)
-			{
-				// Interact with the object
+            // Logger.Log($"_OnObjectActivated: Object: {thing.DisplayedName} activated", Logger.LogTypeEnum.Script);
 
-				// var result = InkStory.EvaluateFunction("verb", thingID, currentVerbID);
+            // CurrentCommandState = CommandState.VerbSelected;
+        }
+    }
 
-				if (!InkStory.EvaluateFunction("verb", thingID, currentVerbID).AsBool())
-				{
-					// No scripted reaction found, use the default one
-					ScriptManager.ScriptActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, GameResource.DefaultVerbReactions[currentVerbID]));
-				}
-				await ScriptManager.RunActionQueue();
+    private async Task PerformVerbAction(string thingID)
+    {
+        string performedAction;
 
-				CurrentCommandState = CommandStateEnum.Idle;
-				return;
-			}
-			else
-			{
-				InkStory.EvaluateFunction("verb", thingID, "walk");
-				await ScriptManager.RunActionQueue();
-			}
+        if (CurrentCommandState == CommandStateEnum.VerbSelected)
+        {
+            // Interact with the object
 
-			// Logger.Log($"_OnObjectActivated: Object: {thing.DisplayedName} activated", Logger.LogTypeEnum.Script);
+            // var result = InkStory.EvaluateFunction("verb", thingID, currentVerbID);
 
+            if (!InkStory.EvaluateFunction("verb", thingID, currentVerbID).AsBool())
+            {
+                // No scripted reaction found, use the default one
+                ScriptManager.ScriptActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, GameResource.DefaultVerbReactions[currentVerbID]));
+            }
+            await ScriptManager.RunActionQueue();
+
+			performedAction = currentVerbID;
+            CurrentCommandState = CommandStateEnum.Idle;
+        }
+        else
+        {
+            InkStory.EvaluateFunction("verb", thingID, "walk");
 			InterfaceNode.SetCommandLabel(ThingManager.GetThingName(thingID));
-			// CurrentCommandState = CommandState.VerbSelected;
-		}
-	}
+            await ScriptManager.RunActionQueue();
+			performedAction = "walk";
+        }
 
-	public async Task StartDialog(string characterID) => await DialogManager.StartDialog(characterID);
+		ThingActionCounter.IncrementActionCounter(thingID, performedAction);
+    }
+
+    private async Task MovePlayerToThing(Thing thing)
+    {
+        Vector2 position = Vector2.Zero;
+        if (thing is Object object_)
+            position = object_.Position;
+        else if (thing is Character character)
+            position = character.Position;
+        else if (thing is HotspotArea hotspotArea)
+            position = hotspotArea.GetClosestPoint(StageNode.PlayerCharacter.Position) + hotspotArea.Position;
+        else
+            Logger.Log($"OnAreaActivated: Area {thing.ThingResource.ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
+
+        // if (position.DistanceTo(StageNode.PlayerCharacter.Position) > 20)
+        await StageNode.PlayerCharacter.MoveTo(position, 20);
+    }
+
+    public async Task StartDialog(string characterID) => await DialogManager.StartDialog(characterID);
 
 	public override void _Process(double delta)
 	{

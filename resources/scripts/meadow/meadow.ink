@@ -2,6 +2,9 @@ INCLUDE ../includes.ink
 INCLUDE robot.ink
 
 === function verb(thing_id, verb_id) ===
+    VAR action_count = 0
+    ~ action_count = get_action_count(thing_id, verb_id)
+    
     { thing_id:
     - "cloud1":
         { verb_id:
@@ -69,22 +72,19 @@ INCLUDE robot.ink
         { verb_id:
         - "look":
             {
-                - get_var("bush_looked_once") == false:
+                - action_count == 0:
                     ~ talk("Well, that’s a bush. Looks unsuspecting, right?")
-                    ~ set_var("bush_looked_once", true)
                 - else:
                     {
-                        - get_var("bush_looked_twice") == false:
+                        - action_count == 1:
                             ~ talk("Wait a second, someone left a coin in there!")
                             ~ create("coin")
-                            ~ set_var("bush_looked_twice", true)
                             ~ set_name(thing_id, "Generous bush")
                         - else:
                             ~ talk("I already found the coin in the bush.")
                     }
             }
         - "pick_up":
-            ~ set_var("bush_looked_once", true)
             ~ verb(thing_id, "look")
         - else: ~ return false
         }
@@ -100,7 +100,7 @@ INCLUDE robot.ink
     - "robot":
         { verb_id:
         - "look":
-            ~ talk("A robot standing in meadow. It seems to be looking for something or someone.")
+            ~ talk("A robot standing in the meadow. It seems to be looking for something or someone.")
         - "talk_to":
             ~ start_dialog(thing_id)
         - "use":
