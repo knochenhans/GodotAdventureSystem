@@ -20,7 +20,7 @@ public partial class DialogManager : GodotObject
 
 		CurrentDialogCharacter = Game.ThingManager.GetThing(characterID) as Character;
 
-		Game.StageNode.PlayerCharacter.LookTo(CurrentDialogCharacter.Position);
+		Game.StageNode.PlayerCharacter.LookAt(CurrentDialogCharacter.Position);
 		Game.StageNode.PlayerCharacter.StartDialog();
 
 		CurrentDialogCharacter.LookTo(Game.StageNode.PlayerCharacter.Position);

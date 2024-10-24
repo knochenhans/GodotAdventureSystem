@@ -10,7 +10,7 @@ VAR c = "robot"
     Weird meeting a robot out here in nature. #player
     
     You think so? #robot
-    ~ play_anim_char(c, "front")
+    ~ play_anim_c(c, "front")
     ~ wait(0.3)
     Well doesn’t seem weird to me at all, you know? #robot
     So what do you want, fleshperson? #robot
@@ -36,7 +36,7 @@ VAR c = "robot"
     Do I need one? #robot
 
 * [What’s a robot like you doing out here?]
-    ~ play_anim_char(c, "idle")
+    ~ play_anim_c(c, "idle")
 
     I’m looking for someone. #robot
     And what are *you* doing out here? #robot
@@ -76,7 +76,7 @@ Take care, fleshperson. #robot -> END
     The Analogue Rebellion Front. #robot
 
 * [What can I buy with it?]
-    ~ play_anim_char(c, "shrug")
+    ~ play_anim_c(c, "shrug")
     Nothing, it’s completely worthless. #robot
 
 * [Why give it a silly name like that?]

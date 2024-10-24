@@ -31,6 +31,19 @@ public partial class ThingManager : GodotObject
             RegisterThing(thing.ThingResource.ID, thing);
     }
 
+    public Character GetCharacter(string characterID)
+    {
+        var character = GetThing(characterID);
+
+        if (character is Character)
+            return character as Character;
+        else
+        {
+            Logger.Log($"ThingManager: Thing {characterID} is not a Character", Logger.LogTypeEnum.Error);
+            return null;
+        }
+    }
+
     public bool IsInInventory(string thingID)
     {
         if (Things.ContainsKey(thingID))

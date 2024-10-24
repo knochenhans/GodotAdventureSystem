@@ -206,7 +206,7 @@ public partial class Character : Thing
 		CurrentMovementState = MovementStateEnum.Idle;
 	}
 
-	public void LookTo(Vector2 position)
+	public new void LookAt(Vector2 position)
 	{
 		if (position == Position)
 			CurrentDirection = DirectionEnum.Front;
