@@ -66,8 +66,8 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 26
 text = "Quit"
 
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/SaveButton" to="." method="_OnSaveButtonPressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/LoadButton" to="." method="_OnLoadButtonPressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/OptionsButton" to="." method="_OnOptionsButtonPressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/ContinueButton" to="." method="_OnContinueButtonPressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/QuitButton" to="." method="_OnQuitButtonPressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/SaveButton" to="." method="OnSaveButtonPressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/LoadButton" to="." method="OnLoadButtonPressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/OptionsButton" to="." method="OnOptionsButtonPressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/ContinueButton" to="." method="OnContinueButtonPressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/QuitButton" to="." method="OnQuitButtonPressed"]

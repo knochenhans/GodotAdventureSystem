@@ -42,4 +42,4 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 
-[connection signal="timeout" from="MessageTimer" to="." method="_OnMessageTimerTimeout"]
+[connection signal="timeout" from="MessageTimer" to="." method="OnMessageTimerTimeout"]

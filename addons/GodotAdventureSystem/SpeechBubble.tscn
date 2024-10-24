@@ -25,4 +25,4 @@ autowrap_mode = 2
 [node name="LifeTimer" type="Timer" parent="."]
 one_shot = true
 
-[connection signal="timeout" from="LifeTimer" to="." method="_OnLifeTimerTimeout"]
+[connection signal="timeout" from="LifeTimer" to="." method="OnLifeTimerTimeout"]

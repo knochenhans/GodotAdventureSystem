@@ -16,5 +16,5 @@ theme_override_font_sizes/font_size = 26
 text = "Test"
 script = ExtResource("1_546wn")
 
-[connection signal="mouse_entered" from="." to="." method="_OnMouseEnter"]
-[connection signal="mouse_exited" from="." to="." method="_OnMouseExit"]
+[connection signal="mouse_entered" from="." to="." method="OnMouseEnter"]
+[connection signal="mouse_exited" from="." to="." method="OnMouseExit"]
