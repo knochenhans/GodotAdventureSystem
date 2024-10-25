@@ -4,11 +4,9 @@ using Godot;
 [Icon("res://addons/GodotAdventureSystem/icons/Hotspot.svg")]
 public partial class Hotspot : Polygon2D
 {
-    [Export]
-    public string ID { get; set; }
+    [Export] public string ID { get; set; }
 
-    [Export]
-    public string DisplayedName { get; set; }
+    [Export] public string DisplayedName { get; set; }
 
     [Export]
     public Godot.Collections.Dictionary<string, string> DefaultReactions { get; set; } = new Godot.Collections.Dictionary<string, string>
