@@ -8,7 +8,7 @@ public partial class DialogManager : GodotObject
 	[Signal] public delegate void DialogFinishedEventHandler();
 
 	private Game Game { get; set; }
-	private Character CurrentDialogCharacter { get; set; }
+	public Character CurrentDialogCharacter { get; set; }
 
 	public DialogManager(Game game) => Game = game;
 
@@ -36,24 +36,6 @@ public partial class DialogManager : GodotObject
 
 	private async void OnDialogContinue()
 	{
-		Logger.Log($"OnDialogContinue: {Game.InkStory.CurrentText}", Logger.LogTypeEnum.Script);
-		if (Game.InkStory.CurrentText.StripEdges() != "")
-		{
-			var tag = Game.InkStory.GetCurrentTags();
-
-			Character actingCharacter = Game.StageNode.PlayerCharacter;
-			Character targetCharacter = CurrentDialogCharacter;
-
-			if (tag.Count > 0 && tag[0] != "player")
-			{
-				actingCharacter = Game.ThingManager.GetThing(tag[0]) as Character;
-				targetCharacter = Game.StageNode.PlayerCharacter;
-			}
-
-			Game.ScriptManager.QueueAction(new ScriptActionMessage(actingCharacter, Game.InkStory.CurrentText, targetCharacter));
-			Game.ScriptManager.QueueAction(new ScriptActionCharacterWait(actingCharacter, 0.3f));
-		}
-
 		if (Game.InkStory.CanContinue)
 			Game.InkStory.Continue();
 		else

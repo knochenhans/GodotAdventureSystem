@@ -219,13 +219,21 @@ public partial class Game : Scene
 		if (tag.Count > 0 && InkStory.CurrentText != "")
 		{
 			Character actingCharacter = StageNode.PlayerCharacter;
+			Character targetCharacter = null;
 
+			if (_currentCommandState == CommandStateEnum.Dialog)
+			{
+				if (tag[0] == "player")
+					targetCharacter = DialogManager.CurrentDialogCharacter;
+				else
+					targetCharacter = StageNode.PlayerCharacter;
+			}
 			if (tag[0] != "player")
 			{
 				actingCharacter = ThingManager.GetThing(tag[0]) as Character;
 			}
 
-			ScriptManager.QueueAction(new ScriptActionMessage(actingCharacter, InkStory.CurrentText));
+			ScriptManager.QueueAction(new ScriptActionMessage(actingCharacter, InkStory.CurrentText, targetCharacter));
 			ScriptManager.QueueAction(new ScriptActionCharacterWait(actingCharacter, 0.3f));
 		}
 	}
