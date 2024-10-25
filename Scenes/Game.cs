@@ -38,7 +38,7 @@ public partial class Game : Scene
 		}
 	}
 
-	public ScriptManager ScriptManager { get; set; }
+	public CustomScriptManager ScriptManager { get; set; }
 	public DialogManager DialogManager { get; set; }
 	public ThingActionCounter ThingActionCounter = new();
 
@@ -194,54 +194,75 @@ public partial class Game : Scene
 	public async void OnThingClicked(string thingID)
 	{
 		if (CurrentCommandState != CommandStateEnum.Dialog)
-        {
-            var thing = ThingManager.GetThing(thingID);
+		{
+			var thing = ThingManager.GetThing(thingID);
 
-            if (thing != null)
-            {
-                // For objects (that are not in the inventory) and hotspots, move the player character to the object
-                if (!ThingManager.IsInInventory(thingID))
-                    await MovePlayerToThing(thing);
-            }
+			if (thing != null)
+			{
+				// For objects (that are not in the inventory) and hotspots, move the player character to the object
+				if (!ThingManager.IsInInventory(thingID))
+					await MovePlayerToThing(thing);
+			}
 
-            await PerformVerbAction(thingID);
+			await PerformVerbAction(thingID);
 
-            // Logger.Log($"_OnObjectActivated: Object: {thing.DisplayedName} activated", Logger.LogTypeEnum.Script);
+			// Logger.Log($"_OnObjectActivated: Object: {thing.DisplayedName} activated", Logger.LogTypeEnum.Script);
 
-            // CurrentCommandState = CommandState.VerbSelected;
-        }
-    }
+			// CurrentCommandState = CommandState.VerbSelected;
+		}
+	}
 
-    private async Task PerformVerbAction(string thingID)
-    {
-        string performedAction;
+	private void Talk()
+	{
+		var tag = InkStory.GetCurrentTags();
 
-        if (CurrentCommandState == CommandStateEnum.VerbSelected)
-        {
-            // Interact with the object
+		if (tag.Count > 0 && InkStory.CurrentText != "")
+		{
+			Character actingCharacter = StageNode.PlayerCharacter;
 
-            // var result = InkStory.EvaluateFunction("verb", thingID, currentVerbID);
+			if (tag[0] != "player")
+			{
+				actingCharacter = ThingManager.GetThing(tag[0]) as Character;
+			}
 
-            if (!InkStory.EvaluateFunction("verb", thingID, currentVerbID).AsBool())
-            {
-                // No scripted reaction found, use the default one
-                ScriptManager.ScriptActionQueue.Add(new ScriptActionMessage(StageNode.PlayerCharacter, GameResource.DefaultVerbReactions[currentVerbID]));
-            }
-            await ScriptManager.RunActionQueue();
+			ScriptManager.QueueAction(new ScriptActionMessage(actingCharacter, InkStory.CurrentText));
+			ScriptManager.QueueAction(new ScriptActionCharacterWait(actingCharacter, 0.3f));
+		}
+	}
+
+	private async Task PerformVerbAction(string thingID)
+	{
+		string performedAction;
+
+		InkStory.Continued += Talk;
+
+		if (CurrentCommandState == CommandStateEnum.VerbSelected)
+		{
+			// Interact with the object
+
+			if (!InkStory.EvaluateFunction("verb", thingID, currentVerbID).AsBool())
+			{
+				// No scripted reaction found, use the default one
+				ScriptManager.QueueAction(new ScriptActionMessage(StageNode.PlayerCharacter, GameResource.DefaultVerbReactions[currentVerbID]));
+			}
+
+			await ScriptManager.RunScriptActionQueue();
 
 			performedAction = currentVerbID;
-            CurrentCommandState = CommandStateEnum.Idle;
-        }
-        else
-        {
-            InkStory.EvaluateFunction("verb", thingID, "walk");
+			CurrentCommandState = CommandStateEnum.Idle;
+		}
+		else
+		{
+			InkStory.EvaluateFunction("verb", thingID, "walk");
 			InterfaceNode.SetCommandLabel(ThingManager.GetThingName(thingID));
-            await ScriptManager.RunActionQueue();
+			await ScriptManager.RunScriptActionQueue();
 			performedAction = "walk";
-        }
+		}
 
 		ThingActionCounter.IncrementActionCounter(thingID, performedAction);
-    }
+
+		InkStory.Continued -= Talk;
+	}
 
 	private async Task MovePlayerToThing(Thing thing)
 	{

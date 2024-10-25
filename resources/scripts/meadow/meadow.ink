@@ -9,14 +9,15 @@ INCLUDE robot.ink
     - "cloud1":
         { verb_id:
         - "look":
-            ~ talk("A cloud high above in the sky…")
+            This is a test! #player
+            A cloud high above in the sky… #player
             ~ move_rel(75, 20)
-            ~ talk("A cloooooud high above in the skyyyy…")
+            A cloooooud high above in the skyyyy… #player
             ~ move_rel(-50, 0)
-            ~ talk("A cloooooooooooud high above in the skyyyyyyyyy…")
+            A cloooooooooooud high above in the skyyyyyyyyy… #player
             ~ move_rel(-25, 0)
-            ~ talk("Sorry.")
-        - "talk_to": ~ talk("This cloud’s not talking back to me. What a shame!")
+            Sorry. #player
+        - "talk_to": This cloud’s not talking back to me. What a shame! #player
         - "give":
             ~ play_anim("left_hand_up")
         - else: ~ return false
@@ -25,21 +26,21 @@ INCLUDE robot.ink
     - "cloud2":
         { verb_id:
         - "look":
-            ~ talk("Another.")
+            Another. #player
 
         - "talk_to":
             ~ wait(2)
-            ~ talk("I’m controlled by an Ink script!")
+            I’m controlled by an Ink script! #player
             ~ wait(0.5)
-            ~ talk("Lets walk a bit to the right…")
+            Lets walk a bit to the right… #player
             ~ move_rel(75, 0)
             ~ wait(0.5)
-            ~ talk("And now to the left…")
+            And now to the left… #player
             ~ move_rel(-150, 0)
             ~ wait(0.5)
-            ~ talk("And I can also do custom animations, see?")
+            And I can also do custom animations, see? #player
             ~ play_anim("left_hand_up")
-            ~ talk("It’s great!")
+            It’s great! #player
 
         - else: ~ return false
         }
@@ -47,8 +48,8 @@ INCLUDE robot.ink
     - "cloud3":
         { verb_id:
 
-        - "look": ~ talk("Yet another a cloud high above in the sky.")
-        - "talk_to": ~ talk("Come on, cloud, talk to me!")
+        - "look": Yet another a cloud high above in the sky. #player
+        - "talk_to": Come on, cloud, talk to me! #player
         - else: ~ return false
         }
     
@@ -57,14 +58,14 @@ INCLUDE robot.ink
 
         - "look":
             { is_in_inventory(thing_id) == false:
-                ~ talk("A paper note.")
+                A paper note. #player
             - else:
-                ~ talk("It’s a paper note. It reads: “Why are you reading this?”")
+                It’s a paper note. It reads: “Why are you reading this?” #player
                 ~ set_name("note", "Paper note with a pointless question")
             }
         - "pick_up":
             ~ pick_up(thing_id)
-            ~ talk("I picked up the note.")
+            I picked up the note. #player
         - else: ~ return false
         }
 
@@ -73,15 +74,15 @@ INCLUDE robot.ink
         - "look":
             {
                 - action_count == 0:
-                    ~ talk("Well, that’s a bush. Looks unsuspecting, right?")
+                    Well, that’s a bush. Looks unsuspecting, right? #player
                 - else:
                     {
                         - action_count == 1:
-                            ~ talk("Wait a second, someone left a coin in there!")
+                            Wait a second, someone left a coin in there! #player
                             ~ create("coin")
                             ~ set_name(thing_id, "Generous bush")
                         - else:
-                            ~ talk("I already found the coin in the bush.")
+                            I already found the coin in the bush. #player
                     }
             }
         - "pick_up":
@@ -92,7 +93,7 @@ INCLUDE robot.ink
     - "coin":
         { verb_id:
         - "look":
-            ~ talk("A coin I found in the bush. It has a strange symbol on it.")
+            A coin I found in the bush. It has a strange symbol on it. #player
             ~ set_name("coin", "Strange coin")
         - else: ~ return false
         }
@@ -100,13 +101,13 @@ INCLUDE robot.ink
     - "robot":
         { verb_id:
         - "look":
-            ~ talk("A robot standing in the meadow. It seems to be looking for something or someone.")
+            A robot standing in the meadow. It seems to be looking for something or someone. #player
         - "talk_to":
             ~ start_dialog(thing_id)
         - "use":
-            ~ talk("Erm...")
+            Erm... #player
             ~ wait(1.0)
-            ~ talk("It’s not *that* kind of robot.")
+            It’s not *that* kind of robot. #player
         - else: ~ return false
         }
 
