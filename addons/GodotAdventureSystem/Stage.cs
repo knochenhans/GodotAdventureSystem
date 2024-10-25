@@ -53,8 +53,8 @@ public partial class Stage : Node2D
 			if (_hotspotNode is Hotspot hotspotNode)
 			{
 				var hotspotArea = newHotspotAreaScene.Instantiate() as HotspotArea;
-				hotspotArea.ThingResource.DisplayedName = hotspotNode.DisplayedName;
-				hotspotArea.ThingResource.ID = hotspotNode.ID;
+				(hotspotArea.Resource as ThingResource).DisplayedName = hotspotNode.DisplayedName;
+				(hotspotArea.Resource as ThingResource).ID = hotspotNode.ID;
 				hotspotArea.GetNode<CollisionPolygon2D>("CollisionPolygon2D").Polygon = hotspotNode.Polygon;
 				hotspotArea.Transform = hotspotNode.Transform;
 				RemoveChild(hotspotNode);
@@ -73,9 +73,9 @@ public partial class Stage : Node2D
 	public void OnThingInputEvent(InputEvent @event, Thing thing)
 	{
 		if (@event is InputEventMouseMotion mouseMotionEvent)
-			EmitSignal(SignalName.ThingHovered, thing.ThingResource.ID);
+			EmitSignal(SignalName.ThingHovered, (thing.Resource as ThingResource).ID);
 		else if (@event is InputEventMouseButton mouseButtonEvent && mouseButtonEvent.Pressed && mouseButtonEvent.ButtonIndex == MouseButton.Left)
-			EmitSignal(SignalName.ThingClicked, thing.ThingResource.ID);
+			EmitSignal(SignalName.ThingClicked, (thing.Resource as ThingResource).ID);
 	}
 
 	public Vector2 GetSize()
@@ -86,7 +86,7 @@ public partial class Stage : Node2D
 	public Object FindObject(string objectID)
 	{
 		foreach (var object_ in GetTree().GetNodesInGroup("object"))
-			if (object_ is Object objectNode && objectNode.ThingResource.ID == objectID)
+			if (object_ is Object objectNode && (objectNode.Resource as ThingResource).ID == objectID)
 				return objectNode;
 		return null;
 	}

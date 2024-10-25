@@ -11,7 +11,12 @@ InitialOrientation = 2
 MovementSpeed = 50.0
 SpeechColor = Color(1, 1, 1, 1)
 SpriteFrames = ExtResource("1_2hjpy")
-IdlePrefix = "idle"
-MovementPrefix = "move"
+AnimationPrefixMap = {
+"idle": "idle",
+"move": "move",
+"talk": "talk"
+}
 MovementSound = ExtResource("1_1juo5")
 PickupSound = ExtResource("2_17nm2")
+ID = "player"
+DisplayedName = "Player"

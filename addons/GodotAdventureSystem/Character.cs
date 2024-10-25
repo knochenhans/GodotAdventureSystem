@@ -5,7 +5,6 @@ using Godot;
 public partial class Character : Thing
 {
 	[Signal] public delegate void MovementFinishedEventHandler();
-	[Export] public CharacterResource CharacterResource;
 
 	enum MovementStateEnum
 	{
@@ -71,7 +70,7 @@ public partial class Character : Thing
 		CurrentDirection = DirectionEnum.Right;
 		CurrentMovementState = MovementStateEnum.Idle;
 
-		AnimatedSprite2D.SpriteFrames = CharacterResource.SpriteFrames;
+		AnimatedSprite2D.SpriteFrames = (Resource as CharacterResource).SpriteFrames;
 	}
 
 	private void MovementStateChanged(MovementStateEnum value)
@@ -126,7 +125,7 @@ public partial class Character : Thing
 
 		var speechBubble = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/SpeechBubble.tscn").Instantiate() as SpeechBubble;
 		AddChild(speechBubble);
-		speechBubble.Init(message, CharacterResource.SpeechColor, new Vector2(0, GetSize().Y));
+		speechBubble.Init(message, (Resource as CharacterResource).SpeechColor, new Vector2(0, GetSize().Y));
 
 		await ToSignal(speechBubble, global::SpeechBubble.SignalName.Finished);
 		SetIdle();
@@ -143,13 +142,13 @@ public partial class Character : Thing
 		}
 		else
 		{
-			Logger.Log($"Animation \"{animationName}\" not found in {ThingResource.ID}", Logger.LogTypeEnum.Error);
+			Logger.Log($"Animation \"{animationName}\" not found in {(Resource as CharacterResource).ID}", Logger.LogTypeEnum.Error);
 		}
 	}
 
 	public void PickUpObject()
 	{
-		SoundPlayer.Stream = CharacterResource.PickupSound;
+		SoundPlayer.Stream = (Resource as CharacterResource).PickupSound;
 		SoundPlayer.Play();
 	}
 
@@ -161,8 +160,7 @@ public partial class Character : Thing
 			{
 				if (!NavigationAgent2D.IsNavigationFinished())
 				{
-					// GD.Print(NavigationAgent2D.TargetDesiredDistance);
-					var movementDelta = CharacterResource.MovementSpeed * delta;
+					var movementDelta = (Resource as CharacterResource).MovementSpeed * delta;
 					var nextPathPosition = NavigationAgent2D.GetNextPathPosition();
 					var newVelocity = Position.DirectionTo(nextPathPosition) * (float)movementDelta;
 					GlobalPosition = GlobalPosition.MoveToward(nextPathPosition + newVelocity, (float)movementDelta);

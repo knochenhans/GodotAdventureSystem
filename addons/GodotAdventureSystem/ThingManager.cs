@@ -11,7 +11,7 @@ public partial class ThingManager : GodotObject
     public void RegisterThing(string thingID, Thing thing)
     {
         Things[thingID] = thing;
-        Logger.Log($"ThingManager: Thing {thingID} with name {thing.ThingResource.DisplayedName} registered", Logger.LogTypeEnum.World);
+        Logger.Log($"ThingManager: Thing {thingID} with name \"{(thing.Resource as ThingResource).DisplayedName}\" registered", Logger.LogTypeEnum.World);
 
         // if (!thing.Visible)
         //     Logger.Log($"ThingManager: Thing {thingID} is set as invisible", Logger.LogTypeEnum.World);
@@ -28,7 +28,7 @@ public partial class ThingManager : GodotObject
     public void RegisterThings(Array<Thing> things)
     {
         foreach (var thing in things)
-            RegisterThing(thing.ThingResource.ID, thing);
+            RegisterThing((thing.Resource as ThingResource).ID, thing);
     }
 
     public Character GetCharacter(string characterID)
@@ -75,7 +75,7 @@ public partial class ThingManager : GodotObject
     {
         if (Things.ContainsKey(thingID))
         {
-            Things[thingID].ThingResource.DisplayedName = name;
+            (Things[thingID].Resource as ThingResource).DisplayedName = name;
             Logger.Log($"ThingManager: Thing {thingID} name updated to {name}", Logger.LogTypeEnum.World);
         }
         else
@@ -85,7 +85,7 @@ public partial class ThingManager : GodotObject
     public string GetThingName(string thingID)
     {
         if (Things.ContainsKey(thingID))
-            return Things[thingID].ThingResource.DisplayedName;
+            return (Things[thingID].Resource as ThingResource).DisplayedName;
         else
         {
             Logger.Log($"ThingManager: Thing {thingID} not found", Logger.LogTypeEnum.Error);

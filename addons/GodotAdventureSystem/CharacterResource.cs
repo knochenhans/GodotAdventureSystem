@@ -1,6 +1,7 @@
 using Godot;
+using Godot.Collections;
 
-public partial class CharacterResource : Resource
+public partial class CharacterResource : ThingResource
 {
     public enum OrientationEnum
     {
@@ -17,8 +18,13 @@ public partial class CharacterResource : Resource
 
     [ExportGroup("Sprite")]
     [Export] public SpriteFrames SpriteFrames { get; set; } = new();
-    [Export] public string IdlePrefix { get; set; } = "idle";
-    [Export] public string MovementPrefix { get; set; } = "move";
+
+    [Export] public Dictionary<string, string> AnimationPrefixMap { get; set; } = new Dictionary<string, string>
+    {
+        { "idle", "idle" },
+        { "move", "move" },
+        { "talk", "talk" }
+    };
 
     [ExportGroup("Sounds")]
     [Export] public AudioStream MovementSound { get; set; } = new();

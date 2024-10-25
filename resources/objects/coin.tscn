@@ -4,14 +4,14 @@
 [ext_resource type="SpriteFrames" uid="uid://15057we2rqc6" path="res://resources/coin.aseprite" id="2_0botd"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/ThingResource.cs" id="2_4svfb"]
 
-[sub_resource type="Resource" id="Resource_0etpe"]
+[sub_resource type="Resource" id="Resource_k4tu3"]
 resource_local_to_scene = true
 script = ExtResource("2_4svfb")
 ID = "coin"
 DisplayedName = "Coin"
 
 [node name="Coin" instance=ExtResource("1_ujosb")]
-ThingResource = SubResource("Resource_0etpe")
+Resource = SubResource("Resource_k4tu3")
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 sprite_frames = ExtResource("2_0botd")

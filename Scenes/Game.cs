@@ -282,7 +282,7 @@ public partial class Game : Scene
 		else if (thing is HotspotArea hotspotArea)
 			position = hotspotArea.GetClosestPoint(StageNode.PlayerCharacter.Position) + hotspotArea.Position;
 		else
-			Logger.Log($"OnAreaActivated: Area {thing.ThingResource.ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
+			Logger.Log($"OnAreaActivated: Area {(thing.Resource as ThingResource).ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
 
 		// if (position.DistanceTo(StageNode.PlayerCharacter.Position) > 20)
 		await StageNode.PlayerCharacter.MoveTo(position, 20);
