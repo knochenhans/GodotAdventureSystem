@@ -37,7 +37,7 @@ public partial class CustomScriptManager : ScriptManager
 			BindExternalFunction(item.Key, new Callable(this, item.Value));
 	}
 
-	public override async Task RunActionQueue()
+	public override async Task RunScriptActionQueue()
 	{
 		// Special case for dialog
 		if (ScriptActionQueue.Count == 1)
@@ -51,7 +51,7 @@ public partial class CustomScriptManager : ScriptManager
 			}
 		}
 
-		await base.RunActionQueue();
+		await base.RunScriptActionQueue();
 	}
 
 	public Variant GetVar(string varName) => Game.VariableManager.GetVariable(varName);
@@ -69,20 +69,19 @@ public partial class CustomScriptManager : ScriptManager
 		Game.ThingManager.LoadThingToInventory(objectID);
 		Game.StageNode.PlayerCharacter.PickUpObject();
 	}
-	private void AddToQueue(AbstractScriptAction action) => ScriptActionQueue.Add(action);
 
-	public void StartDialog(string characterID) => AddToQueue(new ScriptActionStartDialog(Game.StageNode.PlayerCharacter, Game, characterID));
-	public void DisplayBubble(string message) => AddToQueue(new ScriptActionMessage(Game.StageNode.PlayerCharacter, message));
-	public void DisplayBubbleTo(string message, string thingID) => AddToQueue(new ScriptActionMessage(Game.StageNode.PlayerCharacter, message, Game.ThingManager.GetThing(thingID)));
-	public void CharacterWait(float seconds) => AddToQueue(new ScriptActionCharacterWait(Game.StageNode.PlayerCharacter, seconds));
-	public void MoveTo(int posX, int posY) => AddToQueue(new ScriptActionMove(Game.StageNode.PlayerCharacter, new Vector2(posX, posY)));
-	public void CharacterMoveTo(string characterID, int posX, int posY) => AddToQueue(new ScriptActionMove(Game.ThingManager.GetCharacter(characterID), new Vector2(posX, posY)));
-	public void MoveRelative(int posX, int posY) => AddToQueue(new ScriptActionMove(Game.StageNode.PlayerCharacter, new Vector2(posX, posY), true));
-	public void CharacterMoveRelative(string characterID, int posX, int posY) => AddToQueue(new ScriptActionMove(Game.ThingManager.GetCharacter(characterID), new Vector2(posX, posY), true));
-	public void LookAt(string thingID) => AddToQueue(new ScriptActionLookAt(Game.StageNode.PlayerCharacter, Game.ThingManager.GetThing(thingID)));
-	public void CharacterLookAt(string characterID, string thingID) => AddToQueue(new ScriptActionLookAt(Game.ThingManager.GetCharacter(characterID), Game.ThingManager.GetThing(thingID)));
-	public void PlayAnimation(string animationID) => AddToQueue(new ScriptActionPlayAnimation(Game.StageNode.PlayerCharacter, animationID));
-	public void CharacterPlayAnimation(string characterID, string animationID) => AddToQueue(new ScriptActionPlayAnimation(Game.ThingManager.GetCharacter(characterID), animationID));
-	public void InkSwitchStage(string stageID, string entryID) => AddToQueue(new ScriptActionSwitchStage(Game.StageNode.PlayerCharacter, stageID, entryID));
+	public void StartDialog(string characterID) => QueueAction(new ScriptActionStartDialog(Game.StageNode.PlayerCharacter, Game, characterID));
+	public void DisplayBubble(string message) => QueueAction(new ScriptActionMessage(Game.StageNode.PlayerCharacter, message));
+	public void DisplayBubbleTo(string message, string thingID) => QueueAction(new ScriptActionMessage(Game.StageNode.PlayerCharacter, message, Game.ThingManager.GetThing(thingID)));
+	public void CharacterWait(float seconds) => QueueAction(new ScriptActionCharacterWait(Game.StageNode.PlayerCharacter, seconds));
+	public void MoveTo(int posX, int posY) => QueueAction(new ScriptActionMove(Game.StageNode.PlayerCharacter, new Vector2(posX, posY)));
+	public void CharacterMoveTo(string characterID, int posX, int posY) => QueueAction(new ScriptActionMove(Game.ThingManager.GetCharacter(characterID), new Vector2(posX, posY)));
+	public void MoveRelative(int posX, int posY) => QueueAction(new ScriptActionMove(Game.StageNode.PlayerCharacter, new Vector2(posX, posY), true));
+	public void CharacterMoveRelative(string characterID, int posX, int posY) => QueueAction(new ScriptActionMove(Game.ThingManager.GetCharacter(characterID), new Vector2(posX, posY), true));
+	public void LookAt(string thingID) => QueueAction(new ScriptActionLookAt(Game.StageNode.PlayerCharacter, Game.ThingManager.GetThing(thingID)));
+	public void CharacterLookAt(string characterID, string thingID) => QueueAction(new ScriptActionLookAt(Game.ThingManager.GetCharacter(characterID), Game.ThingManager.GetThing(thingID)));
+	public void PlayAnimation(string animationID) => QueueAction(new ScriptActionPlayAnimation(Game.StageNode.PlayerCharacter, animationID));
+	public void CharacterPlayAnimation(string characterID, string animationID) => QueueAction(new ScriptActionPlayAnimation(Game.ThingManager.GetCharacter(characterID), animationID));
+	public void InkSwitchStage(string stageID, string entryID) => QueueAction(new ScriptActionSwitchStage(Game.StageNode.PlayerCharacter, stageID, entryID));
 	public int GetActionCounter(string thingID, string actionID) => Game.ThingActionCounter.GetActionCounter(thingID, actionID);
 }

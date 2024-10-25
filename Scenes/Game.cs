@@ -243,23 +243,23 @@ public partial class Game : Scene
 		ThingActionCounter.IncrementActionCounter(thingID, performedAction);
     }
 
-    private async Task MovePlayerToThing(Thing thing)
-    {
-        Vector2 position = Vector2.Zero;
-        if (thing is Object object_)
-            position = object_.Position;
-        else if (thing is Character character)
-            position = character.Position;
-        else if (thing is HotspotArea hotspotArea)
-            position = hotspotArea.GetClosestPoint(StageNode.PlayerCharacter.Position) + hotspotArea.Position;
-        else
-            Logger.Log($"OnAreaActivated: Area {thing.ThingResource.ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
+	private async Task MovePlayerToThing(Thing thing)
+	{
+		Vector2 position = Vector2.Zero;
+		if (thing is Object object_)
+			position = object_.Position;
+		else if (thing is Character character)
+			position = character.Position;
+		else if (thing is HotspotArea hotspotArea)
+			position = hotspotArea.GetClosestPoint(StageNode.PlayerCharacter.Position) + hotspotArea.Position;
+		else
+			Logger.Log($"OnAreaActivated: Area {thing.ThingResource.ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
 
-        // if (position.DistanceTo(StageNode.PlayerCharacter.Position) > 20)
-        await StageNode.PlayerCharacter.MoveTo(position, 20);
-    }
+		// if (position.DistanceTo(StageNode.PlayerCharacter.Position) > 20)
+		await StageNode.PlayerCharacter.MoveTo(position, 20);
+	}
 
-    public async Task StartDialog(string characterID) => await DialogManager.StartDialog(characterID);
+	public async Task StartDialog(string characterID) => await DialogManager.StartDialog(characterID);
 
 	public override void _Process(double delta)
 	{
