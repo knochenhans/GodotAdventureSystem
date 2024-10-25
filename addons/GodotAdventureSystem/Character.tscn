@@ -22,7 +22,7 @@ script = ExtResource("1_auhhc")
 y_sort_enabled = true
 position = Vector2(-12, 0)
 sprite_frames = ExtResource("2_prt4m")
-animation = &"idle"
+animation = &"idle_down"
 centered = false
 offset = Vector2(0, -48)
 

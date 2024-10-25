@@ -36,7 +36,7 @@ VAR c = "robot"
     Do I need one? #robot
 
 * [What’s a robot like you doing out here?]
-    ~ play_anim_c(c, "idle")
+    ~ play_anim_c(c, "idle_down")
 
     I’m looking for someone. #robot
     And what are *you* doing out here? #robot

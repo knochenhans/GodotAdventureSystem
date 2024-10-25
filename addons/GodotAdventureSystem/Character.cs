@@ -29,7 +29,8 @@ public partial class Character : Thing
 	{
 		Left,
 		Right,
-		Front
+		Up,
+		Down
 	}
 
 	DirectionEnum _currentDirection;
@@ -45,9 +46,13 @@ public partial class Character : Thing
 				case DirectionEnum.Right:
 					AnimatedSprite2D.FlipH = true;
 					break;
-				case DirectionEnum.Front:
+				case DirectionEnum.Up:
 					AnimatedSprite2D.FlipH = false;
-					AnimatedSprite2D.Play("idle");
+					AnimatedSprite2D.Play("idle_up");
+					break;
+				case DirectionEnum.Down:
+					AnimatedSprite2D.FlipH = false;
+					AnimatedSprite2D.Play("idle_down");
 					break;
 			}
 
@@ -78,8 +83,8 @@ public partial class Character : Thing
 		switch (value)
 		{
 			case MovementStateEnum.Idle:
-				if (CurrentDirection == DirectionEnum.Front)
-					AnimatedSprite2D.Play("idle");
+				if (CurrentDirection == DirectionEnum.Down)
+					AnimatedSprite2D.Play("idle_down");
 				else
 					AnimatedSprite2D.Play("idle_side");
 				StepSoundPlayer.Stop();
@@ -89,8 +94,8 @@ public partial class Character : Thing
 				StepSoundPlayer.Play();
 				break;
 			case MovementStateEnum.SpeechBubble:
-				if (CurrentDirection == DirectionEnum.Front)
-					AnimatedSprite2D.Play("talk");
+				if (CurrentDirection == DirectionEnum.Down)
+					AnimatedSprite2D.Play("talk_down");
 				else
 					AnimatedSprite2D.Play("talk_side");
 				StepSoundPlayer.Stop();
@@ -138,7 +143,7 @@ public partial class Character : Thing
 			AnimatedSprite2D.Play(animationName);
 			AnimatedSprite2D.SpriteFrames.SetAnimationLoop(animationName, loop);
 			await ToSignal(AnimatedSprite2D, AnimatedSprite2D.SignalName.AnimationFinished);
-			AnimatedSprite2D.Play("idle");
+			AnimatedSprite2D.Play("idle_down");
 		}
 		else
 		{
@@ -169,10 +174,6 @@ public partial class Character : Thing
 						CurrentDirection = DirectionEnum.Left;
 					else if (newVelocity.X > 0)
 						CurrentDirection = DirectionEnum.Right;
-
-					// GD.Print($"Distance to target: {NavigationAgent2D.DistanceToTarget()}");
-					// GD.Print($"Distance to next path position: {Position.DistanceTo(nextPathPosition)}");
-					// GD.Print($"IsTargetReached: {NavigationAgent2D.IsTargetReached()}");
 				}
 			}
 		}
@@ -207,7 +208,7 @@ public partial class Character : Thing
 	public new void LookAt(Vector2 position)
 	{
 		if (position == Position)
-			CurrentDirection = DirectionEnum.Front;
+			CurrentDirection = DirectionEnum.Down;
 		else
 		{
 			if (position.X < Position.X)
