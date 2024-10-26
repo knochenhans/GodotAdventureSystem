@@ -48,7 +48,6 @@ INCLUDE robot.ink
 
     - "cloud3":
         { verb_id:
-
         - "look": Yet another a cloud high above in the sky. #player
         - "talk_to": Come on, cloud, talk to me! #player
         - else: ~ return false
@@ -56,7 +55,6 @@ INCLUDE robot.ink
     
     - "note":
         { verb_id:
-
         - "look":
             { is_in_inventory(thing_id) == false:
                 A paper note. #player
