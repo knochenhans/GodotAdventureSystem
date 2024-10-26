@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dvc0e14o26om4"
-path="res://.godot/imported/voin.png-31456d0450712e8231f09f54b2d54196.ctex"
+uid="uid://fysk5047l2xd"
+path="res://.godot/imported/meadow.png-5f841c95e203036091e1857b725c2057.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/voin.png"
-dest_files=["res://.godot/imported/voin.png-31456d0450712e8231f09f54b2d54196.ctex"]
+source_file="res://resources/stages/meadow.png"
+dest_files=["res://.godot/imported/meadow.png-5f841c95e203036091e1857b725c2057.ctex"]
 
 [params]
 

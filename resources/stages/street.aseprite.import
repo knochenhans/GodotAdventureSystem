@@ -1,0 +1,16 @@
+[remap]
+
+importer="aseprite_wizard.plugin.static-texture"
+type="AtlasTexture"
+uid="uid://caoeii8muscot"
+path="res://.godot/imported/street.aseprite-ed8253ca7deae97085d49ff05f5e7771.res"
+
+[deps]
+
+source_file="res://resources/stages/street.aseprite"
+dest_files=["res://.godot/imported/street.aseprite-ed8253ca7deae97085d49ff05f5e7771.res"]
+
+[params]
+
+exclude_layers_pattern=""
+only_visible_layers=true

@@ -49,13 +49,12 @@ public partial class Game : Scene
 
 		SetupInterface();
 
-		SwitchStage("Meadow");
-
 		ThingManager.AddThingToIventory += InterfaceNode.OnObjectAddedToInventory;
 
 		ScriptManager = new CustomScriptManager(this);
-
 		DialogManager = new DialogManager(this);
+
+		SwitchStage("meadow");
 	}
 
 	private void SetupInterface()
@@ -88,19 +87,26 @@ public partial class Game : Scene
 		{
 			StageNode?.QueueFree();
 
-			StageNode = ResourceLoader.Load<PackedScene>($"res://resources/{stageID}.tscn").Instantiate() as Stage;
-			AddChild(StageNode);
+			if (ResourceLoader.Exists($"res://resources/stages/{stageID}.tscn"))
+			{
+				StageNode = ResourceLoader.Load<PackedScene>($"res://resources/stages/{stageID}.tscn").Instantiate() as Stage;
+				AddChild(StageNode);
 
-			StageNode.ThingClicked += OnThingClicked;
-			StageNode.ThingHovered += OnThingHovered;
+				StageNode.ThingClicked += OnThingClicked;
+				StageNode.ThingHovered += OnThingHovered;
 
-			var playerCharacter = PlayerCharacterScene.Instantiate() as PlayerCharacter;
-			playerCharacter.SwitchStage += (stageID, entryID) => SwitchStage(stageID, entryID);
+				var playerCharacter = PlayerCharacterScene.Instantiate() as PlayerCharacter;
+				playerCharacter.SwitchStage += (stageID, entryID) => SwitchStage(stageID, entryID);
 
-			StageNode.SetupPlayerCharacter(playerCharacter, entryID);
+				StageNode.SetupPlayerCharacter(playerCharacter, entryID);
 
-			ThingManager.Clear();
-			ThingManager.RegisterThings(StageNode.CollectThings());
+				ThingManager.Clear();
+				ThingManager.RegisterThings(StageNode.CollectThings());
+			}
+			else
+			{
+				Logger.Log($"Stage file res://resources/stages/{stageID}.tscn does not exist", Logger.LogTypeEnum.Error);
+			}
 		}
 	}
 

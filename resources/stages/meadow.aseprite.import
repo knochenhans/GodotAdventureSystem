@@ -1,0 +1,16 @@
+[remap]
+
+importer="aseprite_wizard.plugin.static-texture"
+type="AtlasTexture"
+uid="uid://dcxqxis21xby2"
+path="res://.godot/imported/meadow.aseprite-88d8a92821d3c4404099de17f8c4ec15.res"
+
+[deps]
+
+source_file="res://resources/stages/meadow.aseprite"
+dest_files=["res://.godot/imported/meadow.aseprite-88d8a92821d3c4404099de17f8c4ec15.res"]
+
+[params]
+
+exclude_layers_pattern=""
+only_visible_layers=false

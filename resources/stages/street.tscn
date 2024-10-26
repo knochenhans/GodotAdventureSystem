@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://bunmavhhlfrjf"]
 
-[ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://addons/GodotAdventureSystem/Stage.tscn" id="1_68obn"]
-[ext_resource type="Texture2D" uid="uid://caoeii8muscot" path="res://resources/street.aseprite" id="2_l431u"]
-[ext_resource type="Script" path="res://addons/GodotAdventureSystem/Hotspot.cs" id="3_3j87k"]
+[ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://addons/GodotAdventureSystem/Stage.tscn" id="1_5c304"]
+[ext_resource type="Texture2D" uid="uid://caoeii8muscot" path="res://resources/stages/street.aseprite" id="2_uus5n"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/Hotspot.cs" id="3_ygopr"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_q6mm5"]
 vertices = PackedVector2Array(961, 220, 4, 222, 4, 217, 447, 130, 961, 124)
@@ -11,10 +11,10 @@ outlines = Array[PackedVector2Array]([PackedVector2Array(447, 130, 961, 124, 961
 source_geometry_group_name = &"navigation_polygon_source_group"
 agent_radius = 0.0
 
-[node name="Street" instance=ExtResource("1_68obn")]
+[node name="Street" instance=ExtResource("1_5c304")]
 
 [node name="Background" parent="." index="0"]
-texture = ExtResource("2_l431u")
+texture = ExtResource("2_uus5n")
 
 [node name="WalkableRegion" parent="." index="1"]
 navigation_polygon = SubResource("NavigationPolygon_q6mm5")
@@ -33,6 +33,6 @@ color = Color(0, 1, 1, 0.262745)
 [node name="Hotspot" type="Polygon2D" parent="." index="5"]
 color = Color(0, 1, 1, 0.262745)
 polygon = PackedVector2Array(196, 132, 196, 179, 223, 175, 223, 127)
-script = ExtResource("3_3j87k")
+script = ExtResource("3_ygopr")
 ID = "door"
 DisplayedName = "Door"
