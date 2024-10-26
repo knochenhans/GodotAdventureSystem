@@ -10,8 +10,8 @@ VAR c = "robot"
     Weird meeting a robot out here in nature. #player
     
     You think so? #robot
-    ~ play_anim_c(c, "down")
-    ~ wait(0.3)
+    ~ play_anim_c(c, "idle_down")
+    ~ wait(0.8)
     Well doesn’t seem weird to me at all, you know? #robot
     So what do you want, fleshperson? #robot
 
@@ -26,7 +26,12 @@ VAR c = "robot"
     What’s next, are you going to ask me about the weather? #robot
 
     * * [So, how’s the weather?]
-        You know, I heard the last person that made aquaintance with my 1000 volt electro tool is still having dreams about the wonderful buzzing sound it makes. #robot
+        You know, I heard the last person that made aquaintance with my 1000 volt electro tool... #robot
+        ~ play_anim_c(c, "buzz")
+        ...is still having dreams about the wonderful buzzing sound it makes. #robot
+
+    * * [No, actually.]
+        That’s a wise choice. #robot
     
 * [What’s your name?]
     My name is… err, I have no idea to be honest. No one ever asked me that before. #robot
@@ -46,7 +51,7 @@ VAR c = "robot"
 
 * { is_in_inventory("coin") } [Have you ever seen a coin like this?]
     Let me see that. #robot
-    ~wait(1)
+    ~ wait(1)
     That’s a buttcoin. #robot
 
     A what? #player
@@ -60,7 +65,6 @@ VAR c = "robot"
 
 = outro
 Take care, fleshperson. #robot
-~ play_anim_c(c, "look_around")
 
 -> END
 

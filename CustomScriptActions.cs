@@ -61,7 +61,7 @@ public partial class ScriptActionPlayAnimation : CharacterScriptAction
     public string AnimationName { get; set; }
 
     public ScriptActionPlayAnimation(Character character, string animationID) : base(character) { AnimationName = animationID; }
-    public override async Task Execute() => await Character.PlayAnimation(AnimationName, false);
+    public override async Task Execute() => await Character.PlayAnimation(AnimationName);
 }
 
 public partial class ScriptActionStartDialog : CharacterScriptAction

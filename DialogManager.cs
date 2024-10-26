@@ -28,6 +28,7 @@ public partial class DialogManager : GodotObject
 
 		Game.InkStory.ChoosePathString(characterID);
 		Game.InkStory.Continued += OnDialogContinue;
+		DialogFinished += OnDialogFinished;
 		Game.InterfaceNode.DialogOptionClicked += OnDialogChoiceMade;
 		Game.InkStory.ContinueMaximally();
 		await ToSignal(this, SignalName.DialogFinished);
@@ -64,7 +65,7 @@ public partial class DialogManager : GodotObject
 		Game.InkStory.Continue();
 	}
 
-	public void OnFinishDialog()
+	public void OnDialogFinished()
 	{
 		Game.InkStory.CallDeferred("ResetCallstack");
 		Game.InkStory.Continued -= OnDialogContinue;

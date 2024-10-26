@@ -4,8 +4,6 @@ using GodotInk;
 
 public partial class Game : Scene
 {
-	[Signal] public delegate void DialogFinishedEventHandler();
-
 	[Export] GameResource GameResource { get; set; }
 	[Export] public InkStory InkStory { get; set; }
 	[Export] PackedScene PlayerCharacterScene { get; set; }
@@ -58,7 +56,6 @@ public partial class Game : Scene
 		ScriptManager = new CustomScriptManager(this);
 
 		DialogManager = new DialogManager(this);
-		DialogFinished += DialogManager.OnFinishDialog;
 	}
 
 	private void SetupInterface()

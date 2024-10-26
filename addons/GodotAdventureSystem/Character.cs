@@ -50,6 +50,8 @@ public partial class Character : Thing
 	private int _scriptVisits = 0; // How many times this character's story script has been visited by the player
 	public int ScriptVisits { get; set; }
 
+	private string defaultAnimation;
+
 	public override void _Ready()
 	{
 		base._Ready();
@@ -58,9 +60,9 @@ public partial class Character : Thing
 		MovementState = MovementStateEnum.Idle;
 
 		AnimatedSprite2D.SpriteFrames = (Resource as CharacterResource).SpriteFrames;
-		var initialAnimation = (Resource as CharacterResource).InitialAnimation;
-		if (!string.IsNullOrEmpty(initialAnimation))
-			AnimatedSprite2D.Play(initialAnimation);
+		defaultAnimation = (Resource as CharacterResource).DefaultAnimation;
+		if (!string.IsNullOrEmpty(defaultAnimation))
+			AnimatedSprite2D.Play(defaultAnimation);
 	}
 
 	private void MovementStateChanged(MovementStateEnum value)
@@ -86,12 +88,9 @@ public partial class Character : Thing
 		}
 	}
 
-	private void OrientationChanged(OrientationEnum value)
-	{
-		AnimatedSprite2D.Play("idle_" + value.ToString().ToLower());
-	}
+    private void OrientationChanged(OrientationEnum value) => AnimatedSprite2D.Play("idle_" + value.ToString().ToLower());
 
-	public async Task MoveTo(Vector2 position, int desiredDistance = 10, bool isRelative = false)
+    public async Task MoveTo(Vector2 position, int desiredDistance = 10, bool isRelative = false)
 	{
 		if (MovementState != MovementStateEnum.SpeechBubble)
 		{
@@ -139,14 +138,14 @@ public partial class Character : Thing
 		SetIdle();
 	}
 
-	public async Task PlayAnimation(string animationName, bool loop = false)
+	public async Task PlayAnimation(string animationName)
 	{
 		if (AnimatedSprite2D.SpriteFrames.HasAnimation(animationName))
 		{
 			AnimatedSprite2D.Play(animationName);
-			AnimatedSprite2D.SpriteFrames.SetAnimationLoop(animationName, loop);
+			AnimatedSprite2D.SpriteFrames.SetAnimationLoop(animationName, false);
 			await ToSignal(AnimatedSprite2D, AnimatedSprite2D.SignalName.AnimationFinished);
-			AnimatedSprite2D.Play("idle_" + Orientation.ToString().ToLower());
+			// AnimatedSprite2D.Play("idle_" + Orientation.ToString().ToLower());
 		}
 		else
 		{
@@ -183,24 +182,16 @@ public partial class Character : Thing
 		EmitSignal(SignalName.MovementFinished);
 	}
 
-	public Vector2 GetSize()
-	{
-		return AnimatedSprite2D.SpriteFrames.GetFrameTexture(AnimatedSprite2D.Animation, AnimatedSprite2D.Frame).GetSize();
-	}
+	public Vector2 GetSize() => AnimatedSprite2D.SpriteFrames.GetFrameTexture(AnimatedSprite2D.Animation, AnimatedSprite2D.Frame).GetSize();
 
-	public void SetIdle()
+    public void SetIdle() => MovementState = MovementStateEnum.Idle;
+
+    public void StartDialog() => MovementState = MovementStateEnum.Dialog;
+
+    public void EndDialog()
 	{
 		MovementState = MovementStateEnum.Idle;
-	}
-
-	public void StartDialog()
-	{
-		MovementState = MovementStateEnum.Dialog;
-	}
-
-	public void EndDialog()
-	{
-		MovementState = MovementStateEnum.Idle;
+		AnimatedSprite2D.Play(defaultAnimation);
 	}
 
 	public new void LookAt(Vector2 position)

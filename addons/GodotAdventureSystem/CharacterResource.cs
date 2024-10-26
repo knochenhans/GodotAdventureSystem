@@ -24,7 +24,7 @@ public partial class CharacterResource : ThingResource
         { "move", "move" },
         { "talk", "talk" }
     };
-    [Export] public string InitialAnimation { get; set; } = "";
+    [Export] public string DefaultAnimation { get; set; } = "";
 
     [ExportGroup("Sounds")]
     [Export] public AudioStream MovementSound { get; set; } = new();
