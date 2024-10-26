@@ -1,7 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://dwjqecofhdgta"]
+[gd_scene load_steps=13 format=3 uid="uid://dwjqecofhdgta"]
 
 [ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://addons/GodotAdventureSystem/Stage.tscn" id="1_6d714"]
 [ext_resource type="PackedScene" uid="uid://b44hbsyxbbqit" path="res://resources/Robot.tscn" id="2_6wru3"]
+[ext_resource type="Resource" uid="uid://dmjhj36hjneol" path="res://resources/scripts/meadow/meadow.ink" id="2_dxbyw"]
 [ext_resource type="PackedScene" uid="uid://cbyij1livuxja" path="res://resources/objects/note.tscn" id="3_s8c1d"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/ThingResource.cs" id="4_73313"]
 [ext_resource type="Texture2D" uid="uid://q8g5jhi8xo2q" path="res://resources/note.png" id="4_fagxw"]
@@ -30,6 +31,7 @@ source_geometry_group_name = &"navigation_polygon_source_group"
 agent_radius = 0.0
 
 [node name="Meadow" instance=ExtResource("1_6d714")]
+InkStory = ExtResource("2_dxbyw")
 
 [node name="Robot" parent="." index="0" instance=ExtResource("2_6wru3")]
 position = Vector2(443, 195)

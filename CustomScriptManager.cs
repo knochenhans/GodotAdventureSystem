@@ -6,7 +6,7 @@ public partial class CustomScriptManager : ScriptManager
 {
 	public Game Game;
 
-	public CustomScriptManager(Game game) : base(game.InkStory)
+	public CustomScriptManager(Game game) : base(game.CurrentStage.InkStory)
 	{
 		Game = game;
 

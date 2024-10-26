@@ -1,5 +1,5 @@
 using Godot;
-using System;
+using GodotInk;
 using Godot.Collections;
 
 [Icon("res://addons/GodotAdventureSystem/icons/Stage.svg")]
@@ -10,6 +10,8 @@ public partial class Stage : Node2D
 	[Signal] public delegate void ThingClickedEventHandler(string thingID);
 
 	[Export] public string ID { get; set; } = "";
+	[Export] public InkStory InkStory { get; set; }
+
 
 	public Interface InterfaceNode => GetNode<Interface>("../Interface");
 	public TextureRect BackgroundNode => GetNode<TextureRect>("Background");

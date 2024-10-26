@@ -7,7 +7,6 @@ using System;
 public partial class Game : Scene
 {
 	[Export] GameResource GameResource { get; set; }
-	[Export] public InkStory InkStory { get; set; }
 	[Export] PackedScene PlayerCharacterScene { get; set; }
 
 	public enum CommandStateEnum
@@ -51,11 +50,10 @@ public partial class Game : Scene
 		Input.SetCustomMouseCursor(cursor, Input.CursorShape.Arrow, new Vector2(29, 29));
 
 		SetupInterface();
+		SwitchStage("meadow");
 
 		ScriptManager = new CustomScriptManager(this);
 		DialogManager = new DialogManager(this);
-
-		SwitchStage("meadow");
 	}
 
 	private void SetupInterface()
@@ -102,7 +100,7 @@ public partial class Game : Scene
 				CurrentStage.SetupPlayerCharacter(playerCharacter, entryID);
 
 				if (InkStoryStates.ContainsKey(stageID))
-					InkStory.LoadState(InkStoryStates[stageID]);
+					CurrentStage.InkStory.LoadState(InkStoryStates[stageID]);
 			}
 			else
 			{
@@ -230,9 +228,9 @@ public partial class Game : Scene
 
 	private void Talk()
 	{
-		var tag = InkStory.GetCurrentTags();
+		var tag = CurrentStage.InkStory.GetCurrentTags();
 
-		if (tag.Count > 0 && InkStory.CurrentText != "")
+		if (tag.Count > 0 && CurrentStage.InkStory.CurrentText != "")
 		{
 			Character actingCharacter = CurrentStage.PlayerCharacter;
 			Character targetCharacter = null;
@@ -249,7 +247,7 @@ public partial class Game : Scene
 				actingCharacter = CurrentStage.StageThingManager.GetThing(tag[0]) as Character;
 			}
 
-			ScriptManager.QueueAction(new ScriptActionMessage(actingCharacter, InkStory.CurrentText, targetCharacter));
+			ScriptManager.QueueAction(new ScriptActionMessage(actingCharacter, CurrentStage.InkStory.CurrentText, targetCharacter));
 			ScriptManager.QueueAction(new ScriptActionCharacterWait(actingCharacter, 0.3f));
 		}
 	}
@@ -258,14 +256,14 @@ public partial class Game : Scene
 	{
 		string performedAction;
 
-		InkStory.Continued += Talk;
+		CurrentStage.InkStory.Continued += Talk;
 
 		if (CurrentCommandState == CommandStateEnum.VerbSelected)
 		{
 			performedAction = currentVerbID;
 
 			// Interact with the object
-			if (!InkStory.EvaluateFunction("verb", thingID, currentVerbID).AsBool())
+			if (!CurrentStage.InkStory.EvaluateFunction("verb", thingID, currentVerbID).AsBool())
 			{
 				// No scripted reaction found, use the default one
 				ScriptManager.QueueAction(new ScriptActionMessage(CurrentStage.PlayerCharacter, GameResource.DefaultVerbReactions[currentVerbID]));
@@ -277,7 +275,7 @@ public partial class Game : Scene
 		}
 		else
 		{
-			InkStory.EvaluateFunction("verb", thingID, "walk");
+			CurrentStage.InkStory.EvaluateFunction("verb", thingID, "walk");
 			InterfaceNode.SetCommandLabel(CurrentStage.StageThingManager.GetThingName(thingID));
 			await ScriptManager.RunScriptActionQueue();
 			performedAction = "walk";
@@ -285,7 +283,7 @@ public partial class Game : Scene
 
 		ThingActionCounter.IncrementActionCounter(thingID, performedAction);
 
-		InkStory.Continued -= Talk;
+		CurrentStage.InkStory.Continued -= Talk;
 	}
 
 	private async Task MovePlayerToThing(Thing thing)
@@ -371,7 +369,7 @@ public partial class Game : Scene
 		// Save ink story states per stage
 		Dictionary<string, string> inkStoryStates = new()
 		{
-			[CurrentStage.ID] = InkStory.SaveState()
+			[CurrentStage.ID] = CurrentStage.InkStory.SaveState()
 		};
 
 		saveData.Add("inkStoryStates", inkStoryStates);

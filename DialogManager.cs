@@ -26,25 +26,25 @@ public partial class DialogManager : GodotObject
 		CurrentDialogCharacter.LookAt(Game.CurrentStage.PlayerCharacter.Position);
 		CurrentDialogCharacter.StartDialog();
 
-		Game.InkStory.ChoosePathString(characterID);
-		Game.InkStory.Continued += OnDialogContinue;
+		Game.CurrentStage.InkStory.ChoosePathString(characterID);
+		Game.CurrentStage.InkStory.Continued += OnDialogContinue;
 		DialogFinished += OnDialogFinished;
 		Game.InterfaceNode.DialogOptionClicked += OnDialogChoiceMade;
-		Game.InkStory.ContinueMaximally();
+		Game.CurrentStage.InkStory.ContinueMaximally();
 		await ToSignal(this, SignalName.DialogFinished);
 		Logger.Log($"Finished dialog with {characterID}", Logger.LogTypeEnum.Script);
 	}
 
 	private async void OnDialogContinue()
 	{
-		if (Game.InkStory.CanContinue)
-			Game.InkStory.Continue();
+		if (Game.CurrentStage.InkStory.CanContinue)
+			Game.CurrentStage.InkStory.Continue();
 		else
 		{
 			await Game.ScriptManager.RunScriptActionQueue();
 
-			if (Game.InkStory.CurrentChoices.Count > 0)
-				Game.InterfaceNode.SetDialogChoiceLabels(new Array<InkChoice>(Game.InkStory.CurrentChoices));
+			if (Game.CurrentStage.InkStory.CurrentChoices.Count > 0)
+				Game.InterfaceNode.SetDialogChoiceLabels(new Array<InkChoice>(Game.CurrentStage.InkStory.CurrentChoices));
 			else
 			{
 				Game.InterfaceNode.Mode = Interface.ModeEnum.Normal;
@@ -61,14 +61,14 @@ public partial class DialogManager : GodotObject
 
 		await Game.ScriptManager.RunScriptActionQueue();
 
-		Game.InkStory.ChooseChoiceIndex(choice.Index);
-		Game.InkStory.Continue();
+		Game.CurrentStage.InkStory.ChooseChoiceIndex(choice.Index);
+		Game.CurrentStage.InkStory.Continue();
 	}
 
 	public void OnDialogFinished()
 	{
-		Game.InkStory.CallDeferred("ResetCallstack");
-		Game.InkStory.Continued -= OnDialogContinue;
+		Game.CurrentStage.InkStory.CallDeferred("ResetCallstack");
+		Game.CurrentStage.InkStory.Continued -= OnDialogContinue;
 		DialogFinished -= OnDialogFinished;
 
 		Game.InterfaceNode.DialogOptionClicked -= OnDialogChoiceMade;
