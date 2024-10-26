@@ -16,6 +16,7 @@ AnimationPrefixMap = {
 "move": "move",
 "talk": "talk"
 }
+DefaultAnimation = ""
 MovementSound = ExtResource("1_1juo5")
 PickupSound = ExtResource("2_17nm2")
 ID = "player"

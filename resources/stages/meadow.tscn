@@ -72,9 +72,5 @@ position = Vector2(222, 187)
 script = ExtResource("7_haa85")
 ID = "right"
 
-[node name="ExitLeft" parent="." index="10"]
-color = Color(0, 1, 1, 0.262745)
-
 [node name="ExitRight" parent="." index="11"]
-color = Color(0, 1, 1, 0.262745)
 DisplayedName = "To street"
