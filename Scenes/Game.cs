@@ -19,6 +19,8 @@ public partial class Game : Scene
 
 	public VariableManager VariableManager { get; set; } = new();
 
+	public Dictionary<string, string> InkStoryStates { get; set; } = new();
+
 	public Interface InterfaceNode => GetNode<Interface>("Interface");
 	public Stage CurrentStage { get; set; }
 	public string currentVerbID;
@@ -98,6 +100,9 @@ public partial class Game : Scene
 				playerCharacter.SwitchStage += (stageID, entryID) => SwitchStage(stageID, entryID);
 
 				CurrentStage.SetupPlayerCharacter(playerCharacter, entryID);
+
+				if (InkStoryStates.ContainsKey(stageID))
+					InkStory.LoadState(InkStoryStates[stageID]);
 			}
 			else
 			{
@@ -388,6 +393,9 @@ public partial class Game : Scene
 			// Load general data
 			var saveData = (Dictionary<string, Variant>)saveFile.GetVar();
 
+			// Load ink story states per stage
+			InkStoryStates = (Dictionary<string, string>)saveData["inkStoryStates"];
+
 			SwitchStage(saveData["stageID"].ToString());
 			CurrentStage.PlayerCharacter.Position = (Vector2)saveData["position"];
 			CurrentStage.PlayerCharacter.Orientation = Enum.Parse<Character.OrientationEnum>(saveData["orientation"].ToString());
@@ -436,16 +444,6 @@ public partial class Game : Scene
 
 				CurrentStage.PlayerCharacter.AddThingToInventory(thingResource);
 			}
-
-			// Load ink story states per stage
-			var inkStoryStates = (Dictionary<string, string>)saveData["inkStoryStates"];
-
-			// foreach (var inkStoryState in inkStoryStates)
-			// {
-			// 	InkStory.LoadState(inkStoryState.Value);
-			// }
-
-			InkStory.LoadState(inkStoryStates[CurrentStage.ID]);
 		}
 		else
 		{

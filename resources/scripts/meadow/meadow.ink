@@ -118,7 +118,7 @@ INCLUDE robot.ink
     - "exit_right":
         { verb_id:
         - "walk":
-            ~ switch_stage("Street", "default")
+            ~ switch_stage("street", "default")
         - else: ~ return false
         }
 
