@@ -312,14 +312,13 @@ public partial class Game : Scene
 	{
 		// Save general data, variables, and ink story state
 		Dictionary<string, Variant> saveData = new()
-        {
-            { "stageID", CurrentStage.ID },
-            { "position", CurrentStage.PlayerCharacter.Position },
-            { "orientation", CurrentStage.PlayerCharacter.Orientation.ToString() },
-            { "cameraPosition", Camera2DNode.Position },
-            { "variables", VariableManager.GetVariables() },
-			{ "inkStoryState", InkStory.SaveState() }
-        };
+		{
+			{ "stageID", CurrentStage.ID },
+			{ "position", CurrentStage.PlayerCharacter.Position },
+			{ "orientation", CurrentStage.PlayerCharacter.Orientation.ToString() },
+			{ "cameraPosition", Camera2DNode.Position },
+			{ "variables", VariableManager.GetVariables() },
+		};
 
 		// Save things in stage
 		var thingsStage = CurrentStage.StageThingManager.GetThings();
@@ -364,6 +363,14 @@ public partial class Game : Scene
 
 		saveData.Add("inventory", thingsInventoryData);
 
+		// Save ink story states per stage
+		Dictionary<string, string> inkStoryStates = new()
+		{
+			[CurrentStage.ID] = InkStory.SaveState()
+		};
+
+		saveData.Add("inkStoryStates", inkStoryStates);
+
 		// Write save data to file
 		using var saveFile = FileAccess.Open("user://savegame.save", FileAccess.ModeFlags.Write);
 		saveFile.StoreVar(saveData);
@@ -392,14 +399,11 @@ public partial class Game : Scene
 			// Load things in stage
 			var thingsStageData = (Dictionary<string, Dictionary<string, Variant>>)saveData["things"];
 
-			// Load ink story state
-			InkStory.LoadState((string)saveData["inkStoryState"]);
-
-            Array<Thing> list = CurrentStage.StageThingManager.GetThings();
-            for (int i = list.Count - 1; i >= 0; i--)
+			Array<Thing> list = CurrentStage.StageThingManager.GetThings();
+			for (int i = list.Count - 1; i >= 0; i--)
 			{
-                Thing thing = list[i];
-                var thingID = (thing.Resource as ThingResource).ID;
+				Thing thing = list[i];
+				var thingID = (thing.Resource as ThingResource).ID;
 
 				if (thingsStageData[CurrentStage.ID].ContainsKey(thingID))
 				{
@@ -432,6 +436,16 @@ public partial class Game : Scene
 
 				CurrentStage.PlayerCharacter.AddThingToInventory(thingResource);
 			}
+
+			// Load ink story states per stage
+			var inkStoryStates = (Dictionary<string, string>)saveData["inkStoryStates"];
+
+			// foreach (var inkStoryState in inkStoryStates)
+			// {
+			// 	InkStory.LoadState(inkStoryState.Value);
+			// }
+
+			InkStory.LoadState(inkStoryStates[CurrentStage.ID]);
 		}
 		else
 		{
