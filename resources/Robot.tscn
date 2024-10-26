@@ -9,7 +9,7 @@ Resource = ExtResource("2_l3asv")
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 sprite_frames = ExtResource("3_em3x8")
-animation = &"front"
+animation = &"look_around"
 
 [node name="CollisionShape2D" parent="." index="2"]
 position = Vector2(0, -18)

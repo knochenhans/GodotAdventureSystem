@@ -14,18 +14,17 @@ public partial class Character : Thing
 		Dialog
 	}
 
-	MovementStateEnum _currentMovementState;
-	MovementStateEnum CurrentMovementState
+	MovementStateEnum _movementState;
+	MovementStateEnum MovementState
 	{
-		get => _currentMovementState; set
+		get => _movementState; set
 		{
 			MovementStateChanged(value);
-
-			_currentMovementState = value;
+			_movementState = value;
 		}
 	}
 
-	enum DirectionEnum
+	enum OrientationEnum
 	{
 		Left,
 		Right,
@@ -33,30 +32,13 @@ public partial class Character : Thing
 		Down
 	}
 
-	DirectionEnum _currentDirection;
-	DirectionEnum CurrentDirection
+	OrientationEnum _orientation;
+	OrientationEnum Orientation
 	{
-		get => _currentDirection; set
+		get => _orientation; set
 		{
-			switch (value)
-			{
-				case DirectionEnum.Left:
-					AnimatedSprite2D.FlipH = false;
-					break;
-				case DirectionEnum.Right:
-					AnimatedSprite2D.FlipH = true;
-					break;
-				case DirectionEnum.Up:
-					AnimatedSprite2D.FlipH = false;
-					AnimatedSprite2D.Play("idle_up");
-					break;
-				case DirectionEnum.Down:
-					AnimatedSprite2D.FlipH = false;
-					AnimatedSprite2D.Play("idle_down");
-					break;
-			}
-
-			_currentDirection = value;
+			OrientationChanged(value);
+			_orientation = value;
 		}
 	}
 
@@ -72,8 +54,8 @@ public partial class Character : Thing
 	{
 		base._Ready();
 
-		CurrentDirection = DirectionEnum.Right;
-		CurrentMovementState = MovementStateEnum.Idle;
+		Orientation = OrientationEnum.Right;
+		MovementState = MovementStateEnum.Idle;
 
 		AnimatedSprite2D.SpriteFrames = (Resource as CharacterResource).SpriteFrames;
 	}
@@ -83,33 +65,32 @@ public partial class Character : Thing
 		switch (value)
 		{
 			case MovementStateEnum.Idle:
-				if (CurrentDirection == DirectionEnum.Down)
-					AnimatedSprite2D.Play("idle_down");
-				else
-					AnimatedSprite2D.Play("idle_side");
+				AnimatedSprite2D.Play("idle_" + Orientation.ToString().ToLower());
 				StepSoundPlayer.Stop();
 				break;
 			case MovementStateEnum.Moving:
-				AnimatedSprite2D.Play("walk");
+				AnimatedSprite2D.Play("walk_" + Orientation.ToString().ToLower());
 				StepSoundPlayer.Play();
 				break;
 			case MovementStateEnum.SpeechBubble:
-				if (CurrentDirection == DirectionEnum.Down)
-					AnimatedSprite2D.Play("talk_down");
-				else
-					AnimatedSprite2D.Play("talk_side");
+				AnimatedSprite2D.Play("talk_" + Orientation.ToString().ToLower());
 				StepSoundPlayer.Stop();
 				break;
 			case MovementStateEnum.Dialog:
-				AnimatedSprite2D.Play("idle_side");
+				AnimatedSprite2D.Play("idle_" + Orientation.ToString().ToLower());
 				StepSoundPlayer.Stop();
 				break;
 		}
 	}
 
+	private void OrientationChanged(OrientationEnum value)
+	{
+		AnimatedSprite2D.Play("idle_" + value.ToString().ToLower());
+	}
+
 	public async Task MoveTo(Vector2 position, int desiredDistance = 10, bool isRelative = false)
 	{
-		if (CurrentMovementState != MovementStateEnum.SpeechBubble)
+		if (MovementState != MovementStateEnum.SpeechBubble)
 		{
 			NavigationAgent2D.TargetDesiredDistance = desiredDistance;
 
@@ -118,7 +99,26 @@ public partial class Character : Thing
 			else
 				NavigationAgent2D.TargetPosition = position;
 
-			CurrentMovementState = MovementStateEnum.Moving;
+			// Check angle to determine if to use left/right or up/down animation
+			Vector2 targetPosition = isRelative ? Position + position : position;
+			Vector2 direction = targetPosition - Position;
+
+			if (Mathf.Abs(direction.X) > Mathf.Abs(direction.Y))
+			{
+				if (direction.X < 0)
+					Orientation = OrientationEnum.Left;
+				else
+					Orientation = OrientationEnum.Right;
+			}
+			else
+			{
+				if (direction.Y < 0)
+					Orientation = OrientationEnum.Up;
+				else
+					Orientation = OrientationEnum.Down;
+			}
+
+			MovementState = MovementStateEnum.Moving;
 
 			await ToSignal(this, SignalName.MovementFinished);
 		}
@@ -126,7 +126,7 @@ public partial class Character : Thing
 
 	public async Task SpeechBubble(string message)
 	{
-		CurrentMovementState = MovementStateEnum.SpeechBubble;
+		MovementState = MovementStateEnum.SpeechBubble;
 
 		var speechBubble = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/SpeechBubble.tscn").Instantiate() as SpeechBubble;
 		AddChild(speechBubble);
@@ -143,7 +143,7 @@ public partial class Character : Thing
 			AnimatedSprite2D.Play(animationName);
 			AnimatedSprite2D.SpriteFrames.SetAnimationLoop(animationName, loop);
 			await ToSignal(AnimatedSprite2D, AnimatedSprite2D.SignalName.AnimationFinished);
-			AnimatedSprite2D.Play("idle_down");
+			AnimatedSprite2D.Play("idle_" + Orientation.ToString().ToLower());
 		}
 		else
 		{
@@ -159,7 +159,7 @@ public partial class Character : Thing
 
 	public override void _PhysicsProcess(double delta)
 	{
-		if (CurrentMovementState != MovementStateEnum.SpeechBubble)
+		if (MovementState != MovementStateEnum.SpeechBubble)
 		{
 			if (NavigationAgent2D != null)
 			{
@@ -169,11 +169,6 @@ public partial class Character : Thing
 					var nextPathPosition = NavigationAgent2D.GetNextPathPosition();
 					var newVelocity = Position.DirectionTo(nextPathPosition) * (float)movementDelta;
 					GlobalPosition = GlobalPosition.MoveToward(nextPathPosition + newVelocity, (float)movementDelta);
-
-					if (newVelocity.X < 0)
-						CurrentDirection = DirectionEnum.Left;
-					else if (newVelocity.X > 0)
-						CurrentDirection = DirectionEnum.Right;
 				}
 			}
 		}
@@ -181,7 +176,7 @@ public partial class Character : Thing
 
 	public void OnNavigationFinished()
 	{
-		CurrentMovementState = MovementStateEnum.Idle;
+		MovementState = MovementStateEnum.Idle;
 		EmitSignal(SignalName.MovementFinished);
 	}
 
@@ -192,29 +187,29 @@ public partial class Character : Thing
 
 	public void SetIdle()
 	{
-		CurrentMovementState = MovementStateEnum.Idle;
+		MovementState = MovementStateEnum.Idle;
 	}
 
 	public void StartDialog()
 	{
-		CurrentMovementState = MovementStateEnum.Dialog;
+		MovementState = MovementStateEnum.Dialog;
 	}
 
 	public void EndDialog()
 	{
-		CurrentMovementState = MovementStateEnum.Idle;
+		MovementState = MovementStateEnum.Idle;
 	}
 
 	public new void LookAt(Vector2 position)
 	{
 		if (position == Position)
-			CurrentDirection = DirectionEnum.Down;
+			Orientation = OrientationEnum.Down;
 		else
 		{
 			if (position.X < Position.X)
-				CurrentDirection = DirectionEnum.Left;
+				Orientation = OrientationEnum.Left;
 			else if (position.X > Position.X)
-				CurrentDirection = DirectionEnum.Right;
+				Orientation = OrientationEnum.Right;
 		}
 	}
 }

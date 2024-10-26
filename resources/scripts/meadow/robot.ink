@@ -10,7 +10,7 @@ VAR c = "robot"
     Weird meeting a robot out here in nature. #player
     
     You think so? #robot
-    ~ play_anim_c(c, "front")
+    ~ play_anim_c(c, "down")
     ~ wait(0.3)
     Well doesn’t seem weird to me at all, you know? #robot
     So what do you want, fleshperson? #robot
