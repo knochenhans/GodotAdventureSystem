@@ -181,7 +181,7 @@ public partial class Game : Scene
 
 			if (thing == null)
 			{
-				thingResource = CurrentStage.PlayerCharacter.FindThingInInventory(thingID);
+				thingResource = CurrentStage.PlayerCharacter.Inventory.FindThing(thingID);
 			}
 			else
 			{
@@ -206,7 +206,7 @@ public partial class Game : Scene
 
 			if (thing == null)
 			{
-				thingResource = CurrentStage.PlayerCharacter.FindThingInInventory(thingID);
+				thingResource = CurrentStage.PlayerCharacter.Inventory.FindThing(thingID);
 			}
 			else
 			{

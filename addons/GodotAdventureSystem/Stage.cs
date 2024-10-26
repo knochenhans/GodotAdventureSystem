@@ -15,7 +15,7 @@ public partial class Stage : Node2D
 	public TextureRect BackgroundNode => GetNode<TextureRect>("Background");
 
 	public PlayerCharacter PlayerCharacter { get; set; }
-	public ThingManager StageThingManager { get; set; } = new();
+	public StageThingManager StageThingManager { get; set; } = new();
 
 	public override void _Ready()
 	{

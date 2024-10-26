@@ -2,7 +2,7 @@ using Godot.Collections;
 using Godot;
 using System;
 
-public partial class ThingManager : GodotObject
+public partial class StageThingManager : GodotObject
 {
     public Dictionary<string, Thing> Things { get; private set; } = new();
 

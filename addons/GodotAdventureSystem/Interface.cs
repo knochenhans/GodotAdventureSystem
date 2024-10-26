@@ -150,7 +150,7 @@ public partial class Interface : CanvasLayer
 		}
 	}
 
-	public void OnObjectRemovedFromInventory(string thingID)
+	public void OnPlayerObjectRemovedFromInventory(string thingID)
 	{
 		foreach (var inventoryButton in InventoryGridContainer.GetChildren())
 		{
