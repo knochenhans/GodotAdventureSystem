@@ -123,7 +123,8 @@ public partial class Stage : Node2D
 			}
 		}
 
-		PlayerCharacter.AddThingToInventory += InterfaceNode.OnPlayerObjectAddedToInventory;
+		PlayerCharacter.Inventory.AddedThing += InterfaceNode.OnPlayerObjectAddedToInventory;
+		PlayerCharacter.Inventory.RemovedThing += InterfaceNode.OnPlayerObjectRemovedFromInventory;
 
 		if (!entryFound)
 			Logger.Log($"No entry named '{entryID}' found in the stage, unable to place the player character.", Logger.LogTypeEnum.Error);

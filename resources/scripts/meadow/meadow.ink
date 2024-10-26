@@ -27,8 +27,13 @@ INCLUDE robot.ink
     - "cloud2":
         { verb_id:
         - "look":
-            Another. #player
-
+            {
+                - get_var("test_value") == false:
+                    Another cloud. #player
+                    ~ set_var("test_value", true)
+                - else:
+                    Seems to work! #player
+            }
         - "talk_to":
             ~ wait(2)
             I’m controlled by an Ink script! #player

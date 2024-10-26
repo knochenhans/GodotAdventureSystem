@@ -2,6 +2,7 @@ using Godot;
 using System.Threading.Tasks;
 using GodotInk;
 using Godot.Collections;
+using System;
 
 public partial class Game : Scene
 {
@@ -256,6 +257,8 @@ public partial class Game : Scene
 
 		if (CurrentCommandState == CommandStateEnum.VerbSelected)
 		{
+			performedAction = currentVerbID;
+
 			// Interact with the object
 			if (!InkStory.EvaluateFunction("verb", thingID, currentVerbID).AsBool())
 			{
@@ -265,7 +268,6 @@ public partial class Game : Scene
 
 			await ScriptManager.RunScriptActionQueue();
 
-			performedAction = currentVerbID;
 			CurrentCommandState = CommandStateEnum.Idle;
 		}
 		else
@@ -315,13 +317,59 @@ public partial class Game : Scene
 
 	public void Save()
 	{
+		// Save general data, variables, and ink story state
 		Dictionary<string, Variant> saveData = new()
+        {
+            { "stageID", CurrentStage.ID },
+            { "position", CurrentStage.PlayerCharacter.Position },
+            { "orientation", CurrentStage.PlayerCharacter.Orientation.ToString() },
+            { "cameraPosition", Camera2DNode.Position },
+            { "variables", VariableManager.GetVariables() },
+			{ "inkStoryState", InkStory.SaveState() }
+        };
+
+		// Save things in stage
+		var thingsStage = CurrentStage.StageThingManager.GetThings();
+
+		Dictionary<string, Dictionary<string, Variant>> thingsStageData = new()
 		{
-			{ "stageID", CurrentStage.ID },
-			{ "position", CurrentStage.PlayerCharacter.Position }
+			[CurrentStage.ID] = new()
 		};
 
-		var things = CurrentStage.StageThingManager.GetThings();
+		foreach (var thing in thingsStage)
+		{
+			ThingResource thingResource = thing.Resource as ThingResource;
+
+			Dictionary<string, Variant> thingData = new()
+			{
+				{ "displayedName", thingResource.DisplayedName },
+				{ "position", thing.Position },
+				{ "actionCounter", ThingActionCounter.GetActionCounters(thingResource.ID) }
+			};
+			thingsStageData[CurrentStage.ID].Add(thingResource.ID, thingData);
+		}
+
+		saveData.Add("things", thingsStageData);
+
+		// Save things in inventory
+		var thingsInventory = CurrentStage.PlayerCharacter.Inventory.GetThings();
+
+		Array<Dictionary<string, Variant>> thingsInventoryData = new();
+
+		foreach (var thing in thingsInventory)
+		{
+			ThingResource thingResource = thing;
+
+			Dictionary<string, Variant> thingData = new()
+			{
+				{ "ID", thingResource.ID },
+				{ "displayedName", thingResource.DisplayedName },
+				{ "actionCounter", ThingActionCounter.GetActionCounters(thingResource.ID) }
+			};
+			thingsInventoryData.Add(thingData);
+		}
+
+		saveData.Add("inventory", thingsInventoryData);
 
 		// Write save data to file
 		using var saveFile = FileAccess.Open("user://savegame.save", FileAccess.ModeFlags.Write);
@@ -330,15 +378,67 @@ public partial class Game : Scene
 
 	public void Load()
 	{
+		InterfaceNode.Reset();
+
 		// Read save data from file
 		using var saveFile = FileAccess.Open("user://savegame.save", FileAccess.ModeFlags.Read);
 
 		if (saveFile.GetLength() > 0)
 		{
+			// Load general data
 			var saveData = (Dictionary<string, Variant>)saveFile.GetVar();
 
 			SwitchStage(saveData["stageID"].ToString());
 			CurrentStage.PlayerCharacter.Position = (Vector2)saveData["position"];
+			CurrentStage.PlayerCharacter.Orientation = Enum.Parse<Character.OrientationEnum>(saveData["orientation"].ToString());
+			Camera2DNode.Position = (Vector2)saveData["cameraPosition"];
+
+			// Load variables
+			VariableManager.SetVariables((Dictionary<string, Variant>)saveData["variables"]);
+
+			// Load things in stage
+			var thingsStageData = (Dictionary<string, Dictionary<string, Variant>>)saveData["things"];
+
+			// Load ink story state
+			InkStory.LoadState((string)saveData["inkStoryState"]);
+
+            Array<Thing> list = CurrentStage.StageThingManager.GetThings();
+            for (int i = list.Count - 1; i >= 0; i--)
+			{
+                Thing thing = list[i];
+                var thingID = (thing.Resource as ThingResource).ID;
+
+				if (thingsStageData[CurrentStage.ID].ContainsKey(thingID))
+				{
+					var thingData = (Dictionary<string, Variant>)thingsStageData[CurrentStage.ID][thingID];
+
+					var thingResource = thing.Resource as ThingResource;
+
+					thingResource.DisplayedName = thingData["displayedName"].ToString();
+					thing.Position = (Vector2)thingData["position"];
+					ThingActionCounter.SetActionCounters(thingResource.ID, (Dictionary<string, int>)thingData["actionCounter"]);
+					// list.RemoveAt(i);
+				}
+				else
+					CurrentStage.StageThingManager.RemoveThing(thingID);
+			}
+
+			// Load things in inventory
+			var thingsInventoryData = (Array<Dictionary<string, Variant>>)saveData["inventory"];
+
+			CurrentStage.PlayerCharacter.Inventory.Clear();
+
+			foreach (var thingData in thingsInventoryData)
+			{
+				var thing = GD.Load<PackedScene>($"res://resources/objects/{thingData["ID"]}.tscn").Instantiate() as Thing;
+				var thingResource = thing.Resource as ThingResource;
+				thing.QueueFree();
+
+				thingResource.DisplayedName = thingData["displayedName"].ToString();
+				ThingActionCounter.SetActionCounters(thingResource.ID, (Dictionary<string, int>)thingData["actionCounter"]);
+
+				CurrentStage.PlayerCharacter.AddThingToInventory(thingResource);
+			}
 		}
 		else
 		{

@@ -25,4 +25,21 @@ public class ThingActionCounter
 
 		return thing_action_counter[thingID][actionID];
 	}
+
+	public Dictionary<string, int> GetActionCounters(string thingID)
+	{
+		if (!thing_action_counter.ContainsKey(thingID))
+			return new();
+
+		return thing_action_counter[thingID];
+	}
+
+	public void SetActionCounters(string thingID, Dictionary<string, int> actionCounters)
+	{
+		if (!thing_action_counter.ContainsKey(thingID))
+			thing_action_counter[thingID] = new();
+
+		foreach (var actionCounter in actionCounters)
+			thing_action_counter[thingID][actionCounter.Key] = actionCounter.Value;
+	}
 }

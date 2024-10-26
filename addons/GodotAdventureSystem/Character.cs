@@ -6,7 +6,6 @@ using Godot.Collections;
 public partial class Character : Thing
 {
 	[Signal] public delegate void MovementFinishedEventHandler();
-	[Signal] public delegate void AddThingToInventoryEventHandler(ThingResource thingResource);
 	[Signal] public delegate void RemoveThingFromInventoryEventHandler(ThingResource thingResource);
 
 	enum MovementStateEnum
@@ -27,7 +26,7 @@ public partial class Character : Thing
 		}
 	}
 
-	enum OrientationEnum
+	public enum OrientationEnum
 	{
 		Left,
 		Right,
@@ -36,7 +35,7 @@ public partial class Character : Thing
 	}
 
 	OrientationEnum _orientation;
-	OrientationEnum Orientation
+	public OrientationEnum Orientation
 	{
 		get => _orientation; set
 		{
@@ -50,12 +49,9 @@ public partial class Character : Thing
 	AudioStreamPlayer2D SoundPlayer => GetNode<AudioStreamPlayer2D>("Sounds");
 	AudioStreamPlayer2D StepSoundPlayer => GetNode<AudioStreamPlayer2D>("StepSounds");
 
-	private int _scriptVisits = 0; // How many times this character's story script has been visited by the player
-	public int ScriptVisits { get; set; }
-
 	private string defaultAnimation;
 
-	public Array<ThingResource> Inventory { get; set; } = new();
+	public Inventory Inventory { get; set; } = new();
 
 	public override void _Ready()
 	{
@@ -160,10 +156,14 @@ public partial class Character : Thing
 
 	public void PickUpThing(ThingResource thingResource)
 	{
-		Inventory.Add(thingResource);
-		EmitSignal(SignalName.AddThingToInventory, thingResource);
+		AddThingToInventory(thingResource);
 		SoundPlayer.Stream = (Resource as CharacterResource).PickupSound;
 		SoundPlayer.Play();
+	}
+
+	public void AddThingToInventory(ThingResource thingResource)
+	{
+		Inventory.AddThing(thingResource);
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -212,13 +212,5 @@ public partial class Character : Thing
 			else if (position.X > Position.X)
 				Orientation = OrientationEnum.Right;
 		}
-	}
-
-	public ThingResource FindThingInInventory(string thingID)
-	{
-		foreach (var thingResource in Inventory)
-			if (thingResource.ID == thingID)
-				return thingResource;
-		return null;
 	}
 }

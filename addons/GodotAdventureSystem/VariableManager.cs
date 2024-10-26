@@ -5,15 +5,15 @@ public class VariableManager
 {
     public static VariableManager Instance { get; } = new VariableManager();
 
-    public Dictionary<string, bool> Variables { get; } = new();
+    private Dictionary<string, Variant> Variables { get; } = new();
 
-    public void SetVariable(string thingID, bool value)
+    public void SetVariable(string thingID, Variant value)
     {
         Variables[thingID] = value;
         Logger.Log($"Set variable {thingID} to {value} with type {value.GetType()}", Logger.LogTypeEnum.Info);
     }
 
-    public bool GetVariable(string thingID)
+    public Variant GetVariable(string thingID)
     {
         if (!Variables.ContainsKey(thingID))
         {
@@ -23,8 +23,15 @@ public class VariableManager
         return Variables[thingID];
     }
 
-    public bool HasVariable(string thingID)
+    public bool HasVariable(string thingID) => Variables.ContainsKey(thingID);
+
+    public Dictionary<string, Variant> GetVariables() => Variables;
+    public void SetVariables(Dictionary<string, Variant> variables)
     {
-        return Variables.ContainsKey(thingID);
+        Variables.Clear();
+        foreach (var kvp in variables)
+        {
+            Variables[kvp.Key] = kvp.Value;
+        }
     }
 }

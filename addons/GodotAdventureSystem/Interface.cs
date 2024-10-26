@@ -103,6 +103,22 @@ public partial class Interface : CanvasLayer
 		}
 	}
 
+	public void Reset()
+	{
+		ResetFocus();
+		ClearDialogChoiceLabels();
+		ClearInventory();
+	}
+
+	public void ClearInventory()
+	{
+		foreach (var inventoryButton in InventoryGridContainer.GetChildren())
+		{
+			var button = inventoryButton as InventoryButton;
+			button.SetThing(null);
+		}
+	}
+
 	public void OnGamePanelInputEvent(InputEvent @event)
 	{
 		if (@event is InputEventMouseMotion mouseMotionEvent)
