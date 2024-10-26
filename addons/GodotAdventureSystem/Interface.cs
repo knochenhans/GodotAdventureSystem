@@ -4,41 +4,24 @@ using GodotInk;
 
 public partial class Interface : CanvasLayer
 {
-	GridContainer VerbGridContainer { get; set; }
-	GridContainer InventoryGridContainer { get; set; }
-	Label CommandLabel { get; set; }
-	GamePanel GamePanel { get; set; }
-	Control InterfacePanel { get; set; }
-	Control InterfaceContainer { get; set; }
-	Control InterfaceContainerDialog { get; set; }
-	Control DialogOptionsContainer { get; set; }
+	GamePanel GamePanel => GetNode<GamePanel>("%GamePanel");
+	Control InterfacePanel => GetNode<Control>("%InterfacePanel");
+	Control InterfaceContainer => InterfacePanel.GetNode<Control>("InterfaceContainer");
+	Control InterfaceContainerDialog => InterfacePanel.GetNode<Control>("InterfaceContainerDialog");
+	Control DialogOptionsContainer => InterfaceContainerDialog.GetNode<Control>("%DialogOptionsContainer");
+	GridContainer InventoryGridContainer => InterfaceContainer.GetNode<GridContainer>("%Inventory");
+	GridContainer VerbGridContainer => InterfaceContainer.GetNode<GridContainer>("%Verbs");
+	Label CommandLabel => InterfaceContainer.GetNode<Label>("%CommandLabel");
 
-	[Signal]
-	public delegate void GamePanelMouseMotionEventHandler();
-
-	[Signal]
-	public delegate void GamePanelMousePressedEventHandler(InputEventMouseButton mouseButtonEvent);
-
-	[Signal]
-	public delegate void ThingHoveredEventHandler(string thingID);
-
-	[Signal]
-	public delegate void ThingLeaveEventHandler();
-
-	[Signal]
-	public delegate void ThingClickedEventHandler(string thingID);
-
-	[Signal]
-	public delegate void VerbHoveredEventHandler(string verbID);
-
-	[Signal]
-	public delegate void VerbLeaveEventHandler();
-
-	[Signal]
-	public delegate void VerbClickedEventHandler(string verbID);
-
-	[Signal]
-	public delegate void DialogOptionClickedEventHandler(InkChoice choice);
+	[Signal] public delegate void GamePanelMouseMotionEventHandler();
+	[Signal] public delegate void GamePanelMousePressedEventHandler(InputEventMouseButton mouseButtonEvent);
+	[Signal] public delegate void ThingHoveredEventHandler(string thingID);
+	[Signal] public delegate void ThingLeaveEventHandler();
+	[Signal] public delegate void ThingClickedEventHandler(string thingID);
+	[Signal] public delegate void VerbHoveredEventHandler(string verbID);
+	[Signal] public delegate void VerbLeaveEventHandler();
+	[Signal] public delegate void VerbClickedEventHandler(string verbID);
+	[Signal] public delegate void DialogOptionClickedEventHandler(InkChoice choice);
 
 	int Zoom = 4;
 
@@ -88,20 +71,7 @@ public partial class Interface : CanvasLayer
 		}
 	}
 
-	public override void _Ready()
-	{
-		GamePanel = GetNode<GamePanel>("%GamePanel");
-		GamePanel.GuiInput += OnGamePanelInputEvent;
-
-		InterfacePanel = GetNode<Control>("%InterfacePanel");
-
-		InterfaceContainer = InterfacePanel.GetNode<Control>("InterfaceContainer");
-		InterfaceContainerDialog = InterfacePanel.GetNode<Control>("InterfaceContainerDialog");
-		DialogOptionsContainer = InterfaceContainerDialog.GetNode<Control>("%DialogOptionsContainer");
-		VerbGridContainer = InterfaceContainer.GetNode<GridContainer>("%Verbs");
-		InventoryGridContainer = InterfaceContainer.GetNode<GridContainer>("%Inventory");
-		CommandLabel = InterfaceContainer.GetNode<Label>("%CommandLabel");
-	}
+	public override void _Ready() => GamePanel.GuiInput += OnGamePanelInputEvent;
 
 	public void Init(Dictionary<string, string> verbs)
 	{
