@@ -16,6 +16,7 @@ AnimationPrefixMap = {
 "move": "move",
 "talk": "talk"
 }
+InitialAnimation = "look_around"
 MovementSound = ExtResource("1_8yj43")
 PickupSound = ExtResource("2_8ocqb")
 ID = "robot"

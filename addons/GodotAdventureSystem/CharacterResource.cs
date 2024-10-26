@@ -18,13 +18,13 @@ public partial class CharacterResource : ThingResource
 
     [ExportGroup("Sprite")]
     [Export] public SpriteFrames SpriteFrames { get; set; } = new();
-
     [Export] public Dictionary<string, string> AnimationPrefixMap { get; set; } = new Dictionary<string, string>
     {
         { "idle", "idle" },
         { "move", "move" },
         { "talk", "talk" }
     };
+    [Export] public string InitialAnimation { get; set; } = "";
 
     [ExportGroup("Sounds")]
     [Export] public AudioStream MovementSound { get; set; } = new();

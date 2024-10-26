@@ -58,6 +58,9 @@ public partial class Character : Thing
 		MovementState = MovementStateEnum.Idle;
 
 		AnimatedSprite2D.SpriteFrames = (Resource as CharacterResource).SpriteFrames;
+		var initialAnimation = (Resource as CharacterResource).InitialAnimation;
+		if (!string.IsNullOrEmpty(initialAnimation))
+			AnimatedSprite2D.Play(initialAnimation);
 	}
 
 	private void MovementStateChanged(MovementStateEnum value)

@@ -27,7 +27,7 @@ outlines = Array[PackedVector2Array]([PackedVector2Array(11, 172, 75, 166, 204, 
 source_geometry_group_name = &"navigation_polygon_source_group"
 agent_radius = 0.0
 
-[node name="Meadow2" instance=ExtResource("1_47bt1")]
+[node name="Meadow" instance=ExtResource("1_47bt1")]
 
 [node name="Robot" parent="." index="0" instance=ExtResource("6_jm8yb")]
 position = Vector2(443, 195)

@@ -36,7 +36,7 @@ VAR c = "robot"
     Do I need one? #robot
 
 * [What’s a robot like you doing out here?]
-    ~ play_anim_c(c, "idle_down")
+    ~ play_anim_c(c, "look_around")
 
     I’m looking for someone. #robot
     And what are *you* doing out here? #robot
@@ -59,8 +59,9 @@ VAR c = "robot"
 - -> main
 
 = outro
-Take care, fleshperson. #robot -> END
-        
+Take care, fleshperson. #robot
+~ play_anim_c(c, "look_around")
+
 -> END
 
 = buttcoin
