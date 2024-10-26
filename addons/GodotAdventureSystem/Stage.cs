@@ -5,6 +5,8 @@ using Godot.Collections;
 [Icon("res://addons/GodotAdventureSystem/icons/Stage.svg")]
 public partial class Stage : Node2D
 {
+	[Export] public string ID { get; set; } = "";
+
 	public Interface InterfaceNode { get; set; }
 	public TextureRect BackgroundNode { get; set; }
 
