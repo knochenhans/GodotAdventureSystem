@@ -69,6 +69,7 @@ public partial class DialogManager : GodotObject
 	{
 		Game.InkStory.CallDeferred("ResetCallstack");
 		Game.InkStory.Continued -= OnDialogContinue;
+		DialogFinished -= OnDialogFinished;
 
 		Game.InterfaceNode.DialogOptionClicked -= OnDialogChoiceMade;
 		Game.InterfaceNode.ClearDialogChoiceLabels();
@@ -78,7 +79,6 @@ public partial class DialogManager : GodotObject
 		Game.CurrentStage.PlayerCharacter.EndDialog();
 
 		CurrentDialogCharacter.EndDialog();
-		CurrentDialogCharacter.ScriptVisits++;
 		CurrentDialogCharacter = null;
 	}
 }

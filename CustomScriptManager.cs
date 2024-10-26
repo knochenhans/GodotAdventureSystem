@@ -56,15 +56,19 @@ public partial class CustomScriptManager : ScriptManager
 
 	public Variant GetVar(string varName) => Game.VariableManager.GetVariable(varName);
 	public void SetVar(string varName, bool value) => Game.VariableManager.SetVariable(varName, value);
-	public int GetScriptVisits(string characterID) => Game.CurrentStage.StageThingManager.GetThing(characterID) is Character character ? character.ScriptVisits : 0;
-    public Variant IsInInventory(string thingID) => Game.CurrentStage.PlayerCharacter.FindThingInInventory(thingID) is not null;
+    public int GetScriptVisits(string characterID)
+    {
+        return GetActionCounter(characterID, "talk_to");
+    }
+
+    public Variant IsInInventory(string thingID) => Game.CurrentStage.PlayerCharacter.Inventory.FindThing(thingID) is not null;
     public void SetThingName(string thingID, string name)
 	{
 		if (Game.CurrentStage.StageThingManager.GetThing(thingID) is not null)
 			Game.CurrentStage.StageThingManager.UpdateThingName(thingID, name);
 		else
 		{
-			var thingResource = Game.CurrentStage.PlayerCharacter.FindThingInInventory(thingID);
+			var thingResource = Game.CurrentStage.PlayerCharacter.Inventory.FindThing(thingID);
 			if (thingResource is not null)
 				thingResource.DisplayedName = name;
 		}
