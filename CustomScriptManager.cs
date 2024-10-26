@@ -18,7 +18,7 @@ public partial class CustomScriptManager : ScriptManager
 				{ "is_in_inventory", MethodName.IsInInventory },
 				{ "set_name", MethodName.SetThingName },
 				{ "pick_up", MethodName.PickUp },
-				{ "create", MethodName.CreateObject },
+				{ "create", MethodName.CreateThingInInventory },
 				{ "start_dialog", MethodName.StartDialog },
 				{ "talk", MethodName.DisplayBubble },
 				{ "talk_to", MethodName.DisplayBubbleTo },
@@ -56,32 +56,44 @@ public partial class CustomScriptManager : ScriptManager
 
 	public Variant GetVar(string varName) => Game.VariableManager.GetVariable(varName);
 	public void SetVar(string varName, bool value) => Game.VariableManager.SetVariable(varName, value);
-	public int GetScriptVisits(string characterID) => Game.ThingManager.GetThing(characterID) is Character character ? character.ScriptVisits : 0;
-	public Variant IsInInventory(string thingID) => Game.ThingManager.IsInInventory(thingID);
-	public void SetThingName(string thingID, string name) => Game.ThingManager.UpdateThingName(thingID, name);
-	public void PickUp(string objectID)
+	public int GetScriptVisits(string characterID) => Game.CurrentStage.StageThingManager.GetThing(characterID) is Character character ? character.ScriptVisits : 0;
+    public Variant IsInInventory(string thingID) => Game.CurrentStage.PlayerCharacter.FindThingInInventory(thingID) is not null;
+    public void SetThingName(string thingID, string name)
 	{
-		Game.ThingManager.MoveThingToInventory(objectID);
-		Game.StageNode.PlayerCharacter.PickUpObject();
-	}
-	public void CreateObject(string objectID)
-	{
-		Game.ThingManager.LoadThingToInventory(objectID);
-		Game.StageNode.PlayerCharacter.PickUpObject();
+		if (Game.CurrentStage.StageThingManager.GetThing(thingID) is not null)
+			Game.CurrentStage.StageThingManager.UpdateThingName(thingID, name);
+		else
+		{
+			var thingResource = Game.CurrentStage.PlayerCharacter.FindThingInInventory(thingID);
+			if (thingResource is not null)
+				thingResource.DisplayedName = name;
+		}
 	}
 
-	public void StartDialog(string characterID) => QueueAction(new ScriptActionStartDialog(Game.StageNode.PlayerCharacter, Game, characterID));
-	public void DisplayBubble(string message) => QueueAction(new ScriptActionMessage(Game.StageNode.PlayerCharacter, message));
-	public void DisplayBubbleTo(string message, string thingID) => QueueAction(new ScriptActionMessage(Game.StageNode.PlayerCharacter, message, Game.ThingManager.GetThing(thingID)));
-	public void CharacterWait(float seconds) => QueueAction(new ScriptActionCharacterWait(Game.StageNode.PlayerCharacter, seconds));
-	public void MoveTo(int posX, int posY) => QueueAction(new ScriptActionMove(Game.StageNode.PlayerCharacter, new Vector2(posX, posY)));
-	public void CharacterMoveTo(string characterID, int posX, int posY) => QueueAction(new ScriptActionMove(Game.ThingManager.GetCharacter(characterID), new Vector2(posX, posY)));
-	public void MoveRelative(int posX, int posY) => QueueAction(new ScriptActionMove(Game.StageNode.PlayerCharacter, new Vector2(posX, posY), true));
-	public void CharacterMoveRelative(string characterID, int posX, int posY) => QueueAction(new ScriptActionMove(Game.ThingManager.GetCharacter(characterID), new Vector2(posX, posY), true));
-	public void LookAt(string thingID) => QueueAction(new ScriptActionLookAt(Game.StageNode.PlayerCharacter, Game.ThingManager.GetThing(thingID)));
-	public void CharacterLookAt(string characterID, string thingID) => QueueAction(new ScriptActionLookAt(Game.ThingManager.GetCharacter(characterID), Game.ThingManager.GetThing(thingID)));
-	public void PlayAnimation(string animationID) => QueueAction(new ScriptActionPlayAnimation(Game.StageNode.PlayerCharacter, animationID));
-	public void CharacterPlayAnimation(string characterID, string animationID) => QueueAction(new ScriptActionPlayAnimation(Game.ThingManager.GetCharacter(characterID), animationID));
-	public void InkSwitchStage(string stageID, string entryID) => QueueAction(new ScriptActionSwitchStage(Game.StageNode.PlayerCharacter, stageID, entryID));
+	public void PickUp(string thingID)
+	{
+		var thingResource = Game.CurrentStage.StageThingManager.RemoveThing(thingID);
+		Game.CurrentStage.PlayerCharacter.PickUpThing(thingResource);
+	}
+	public void CreateThingInInventory(string thingID)
+	{
+		var thing = GD.Load<PackedScene>($"res://resources/objects/{thingID}.tscn").Instantiate() as Thing;
+		Game.CurrentStage.PlayerCharacter.PickUpThing(thing.Resource as ThingResource);
+		thing.QueueFree();
+	}
+
+	public void StartDialog(string characterID) => QueueAction(new ScriptActionStartDialog(Game.CurrentStage.PlayerCharacter, Game, characterID));
+	public void DisplayBubble(string message) => QueueAction(new ScriptActionMessage(Game.CurrentStage.PlayerCharacter, message));
+	public void DisplayBubbleTo(string message, string thingID) => QueueAction(new ScriptActionMessage(Game.CurrentStage.PlayerCharacter, message, Game.CurrentStage.StageThingManager.GetThing(thingID)));
+	public void CharacterWait(float seconds) => QueueAction(new ScriptActionCharacterWait(Game.CurrentStage.PlayerCharacter, seconds));
+	public void MoveTo(int posX, int posY) => QueueAction(new ScriptActionMove(Game.CurrentStage.PlayerCharacter, new Vector2(posX, posY)));
+	public void CharacterMoveTo(string characterID, int posX, int posY) => QueueAction(new ScriptActionMove(Game.CurrentStage.StageThingManager.GetCharacter(characterID), new Vector2(posX, posY)));
+	public void MoveRelative(int posX, int posY) => QueueAction(new ScriptActionMove(Game.CurrentStage.PlayerCharacter, new Vector2(posX, posY), true));
+	public void CharacterMoveRelative(string characterID, int posX, int posY) => QueueAction(new ScriptActionMove(Game.CurrentStage.StageThingManager.GetCharacter(characterID), new Vector2(posX, posY), true));
+	public void LookAt(string thingID) => QueueAction(new ScriptActionLookAt(Game.CurrentStage.PlayerCharacter, Game.CurrentStage.StageThingManager.GetThing(thingID)));
+	public void CharacterLookAt(string characterID, string thingID) => QueueAction(new ScriptActionLookAt(Game.CurrentStage.StageThingManager.GetCharacter(characterID), Game.CurrentStage.StageThingManager.GetThing(thingID)));
+	public void PlayAnimation(string animationID) => QueueAction(new ScriptActionPlayAnimation(Game.CurrentStage.PlayerCharacter, animationID));
+	public void CharacterPlayAnimation(string characterID, string animationID) => QueueAction(new ScriptActionPlayAnimation(Game.CurrentStage.StageThingManager.GetCharacter(characterID), animationID));
+	public void InkSwitchStage(string stageID, string entryID) => QueueAction(new ScriptActionSwitchStage(Game.CurrentStage.PlayerCharacter, stageID, entryID));
 	public int GetActionCounter(string thingID, string actionID) => Game.ThingActionCounter.GetActionCounter(thingID, actionID);
 }

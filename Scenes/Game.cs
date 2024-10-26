@@ -1,6 +1,7 @@
 using Godot;
 using System.Threading.Tasks;
 using GodotInk;
+using Godot.Collections;
 
 public partial class Game : Scene
 {
@@ -16,10 +17,9 @@ public partial class Game : Scene
 	}
 
 	public VariableManager VariableManager { get; set; } = new();
-	public ThingManager ThingManager { get; set; } = new();
 
 	public Interface InterfaceNode => GetNode<Interface>("Interface");
-	public Stage StageNode { get; set; }
+	public Stage CurrentStage { get; set; }
 	public string currentVerbID;
 	public Camera2D Camera2DNode => GetNode<Camera2D>("Camera2D");
 
@@ -48,8 +48,6 @@ public partial class Game : Scene
 		Input.SetCustomMouseCursor(cursor, Input.CursorShape.Arrow, new Vector2(29, 29));
 
 		SetupInterface();
-
-		ThingManager.AddThingToIventory += InterfaceNode.OnObjectAddedToInventory;
 
 		ScriptManager = new CustomScriptManager(this);
 		DialogManager = new DialogManager(this);
@@ -85,23 +83,20 @@ public partial class Game : Scene
 	{
 		if (CurrentCommandState == CommandStateEnum.Idle)
 		{
-			StageNode?.QueueFree();
+			CurrentStage?.QueueFree();
 
 			if (ResourceLoader.Exists($"res://resources/stages/{stageID}.tscn"))
 			{
-				StageNode = ResourceLoader.Load<PackedScene>($"res://resources/stages/{stageID}.tscn").Instantiate() as Stage;
-				AddChild(StageNode);
+				CurrentStage = ResourceLoader.Load<PackedScene>($"res://resources/stages/{stageID}.tscn").Instantiate() as Stage;
+				AddChild(CurrentStage);
 
-				StageNode.ThingClicked += OnThingClicked;
-				StageNode.ThingHovered += OnThingHovered;
+				CurrentStage.ThingClicked += OnThingClicked;
+				CurrentStage.ThingHovered += OnThingHovered;
 
 				var playerCharacter = PlayerCharacterScene.Instantiate() as PlayerCharacter;
 				playerCharacter.SwitchStage += (stageID, entryID) => SwitchStage(stageID, entryID);
 
-				StageNode.SetupPlayerCharacter(playerCharacter, entryID);
-
-				ThingManager.Clear();
-				ThingManager.RegisterThings(StageNode.CollectThings());
+				CurrentStage.SetupPlayerCharacter(playerCharacter, entryID);
 			}
 			else
 			{
@@ -123,6 +118,10 @@ public partial class Game : Scene
 				case Key.F5:
 					var ingameMenu = IngameMenuScene.Instantiate<IngameMenu>();
 					AddChild(ingameMenu);
+
+					ingameMenu.SaveButtonPressed += Save;
+					ingameMenu.LoadButtonPressed += Load;
+					ingameMenu.QuitButtonPressed += Quit;
 					break;
 			}
 		}
@@ -161,7 +160,7 @@ public partial class Game : Scene
 	{
 		if (CurrentCommandState == CommandStateEnum.Idle)
 		{
-			await StageNode.PlayerCharacter.MoveTo(mouseButtonEvent.Position / Camera2DNode.Zoom + Camera2DNode.Position, 1);
+			await CurrentStage.PlayerCharacter.MoveTo(mouseButtonEvent.Position / Camera2DNode.Zoom + Camera2DNode.Position, 1);
 		}
 		else if (CurrentCommandState == CommandStateEnum.VerbSelected)
 		{
@@ -177,20 +176,24 @@ public partial class Game : Scene
 	{
 		if (CurrentCommandState != CommandStateEnum.Dialog)
 		{
-			var thing = ThingManager.GetThing(thingID);
+			var thing = CurrentStage.StageThingManager.GetThing(thingID);
+			ThingResource thingResource;
 
 			if (thing == null)
 			{
-				Logger.Log($"OnThingHovered: Thing {thingID} not registered in ThingManager", Logger.LogTypeEnum.Error);
+				thingResource = CurrentStage.PlayerCharacter.FindThingInInventory(thingID);
 			}
 			else
 			{
-				// Hovered inventory item
-				if (CurrentCommandState == CommandStateEnum.Idle)
-					InterfaceNode.SetCommandLabel(ThingManager.GetThingName(thingID));
-				else if (CurrentCommandState == CommandStateEnum.VerbSelected)
-					InterfaceNode.SetCommandLabel($"{GameResource.Verbs[currentVerbID]} {ThingManager.GetThingName(thingID)}");
+				thingResource = thing.Resource as ThingResource;
 			}
+
+			var thingName = thingResource.DisplayedName;
+
+			if (CurrentCommandState == CommandStateEnum.Idle)
+				InterfaceNode.SetCommandLabel(thingName);
+			else if (CurrentCommandState == CommandStateEnum.VerbSelected)
+				InterfaceNode.SetCommandLabel($"{GameResource.Verbs[currentVerbID]} {thingName}");
 		}
 	}
 
@@ -198,13 +201,17 @@ public partial class Game : Scene
 	{
 		if (CurrentCommandState != CommandStateEnum.Dialog)
 		{
-			var thing = ThingManager.GetThing(thingID);
+			var thing = CurrentStage.StageThingManager.GetThing(thingID);
+			ThingResource thingResource;
 
-			if (thing != null)
+			if (thing == null)
 			{
-				// For objects (that are not in the inventory) and hotspots, move the player character to the object
-				if (!ThingManager.IsInInventory(thingID))
-					await MovePlayerToThing(thing);
+				thingResource = CurrentStage.PlayerCharacter.FindThingInInventory(thingID);
+			}
+			else
+			{
+				thingResource = thing.Resource as ThingResource;
+				await MovePlayerToThing(thing);
 			}
 
 			await PerformVerbAction(thingID);
@@ -221,7 +228,7 @@ public partial class Game : Scene
 
 		if (tag.Count > 0 && InkStory.CurrentText != "")
 		{
-			Character actingCharacter = StageNode.PlayerCharacter;
+			Character actingCharacter = CurrentStage.PlayerCharacter;
 			Character targetCharacter = null;
 
 			if (_currentCommandState == CommandStateEnum.Dialog)
@@ -229,11 +236,11 @@ public partial class Game : Scene
 				if (tag[0] == "player")
 					targetCharacter = DialogManager.CurrentDialogCharacter;
 				else
-					targetCharacter = StageNode.PlayerCharacter;
+					targetCharacter = CurrentStage.PlayerCharacter;
 			}
 			if (tag[0] != "player")
 			{
-				actingCharacter = ThingManager.GetThing(tag[0]) as Character;
+				actingCharacter = CurrentStage.StageThingManager.GetThing(tag[0]) as Character;
 			}
 
 			ScriptManager.QueueAction(new ScriptActionMessage(actingCharacter, InkStory.CurrentText, targetCharacter));
@@ -250,11 +257,10 @@ public partial class Game : Scene
 		if (CurrentCommandState == CommandStateEnum.VerbSelected)
 		{
 			// Interact with the object
-
 			if (!InkStory.EvaluateFunction("verb", thingID, currentVerbID).AsBool())
 			{
 				// No scripted reaction found, use the default one
-				ScriptManager.QueueAction(new ScriptActionMessage(StageNode.PlayerCharacter, GameResource.DefaultVerbReactions[currentVerbID]));
+				ScriptManager.QueueAction(new ScriptActionMessage(CurrentStage.PlayerCharacter, GameResource.DefaultVerbReactions[currentVerbID]));
 			}
 
 			await ScriptManager.RunScriptActionQueue();
@@ -265,7 +271,7 @@ public partial class Game : Scene
 		else
 		{
 			InkStory.EvaluateFunction("verb", thingID, "walk");
-			InterfaceNode.SetCommandLabel(ThingManager.GetThingName(thingID));
+			InterfaceNode.SetCommandLabel(CurrentStage.StageThingManager.GetThingName(thingID));
 			await ScriptManager.RunScriptActionQueue();
 			performedAction = "walk";
 		}
@@ -283,27 +289,65 @@ public partial class Game : Scene
 		else if (thing is Character character)
 			position = character.Position;
 		else if (thing is HotspotArea hotspotArea)
-			position = hotspotArea.GetClosestPoint(StageNode.PlayerCharacter.Position) + hotspotArea.Position;
+			position = hotspotArea.GetClosestPoint(CurrentStage.PlayerCharacter.Position) + hotspotArea.Position;
 		else
 			Logger.Log($"OnAreaActivated: Area {(thing.Resource as ThingResource).ID} is not an Object or a HotspotArea", Logger.LogTypeEnum.Error);
 
 		// if (position.DistanceTo(StageNode.PlayerCharacter.Position) > 20)
-		await StageNode.PlayerCharacter.MoveTo(position, 20);
+		await CurrentStage.PlayerCharacter.MoveTo(position, 20);
 	}
 
 	public async Task StartDialog(string characterID) => await DialogManager.StartDialog(characterID);
 
 	public override void _Process(double delta)
 	{
-		if (StageNode.PlayerCharacter.Position.X > StageNode.GetViewportRect().Size.X / 8)
+		if (CurrentStage.PlayerCharacter.Position.X > CurrentStage.GetViewportRect().Size.X / 8)
 		{
-			if (Camera2DNode.Position.X + StageNode.GetViewportRect().Size.X / 4 < StageNode.GetSize().X)
-				Camera2DNode.Position = new Vector2(StageNode.PlayerCharacter.Position.X - StageNode.GetViewportRect().Size.X / 8, Camera2DNode.Position.Y);
+			if (Camera2DNode.Position.X + CurrentStage.GetViewportRect().Size.X / 4 < CurrentStage.GetSize().X)
+				Camera2DNode.Position = new Vector2(CurrentStage.PlayerCharacter.Position.X - CurrentStage.GetViewportRect().Size.X / 8, Camera2DNode.Position.Y);
 		}
-		else if (StageNode.PlayerCharacter.Position.X < StageNode.GetViewportRect().Size.X / 8)
+		else if (CurrentStage.PlayerCharacter.Position.X < CurrentStage.GetViewportRect().Size.X / 8)
 		{
-			if (Camera2DNode.Position.X - StageNode.GetViewportRect().Size.X / 4 > 0)
-				Camera2DNode.Position = new Vector2(StageNode.PlayerCharacter.Position.X - StageNode.GetViewportRect().Size.X / 8, Camera2DNode.Position.Y);
+			if (Camera2DNode.Position.X - CurrentStage.GetViewportRect().Size.X / 4 > 0)
+				Camera2DNode.Position = new Vector2(CurrentStage.PlayerCharacter.Position.X - CurrentStage.GetViewportRect().Size.X / 8, Camera2DNode.Position.Y);
 		}
+	}
+
+	public void Save()
+	{
+		Dictionary<string, Variant> saveData = new()
+		{
+			{ "stageID", CurrentStage.ID },
+			{ "position", CurrentStage.PlayerCharacter.Position }
+		};
+
+		var things = CurrentStage.StageThingManager.GetThings();
+
+		// Write save data to file
+		using var saveFile = FileAccess.Open("user://savegame.save", FileAccess.ModeFlags.Write);
+		saveFile.StoreVar(saveData);
+	}
+
+	public void Load()
+	{
+		// Read save data from file
+		using var saveFile = FileAccess.Open("user://savegame.save", FileAccess.ModeFlags.Read);
+
+		if (saveFile.GetLength() > 0)
+		{
+			var saveData = (Dictionary<string, Variant>)saveFile.GetVar();
+
+			SwitchStage(saveData["stageID"].ToString());
+			CurrentStage.PlayerCharacter.Position = (Vector2)saveData["position"];
+		}
+		else
+		{
+			Logger.Log("No save data found", Logger.LogTypeEnum.Error);
+		}
+	}
+
+	public void Quit()
+	{
+		GetTree().Quit();
 	}
 }

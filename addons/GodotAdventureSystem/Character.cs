@@ -1,10 +1,13 @@
 using System.Threading.Tasks;
 using Godot;
+using Godot.Collections;
 
 [Icon("res://addons/GodotAdventureSystem/icons/Character.svg")]
 public partial class Character : Thing
 {
 	[Signal] public delegate void MovementFinishedEventHandler();
+	[Signal] public delegate void AddThingToInventoryEventHandler(ThingResource thingResource);
+	[Signal] public delegate void RemoveThingFromInventoryEventHandler(ThingResource thingResource);
 
 	enum MovementStateEnum
 	{
@@ -52,6 +55,8 @@ public partial class Character : Thing
 
 	private string defaultAnimation;
 
+	public Array<ThingResource> Inventory { get; set; } = new();
+
 	public override void _Ready()
 	{
 		base._Ready();
@@ -88,9 +93,9 @@ public partial class Character : Thing
 		}
 	}
 
-    private void OrientationChanged(OrientationEnum value) => AnimatedSprite2D.Play("idle_" + value.ToString().ToLower());
+	private void OrientationChanged(OrientationEnum value) => AnimatedSprite2D.Play("idle_" + value.ToString().ToLower());
 
-    public async Task MoveTo(Vector2 position, int desiredDistance = 10, bool isRelative = false)
+	public async Task MoveTo(Vector2 position, int desiredDistance = 10, bool isRelative = false)
 	{
 		if (MovementState != MovementStateEnum.SpeechBubble)
 		{
@@ -153,8 +158,10 @@ public partial class Character : Thing
 		}
 	}
 
-	public void PickUpObject()
+	public void PickUpThing(ThingResource thingResource)
 	{
+		Inventory.Add(thingResource);
+		EmitSignal(SignalName.AddThingToInventory, thingResource);
 		SoundPlayer.Stream = (Resource as CharacterResource).PickupSound;
 		SoundPlayer.Play();
 	}
@@ -184,11 +191,11 @@ public partial class Character : Thing
 
 	public Vector2 GetSize() => AnimatedSprite2D.SpriteFrames.GetFrameTexture(AnimatedSprite2D.Animation, AnimatedSprite2D.Frame).GetSize();
 
-    public void SetIdle() => MovementState = MovementStateEnum.Idle;
+	public void SetIdle() => MovementState = MovementStateEnum.Idle;
 
-    public void StartDialog() => MovementState = MovementStateEnum.Dialog;
+	public void StartDialog() => MovementState = MovementStateEnum.Dialog;
 
-    public void EndDialog()
+	public void EndDialog()
 	{
 		MovementState = MovementStateEnum.Idle;
 		AnimatedSprite2D.Play(defaultAnimation);
@@ -205,5 +212,13 @@ public partial class Character : Thing
 			else if (position.X > Position.X)
 				Orientation = OrientationEnum.Right;
 		}
+	}
+
+	public ThingResource FindThingInInventory(string thingID)
+	{
+		foreach (var thingResource in Inventory)
+			if (thingResource.ID == thingID)
+				return thingResource;
+		return null;
 	}
 }

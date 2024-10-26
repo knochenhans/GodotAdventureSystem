@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://cbyij1livuxja"]
+[gd_scene load_steps=6 format=3 uid="uid://cbyij1livuxja"]
 
 [ext_resource type="PackedScene" uid="uid://b163pg6wsgrfk" path="res://addons/GodotAdventureSystem/Object.tscn" id="1_mbs28"]
+[ext_resource type="Texture2D" uid="uid://q8g5jhi8xo2q" path="res://resources/note.png" id="2_5hnqc"]
 [ext_resource type="SpriteFrames" uid="uid://d1da1cx8hknlv" path="res://resources/note.aseprite" id="2_hbm3p"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/ThingResource.cs" id="2_oyd3c"]
 
@@ -9,6 +10,7 @@ resource_local_to_scene = true
 script = ExtResource("2_oyd3c")
 ID = "note"
 DisplayedName = "Note"
+Texture = ExtResource("2_5hnqc")
 
 [node name="Note" instance=ExtResource("1_mbs28")]
 Resource = SubResource("Resource_jerio")

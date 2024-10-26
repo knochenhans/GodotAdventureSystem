@@ -12,14 +12,32 @@ public partial class InventoryButton : Button
 		SetMeta("thingID", "");
 	}
 
-	public void SetThing(string thingID, Texture2D texture)
+	public void SetThing(ThingResource thingResource)
 	{
-		var image = texture.GetImage();
-		Vector2 zoom = GetViewport().GetCamera2D().Zoom;
-		image.Resize(image.GetWidth() * (int)zoom.X, image.GetHeight() * (int)zoom.Y, Image.Interpolation.Nearest);
-		TextureRect.Texture = ImageTexture.CreateFromImage(image);
+		if (thingResource != null)
+		{
+			var texture = thingResource.Texture;
 
-		SetMeta("thingID", thingID);
+			if (texture != null)
+			{
+				var image = thingResource.Texture.GetImage();
+				Vector2 zoom = GetViewport().GetCamera2D().Zoom;
+				image.Resize(image.GetWidth() * (int)zoom.X, image.GetHeight() * (int)zoom.Y, Image.Interpolation.Nearest);
+				TextureRect.Texture = ImageTexture.CreateFromImage(image);
+
+				SetMeta("thingID", thingResource.ID);
+			}
+			else
+			{
+				Logger.Log($"InventoryButton: No texture found for thing {thingResource.ID}", Logger.LogTypeEnum.Error);
+				return;
+			}
+		}
+		else
+		{
+			TextureRect.Texture = null;
+			SetMeta("thingID", "");
+		}
 	}
 
 	public void Clear()

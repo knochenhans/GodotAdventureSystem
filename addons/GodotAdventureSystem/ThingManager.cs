@@ -4,17 +4,12 @@ using System;
 
 public partial class ThingManager : GodotObject
 {
-    [Signal] public delegate void AddThingToIventoryEventHandler(string thingID, Texture2D thingTexture);
-
     public Dictionary<string, Thing> Things { get; private set; } = new();
 
     public void RegisterThing(string thingID, Thing thing)
     {
         Things[thingID] = thing;
-        Logger.Log($"ThingManager: Thing {thingID} with name \"{(thing.Resource as ThingResource).DisplayedName}\" registered", Logger.LogTypeEnum.World);
-
-        // if (!thing.Visible)
-        //     Logger.Log($"ThingManager: Thing {thingID} is set as invisible", Logger.LogTypeEnum.World);
+        Logger.Log($"StageThingManager: Thing {thingID} with name \"{(thing.Resource as ThingResource).DisplayedName}\" registered", Logger.LogTypeEnum.World);
     }
 
     public Thing GetThing(string thingID)
@@ -39,7 +34,7 @@ public partial class ThingManager : GodotObject
             return character as Character;
         else
         {
-            Logger.Log($"ThingManager: Thing {characterID} is not a Character", Logger.LogTypeEnum.Error);
+            Logger.Log($"StageThingManager: Thing {characterID} is not a Character", Logger.LogTypeEnum.Error);
             return null;
         }
     }
@@ -58,17 +53,20 @@ public partial class ThingManager : GodotObject
         return false;
     }
 
-    public void RemoveThing(string thingID)
+    public ThingResource RemoveThing(string thingID)
     {
+        ThingResource thingResource = null;
         if (Things.ContainsKey(thingID))
         {
             var thing = Things[thingID];
+            thingResource = thing.Resource as ThingResource;
             Things.Remove(thingID);
             thing.QueueFree();
-            Logger.Log($"ThingManager: Thing {thingID} removed", Logger.LogTypeEnum.World);
+            Logger.Log($"StageThingManager: Thing {thingID} removed", Logger.LogTypeEnum.World);
         }
         else
-            Logger.Log($"ThingManager: Thing {thingID} not found", Logger.LogTypeEnum.Error);
+            Logger.Log($"StageThingManager: Thing {thingID} not found", Logger.LogTypeEnum.Error);
+        return thingResource;
     }
 
     public void UpdateThingName(string thingID, string name)
@@ -76,10 +74,10 @@ public partial class ThingManager : GodotObject
         if (Things.ContainsKey(thingID))
         {
             (Things[thingID].Resource as ThingResource).DisplayedName = name;
-            Logger.Log($"ThingManager: Thing {thingID} name updated to {name}", Logger.LogTypeEnum.World);
+            Logger.Log($"StageThingManager: Thing {thingID} name updated to {name}", Logger.LogTypeEnum.World);
         }
         else
-            Logger.Log($"ThingManager: Thing {thingID} not found", Logger.LogTypeEnum.Error);
+            Logger.Log($"StageThingManager: Thing {thingID} not found", Logger.LogTypeEnum.Error);
     }
 
     public string GetThingName(string thingID)
@@ -88,40 +86,22 @@ public partial class ThingManager : GodotObject
             return (Things[thingID].Resource as ThingResource).DisplayedName;
         else
         {
-            Logger.Log($"ThingManager: Thing {thingID} not found", Logger.LogTypeEnum.Error);
+            Logger.Log($"StageThingManager: Thing {thingID} not found", Logger.LogTypeEnum.Error);
             return "";
         }
     }
 
-    public void MoveThingToInventory(string thingID)
+    public Array<Thing> GetThings()
     {
-        if (Things.ContainsKey(thingID))
-        {
-            var thing = Things[thingID];
-            if (thing is Object object_)
-            {
-                object_.Visible = false;
-                EmitSignal(SignalName.AddThingToIventory, thingID, object_.GetTexture());
-            }
-            Logger.Log($"ThingManager: Thing {thingID} moved to inventory", Logger.LogTypeEnum.World);
-        }
-        else
-            Logger.Log($"ThingManager: Thing {thingID} not found", Logger.LogTypeEnum.Error);
-    }
+        Array<Thing> things = new();
 
-    public void LoadThingToInventory(string thingID)
-    {
-        if (!Things.ContainsKey(thingID))
+        foreach (var thing in Things)
         {
-            var thing = GD.Load<PackedScene>($"res://resources/objects/{thingID}.tscn").Instantiate() as Thing;
-            RegisterThing(thingID, thing);
-            MoveThingToInventory(thingID);
-
-            if (thing == null)
-                Logger.Log($"ThingManager: Unable to load thing {thingID} from resources", Logger.LogTypeEnum.Error);
+            if (!IsInInventory(thing.Key))
+                things.Add(thing.Value);
         }
-        else
-            Logger.Log($"ThingManager: Thing {thingID} already loaded", Logger.LogTypeEnum.Error);
+
+        return things;
     }
 
     public void Clear()
@@ -129,6 +109,6 @@ public partial class ThingManager : GodotObject
         // foreach (var thing in Things)
         // thing.Value.QueueFree();
         Things.Clear();
-        Logger.Log("ThingManager: Cleared", Logger.LogTypeEnum.World);
+        Logger.Log("StageThingManager: Cleared", Logger.LogTypeEnum.World);
     }
 }

@@ -54,24 +54,28 @@ public partial class Interface : CanvasLayer
 	{
 		get => _mode;
 		set
-		{
-			switch (value)
-			{
-				case ModeEnum.Normal:
-					InterfaceContainer.Visible = true;
-					InterfaceContainerDialog.Visible = false;
-					break;
-				case ModeEnum.Dialog:
-					InterfaceContainer.Visible = false;
-					InterfaceContainerDialog.Visible = true;
-					break;
-			}
+        {
+            ModeChanged(value);
+            _mode = value;
+        }
+    }
 
-			_mode = value;
-		}
-	}
+    private void ModeChanged(ModeEnum value)
+    {
+        switch (value)
+        {
+            case ModeEnum.Normal:
+                InterfaceContainer.Visible = true;
+                InterfaceContainerDialog.Visible = false;
+                break;
+            case ModeEnum.Dialog:
+                InterfaceContainer.Visible = false;
+                InterfaceContainerDialog.Visible = true;
+                break;
+        }
+    }
 
-	public override void _Ready() => GamePanel.GuiInput += OnGamePanelInputEvent;
+    public override void _Ready() => GamePanel.GuiInput += OnGamePanelInputEvent;
 
 	public void Init(Dictionary<string, string> verbs)
 	{
@@ -133,14 +137,27 @@ public partial class Interface : CanvasLayer
 		ResetFocus();
 	}
 
-	public void OnObjectAddedToInventory(string thingID, Texture2D texture)
+	public void OnPlayerObjectAddedToInventory(ThingResource thingResource)
 	{
 		foreach (var inventoryButton in InventoryGridContainer.GetChildren())
 		{
 			var button = inventoryButton as InventoryButton;
 			if (button.GetMeta("thingID").AsString() == "")
 			{
-				button.SetThing(thingID, texture);
+				button.SetThing(thingResource);
+				break;
+			}
+		}
+	}
+
+	public void OnObjectRemovedFromInventory(string thingID)
+	{
+		foreach (var inventoryButton in InventoryGridContainer.GetChildren())
+		{
+			var button = inventoryButton as InventoryButton;
+			if (button.GetMeta("thingID").AsString() == thingID)
+			{
+				button.SetThing(null);
 				break;
 			}
 		}

@@ -18,12 +18,12 @@ public partial class DialogManager : GodotObject
 		Game.InterfaceNode.Mode = Interface.ModeEnum.Dialog;
 		Game.CurrentCommandState = Game.CommandStateEnum.Dialog;
 
-		CurrentDialogCharacter = Game.ThingManager.GetThing(characterID) as Character;
+		CurrentDialogCharacter = Game.CurrentStage.StageThingManager.GetThing(characterID) as Character;
 
-		Game.StageNode.PlayerCharacter.LookAt(CurrentDialogCharacter.Position);
-		Game.StageNode.PlayerCharacter.StartDialog();
+		Game.CurrentStage.PlayerCharacter.LookAt(CurrentDialogCharacter.Position);
+		Game.CurrentStage.PlayerCharacter.StartDialog();
 
-		CurrentDialogCharacter.LookAt(Game.StageNode.PlayerCharacter.Position);
+		CurrentDialogCharacter.LookAt(Game.CurrentStage.PlayerCharacter.Position);
 		CurrentDialogCharacter.StartDialog();
 
 		Game.InkStory.ChoosePathString(characterID);
@@ -56,8 +56,8 @@ public partial class DialogManager : GodotObject
 	private async void OnDialogChoiceMade(InkChoice choice)
 	{
 		Game.InterfaceNode.ClearDialogChoiceLabels();
-		Game.ScriptManager.QueueAction(new ScriptActionMessage(Game.StageNode.PlayerCharacter, choice.Text, CurrentDialogCharacter));
-		Game.ScriptManager.QueueAction(new ScriptActionCharacterWait(Game.StageNode.PlayerCharacter, 0.5f));
+		Game.ScriptManager.QueueAction(new ScriptActionMessage(Game.CurrentStage.PlayerCharacter, choice.Text, CurrentDialogCharacter));
+		Game.ScriptManager.QueueAction(new ScriptActionCharacterWait(Game.CurrentStage.PlayerCharacter, 0.5f));
 
 		await Game.ScriptManager.RunScriptActionQueue();
 
@@ -75,7 +75,7 @@ public partial class DialogManager : GodotObject
 		Game.InterfaceNode.Mode = Interface.ModeEnum.Normal;
 		Game.CurrentCommandState = Game.CommandStateEnum.Idle;
 
-		Game.StageNode.PlayerCharacter.EndDialog();
+		Game.CurrentStage.PlayerCharacter.EndDialog();
 
 		CurrentDialogCharacter.EndDialog();
 		CurrentDialogCharacter.ScriptVisits++;

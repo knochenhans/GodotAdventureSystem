@@ -1,18 +1,20 @@
-[gd_scene load_steps=11 format=3 uid="uid://dwjqecofhdgta"]
+[gd_scene load_steps=12 format=3 uid="uid://dwjqecofhdgta"]
 
 [ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://addons/GodotAdventureSystem/Stage.tscn" id="1_6d714"]
 [ext_resource type="PackedScene" uid="uid://b44hbsyxbbqit" path="res://resources/Robot.tscn" id="2_6wru3"]
 [ext_resource type="PackedScene" uid="uid://cbyij1livuxja" path="res://resources/objects/note.tscn" id="3_s8c1d"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/ThingResource.cs" id="4_73313"]
+[ext_resource type="Texture2D" uid="uid://q8g5jhi8xo2q" path="res://resources/note.png" id="4_fagxw"]
 [ext_resource type="PackedScene" uid="uid://dxunhfut7rfqt" path="res://resources/objects/bush.tscn" id="5_eku16"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Hotspot.cs" id="6_1oyp7"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Entry.cs" id="7_haa85"]
 
-[sub_resource type="Resource" id="Resource_y52g2"]
+[sub_resource type="Resource" id="Resource_wo2xp"]
 resource_local_to_scene = true
 script = ExtResource("4_73313")
 ID = "note"
 DisplayedName = "Note"
+Texture = ExtResource("4_fagxw")
 
 [sub_resource type="Resource" id="Resource_qf4n5"]
 resource_local_to_scene = true
@@ -34,7 +36,7 @@ position = Vector2(443, 195)
 
 [node name="Note" parent="." index="1" instance=ExtResource("3_s8c1d")]
 position = Vector2(618, 193)
-Resource = SubResource("Resource_y52g2")
+Resource = SubResource("Resource_wo2xp")
 
 [node name="Bush" parent="." index="2" instance=ExtResource("5_eku16")]
 position = Vector2(123, 194)

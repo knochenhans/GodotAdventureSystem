@@ -5,28 +5,21 @@ using Godot.Collections;
 [Icon("res://addons/GodotAdventureSystem/icons/Stage.svg")]
 public partial class Stage : Node2D
 {
+	[Signal] public delegate void ThingHoveredEventHandler(string thingID);
+	[Signal] public delegate void ThingLeaveEventHandler(string thingID);
+	[Signal] public delegate void ThingClickedEventHandler(string thingID);
+
 	[Export] public string ID { get; set; } = "";
 
-	public Interface InterfaceNode { get; set; }
-	public TextureRect BackgroundNode { get; set; }
+	public Interface InterfaceNode => GetNode<Interface>("../Interface");
+	public TextureRect BackgroundNode => GetNode<TextureRect>("Background");
 
 	public PlayerCharacter PlayerCharacter { get; set; }
-
-	[Signal]
-	public delegate void ThingHoveredEventHandler(string thingID);
-
-	[Signal]
-	public delegate void ThingLeaveEventHandler(string thingID);
-
-	[Signal]
-	public delegate void ThingClickedEventHandler(string thingID);
+	public ThingManager StageThingManager { get; set; } = new();
 
 	public override void _Ready()
 	{
 		base._Ready();
-
-		InterfaceNode = GetNode<Interface>("../Interface");
-		BackgroundNode = GetNode<TextureRect>("Background");
 
 		CreateHotspotAreas();
 
@@ -39,6 +32,9 @@ public partial class Stage : Node2D
 				characterNode.InputEvent += (viewport, @event, shapeIdx) => OnThingInputEvent(@event, characterNode);
 
 		var walkableRegion = GetNode<NavigationRegion2D>("WalkableRegion");
+
+		StageThingManager.Clear();
+		StageThingManager.RegisterThings(CollectThings());
 	}
 
 	// Convert Hotspots into HotspotAreas
@@ -126,6 +122,8 @@ public partial class Stage : Node2D
 				break;
 			}
 		}
+
+		PlayerCharacter.AddThingToInventory += InterfaceNode.OnPlayerObjectAddedToInventory;
 
 		if (!entryFound)
 			Logger.Log($"No entry named '{entryID}' found in the stage, unable to place the player character.", Logger.LogTypeEnum.Error);
