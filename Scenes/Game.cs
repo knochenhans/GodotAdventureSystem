@@ -303,16 +303,9 @@ public partial class Game : Scene
 
 	public override void _Process(double delta)
 	{
-		if (CurrentStage.PlayerCharacter.Position.X > CurrentStage.GetViewportRect().Size.X / 8)
-		{
-			if (Camera2DNode.Position.X + CurrentStage.GetViewportRect().Size.X / 4 < CurrentStage.GetSize().X)
-				Camera2DNode.Position = new Vector2(CurrentStage.PlayerCharacter.Position.X - CurrentStage.GetViewportRect().Size.X / 8, Camera2DNode.Position.Y);
-		}
-		else if (CurrentStage.PlayerCharacter.Position.X < CurrentStage.GetViewportRect().Size.X / 8)
-		{
-			if (Camera2DNode.Position.X - CurrentStage.GetViewportRect().Size.X / 4 > 0)
-				Camera2DNode.Position = new Vector2(CurrentStage.PlayerCharacter.Position.X - CurrentStage.GetViewportRect().Size.X / 8, Camera2DNode.Position.Y);
-		}
+		var viewportRect = CurrentStage.GetViewportRect();
+		var cameraPositionX = Mathf.Clamp(CurrentStage.PlayerCharacter.Position.X - viewportRect.Size.X / (2 * Camera2DNode.Zoom.X), 0, viewportRect.Size.X / Camera2DNode.Zoom.X);
+		Camera2DNode.Position = new Vector2(cameraPositionX, Camera2DNode.Position.Y);
 	}
 
 	public void Save()
