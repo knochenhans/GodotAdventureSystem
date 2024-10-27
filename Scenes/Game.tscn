@@ -1,9 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://b46xhre03dhm8"]
+[gd_scene load_steps=7 format=3 uid="uid://b46xhre03dhm8"]
 
 [ext_resource type="PackedScene" uid="uid://bawrmdt67ohun" path="res://addons/SceneManager/Scene.tscn" id="1_hl7nu"]
 [ext_resource type="Script" path="res://Scenes/Game.cs" id="2_4jlpu"]
 [ext_resource type="Resource" uid="uid://ct05u0fp1b1t6" path="res://Game.tres" id="3_074xn"]
-[ext_resource type="Resource" uid="uid://dmjhj36hjneol" path="res://resources/scripts/meadow/meadow.ink" id="3_i2mou"]
 [ext_resource type="PackedScene" uid="uid://dwxanbxgml16l" path="res://resources/PlayerCharacter.tscn" id="4_afvkx"]
 [ext_resource type="PackedScene" uid="uid://ca6ex1hvbacgf" path="res://addons/GodotAdventureSystem/Interface.tscn" id="4_rus0q"]
 [ext_resource type="PackedScene" uid="uid://cic11sx8uilrp" path="res://Camera.tscn" id="6_x8nfc"]
@@ -11,7 +10,6 @@
 [node name="Game" instance=ExtResource("1_hl7nu")]
 script = ExtResource("2_4jlpu")
 GameResource = ExtResource("3_074xn")
-InkStory = ExtResource("3_i2mou")
 PlayerCharacterScene = ExtResource("4_afvkx")
 FadeInTime = 0.0
 FadeOutTime = 0.0

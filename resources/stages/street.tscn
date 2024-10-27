@@ -1,17 +1,19 @@
-[gd_scene load_steps=5 format=3 uid="uid://bunmavhhlfrjf"]
+[gd_scene load_steps=6 format=3 uid="uid://bunmavhhlfrjf"]
 
 [ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://addons/GodotAdventureSystem/Stage.tscn" id="1_5c304"]
+[ext_resource type="Resource" uid="uid://ddulsf45peoo0" path="res://resources/scripts/street/street.ink" id="2_rmxor"]
 [ext_resource type="Texture2D" uid="uid://caoeii8muscot" path="res://resources/stages/street.aseprite" id="2_uus5n"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Hotspot.cs" id="3_ygopr"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_q6mm5"]
-vertices = PackedVector2Array(961, 220, 4, 222, 4, 217, 447, 130, 961, 124)
+vertices = PackedVector2Array(961, 220, 4, 222, 3, 220, 447, 130, 961, 124)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(447, 130, 961, 124, 961, 220, 4, 222, 4, 217)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(447, 130, 961, 124, 961, 220, 4, 222, 3, 220)])
 source_geometry_group_name = &"navigation_polygon_source_group"
 agent_radius = 0.0
 
 [node name="Street" instance=ExtResource("1_5c304")]
+InkStory = ExtResource("2_rmxor")
 
 [node name="Background" parent="." index="0"]
 texture = ExtResource("2_uus5n")
@@ -23,12 +25,8 @@ navigation_polygon = SubResource("NavigationPolygon_q6mm5")
 position = Vector2(54, 216)
 
 [node name="ExitLeft" parent="." index="3"]
-color = Color(0, 1, 1, 0.262745)
 polygon = PackedVector2Array(-9, -8, -6, 229, 5, 228, 3, -8)
 DisplayedName = "To meadow"
-
-[node name="ExitRight" parent="." index="4"]
-color = Color(0, 1, 1, 0.262745)
 
 [node name="Hotspot" type="Polygon2D" parent="." index="5"]
 color = Color(0, 1, 1, 0.262745)

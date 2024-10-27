@@ -1,0 +1,16 @@
+[remap]
+
+importer="ink"
+type="Resource"
+uid="uid://ddulsf45peoo0"
+path="res://.godot/imported/street.ink-8796fc4a3c2a5d61ac88f0736e0e597b.res"
+
+[deps]
+
+source_file="res://resources/scripts/street/street.ink"
+dest_files=["res://.godot/imported/street.ink-8796fc4a3c2a5d61ac88f0736e0e597b.res"]
+
+[params]
+
+is_main_file=true
+compress=true
