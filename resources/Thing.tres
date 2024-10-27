@@ -7,3 +7,4 @@ resource_local_to_scene = true
 script = ExtResource("1_3sny4")
 ID = ""
 DisplayedName = ""
+CanBePickedUp = false

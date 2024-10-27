@@ -18,3 +18,5 @@ EXTERNAL play_anim(anim_name)
 EXTERNAL play_anim_c(character_id, anim_name)
 EXTERNAL switch_stage(scene_id, entry_id)
 EXTERNAL get_action_count(thing_id, action_id)
+
+VAR action_count = 0

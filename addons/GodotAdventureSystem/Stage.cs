@@ -7,7 +7,7 @@ public partial class Stage : Node2D
 {
 	[Signal] public delegate void ThingHoveredEventHandler(string thingID);
 	[Signal] public delegate void ThingLeaveEventHandler(string thingID);
-	[Signal] public delegate void ThingClickedEventHandler(string thingID);
+	[Signal] public delegate void ThingClickedEventHandler(string thingID, Vector2 position);
 
 	[Export] public string ID { get; set; } = "";
 	[Export] public InkStory InkStory { get; set; }
@@ -46,6 +46,7 @@ public partial class Stage : Node2D
         base._ExitTree();
 
 		ScriptManager.Cleanup();
+		ScriptManager = null;
     }
 
     // Convert Hotspots into HotspotAreas
@@ -84,7 +85,7 @@ public partial class Stage : Node2D
 		if (@event is InputEventMouseMotion mouseMotionEvent)
 			EmitSignal(SignalName.ThingHovered, (thing.Resource as ThingResource).ID);
 		else if (@event is InputEventMouseButton mouseButtonEvent && mouseButtonEvent.Pressed && mouseButtonEvent.ButtonIndex == MouseButton.Left)
-			EmitSignal(SignalName.ThingClicked, (thing.Resource as ThingResource).ID);
+			EmitSignal(SignalName.ThingClicked, (thing.Resource as ThingResource).ID, mouseButtonEvent.Position);
 	}
 
 	public Vector2 GetSize()
@@ -136,8 +137,14 @@ public partial class Stage : Node2D
 
 		PlayerCharacter.Inventory.AddedThing += InterfaceNode.OnPlayerObjectAddedToInventory;
 		PlayerCharacter.Inventory.RemovedThing += InterfaceNode.OnPlayerObjectRemovedFromInventory;
+		PlayerCharacter.ThingPickedUp += OnCharacterPickedUpThing;
 
 		if (!entryFound)
 			Logger.Log($"No entry named '{entryID}' found in the stage, unable to place the player character.", Logger.LogTypeEnum.Error);
+	}
+
+	public void OnCharacterPickedUpThing(ThingResource thingResource)
+	{
+		StageThingManager.RemoveThing(thingResource.ID);
 	}
 }

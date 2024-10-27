@@ -10,6 +10,7 @@ resource_local_to_scene = true
 script = ExtResource("2_4svfb")
 ID = "coin"
 DisplayedName = "Coin"
+CanBePickedUp = false
 Texture = ExtResource("2_gux2m")
 
 [node name="Coin" instance=ExtResource("1_ujosb")]

@@ -24,6 +24,12 @@ public partial class Inventory : GodotObject
 
     public Array<ThingResource> GetThings() => ThingResources;
 
+    public void AddThings(Array<ThingResource> thingResources)
+    {
+        foreach (var thingResource in thingResources)
+            AddThing(thingResource);
+    }
+
     public void RemoveThing(ThingResource thingResource)
     {
         ThingResources.Remove(thingResource);

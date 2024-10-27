@@ -17,7 +17,7 @@ public partial class Interface : CanvasLayer
 	[Signal] public delegate void GamePanelMousePressedEventHandler(InputEventMouseButton mouseButtonEvent);
 	[Signal] public delegate void ThingHoveredEventHandler(string thingID);
 	[Signal] public delegate void ThingLeaveEventHandler();
-	[Signal] public delegate void ThingClickedEventHandler(string thingID);
+	[Signal] public delegate void ThingClickedEventHandler(string thingID, Vector2 mousePosition);
 	[Signal] public delegate void VerbHoveredEventHandler(string verbID);
 	[Signal] public delegate void VerbLeaveEventHandler();
 	[Signal] public delegate void VerbClickedEventHandler(string verbID);

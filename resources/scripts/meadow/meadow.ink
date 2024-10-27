@@ -1,8 +1,8 @@
 INCLUDE ../includes.ink
+INCLUDE ../items.ink
 INCLUDE robot.ink
 
-=== function verb(thing_id, verb_id) ===
-    VAR action_count = 0
+=== function interact_stage(thing_id, verb_id) ===
     ~ action_count = get_action_count(thing_id, verb_id)
     
     { thing_id:
@@ -57,21 +57,6 @@ INCLUDE robot.ink
         - "talk_to": Come on, cloud, talk to me! #player
         - else: ~ return false
         }
-    
-    - "note":
-        { verb_id:
-        - "look":
-            { is_in_inventory(thing_id) == false:
-                A paper note. #player
-            - else:
-                It’s a paper note. It reads: “Why are you reading this?” #player
-                ~ set_name("note", "Paper note with a pointless question")
-            }
-        - "pick_up":
-            ~ pick_up(thing_id)
-            I picked up the note. #player
-        - else: ~ return false
-        }
 
     - "bush":
         { verb_id:
@@ -90,7 +75,7 @@ INCLUDE robot.ink
                     }
             }
         - "pick_up":
-            ~ verb(thing_id, "look")
+            ~ interact_stage(thing_id, "look")
         - else: ~ return false
         }
     
@@ -119,6 +104,13 @@ INCLUDE robot.ink
         { verb_id:
         - "walk":
             ~ switch_stage("street", "default")
+        - else: ~ return false
+        }
+    
+    - "note":
+        { verb_id:
+        - "look":
+            A paper note in the grass. #player
         - else: ~ return false
         }
 

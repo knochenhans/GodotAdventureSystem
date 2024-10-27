@@ -1,6 +1,6 @@
 INCLUDE ../includes.ink
 
-=== function verb(thing_id, verb_id) ===
+=== function interact_stage(thing_id, verb_id) ===
     VAR action_count = 0
     ~ action_count = get_action_count(thing_id, verb_id)
     

@@ -1,12 +1,11 @@
 using System.Threading.Tasks;
 using Godot;
-using Godot.Collections;
 
 [Icon("res://addons/GodotAdventureSystem/icons/Character.svg")]
 public partial class Character : Thing
 {
 	[Signal] public delegate void MovementFinishedEventHandler();
-	[Signal] public delegate void RemoveThingFromInventoryEventHandler(ThingResource thingResource);
+	[Signal] public delegate void ThingPickedUpEventHandler(ThingResource thingResource);
 
 	enum MovementStateEnum
 	{
@@ -22,7 +21,7 @@ public partial class Character : Thing
 		get => _movementState; set
 		{
 			MovementStateChanged(value);
-			Logger.Log($"MovementState changed from {_movementState} to {value}", Logger.LogTypeEnum.Script);
+			// Logger.Log($"MovementState changed from {_movementState} to {value}", Logger.LogTypeEnum.Script);
 			_movementState = value;
 		}
 	}
@@ -98,7 +97,7 @@ public partial class Character : Thing
 		AnimatedSprite2D.Frame = currentFrame;
 	}
 
-	public async Task MoveTo(Vector2 position, int desiredDistance = 10, bool isRelative = false)
+	public async Task MoveTo(Vector2 position, int desiredDistance = 2, bool isRelative = false)
 	{
 		if (MovementState != MovementStateEnum.SpeechBubble)
 		{
@@ -166,14 +165,12 @@ public partial class Character : Thing
 		AddThingToInventory(thingResource);
 		SoundPlayer.Stream = (Resource as CharacterResource).PickupSound;
 		SoundPlayer.Play();
+		EmitSignal(SignalName.ThingPickedUp, thingResource);
 	}
 
-	public void AddThingToInventory(ThingResource thingResource)
-	{
-		Inventory.AddThing(thingResource);
-	}
+    public void AddThingToInventory(ThingResource thingResource) => Inventory.AddThing(thingResource);
 
-	public override void _PhysicsProcess(double delta)
+    public override void _PhysicsProcess(double delta)
 	{
 		if (MovementState != MovementStateEnum.SpeechBubble)
 		{

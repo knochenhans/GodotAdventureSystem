@@ -1,0 +1,16 @@
+[remap]
+
+importer="ink"
+type="Resource"
+uid="uid://dyiv2qcjj3wvv"
+path="res://.godot/imported/items.ink-a6ae457a0df710353e9acda8706c6629.res"
+
+[deps]
+
+source_file="res://resources/scripts/items.ink"
+dest_files=["res://.godot/imported/items.ink-a6ae457a0df710353e9acda8706c6629.res"]
+
+[params]
+
+is_main_file=false
+compress=true

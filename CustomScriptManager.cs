@@ -62,7 +62,8 @@ public partial class CustomScriptManager : ScriptManager
     }
 
     public Variant IsInInventory(string thingID) => Game.CurrentStage.PlayerCharacter.Inventory.FindThing(thingID) is not null;
-    public void SetThingName(string thingID, string name)
+    
+	public void SetThingName(string thingID, string name)
 	{
 		if (Game.CurrentStage.StageThingManager.GetThing(thingID) is not null)
 			Game.CurrentStage.StageThingManager.UpdateThingName(thingID, name);
@@ -76,9 +77,10 @@ public partial class CustomScriptManager : ScriptManager
 
 	public void PickUp(string thingID)
 	{
-		var thingResource = Game.CurrentStage.StageThingManager.RemoveThing(thingID);
+		var thingResource = Game.CurrentStage.StageThingManager.GetThing(thingID).Resource as ThingResource;
 		Game.CurrentStage.PlayerCharacter.PickUpThing(thingResource);
 	}
+
 	public void CreateThingInInventory(string thingID)
 	{
 		var thing = GD.Load<PackedScene>($"res://resources/objects/{thingID}.tscn").Instantiate() as Thing;
