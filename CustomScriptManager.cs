@@ -4,7 +4,7 @@ using Godot.Collections;
 
 public partial class CustomScriptManager : ScriptManager
 {
-	public Game Game;
+	public Game Game { get; set; }
 
 	public CustomScriptManager(Game game) : base(game.CurrentStage.InkStory)
 	{

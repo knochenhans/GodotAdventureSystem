@@ -41,7 +41,7 @@ public partial class DialogManager : GodotObject
 			Game.CurrentStage.InkStory.Continue();
 		else
 		{
-			await Game.ScriptManager.RunScriptActionQueue();
+			await Game.CurrentStage.ScriptManager.RunScriptActionQueue();
 
 			if (Game.CurrentStage.InkStory.CurrentChoices.Count > 0)
 				Game.InterfaceNode.SetDialogChoiceLabels(new Array<InkChoice>(Game.CurrentStage.InkStory.CurrentChoices));
@@ -56,10 +56,10 @@ public partial class DialogManager : GodotObject
 	private async void OnDialogChoiceMade(InkChoice choice)
 	{
 		Game.InterfaceNode.ClearDialogChoiceLabels();
-		Game.ScriptManager.QueueAction(new ScriptActionMessage(Game.CurrentStage.PlayerCharacter, choice.Text, CurrentDialogCharacter));
-		Game.ScriptManager.QueueAction(new ScriptActionCharacterWait(Game.CurrentStage.PlayerCharacter, 0.5f));
+		Game.CurrentStage.ScriptManager.QueueAction(new ScriptActionMessage(Game.CurrentStage.PlayerCharacter, choice.Text, CurrentDialogCharacter));
+		Game.CurrentStage.ScriptManager.QueueAction(new ScriptActionCharacterWait(Game.CurrentStage.PlayerCharacter, 0.5f));
 
-		await Game.ScriptManager.RunScriptActionQueue();
+		await Game.CurrentStage.ScriptManager.RunScriptActionQueue();
 
 		Game.CurrentStage.InkStory.ChooseChoiceIndex(choice.Index);
 		Game.CurrentStage.InkStory.Continue();

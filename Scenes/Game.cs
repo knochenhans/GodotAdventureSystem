@@ -38,7 +38,6 @@ public partial class Game : Scene
 		}
 	}
 
-	public CustomScriptManager ScriptManager { get; set; }
 	public DialogManager DialogManager { get; set; }
 	public ThingActionCounter ThingActionCounter = new();
 
@@ -52,7 +51,6 @@ public partial class Game : Scene
 		SetupInterface();
 		SwitchStage("meadow");
 
-		ScriptManager = new CustomScriptManager(this);
 		DialogManager = new DialogManager(this);
 	}
 
@@ -247,8 +245,8 @@ public partial class Game : Scene
 				actingCharacter = CurrentStage.StageThingManager.GetThing(tag[0]) as Character;
 			}
 
-			ScriptManager.QueueAction(new ScriptActionMessage(actingCharacter, CurrentStage.InkStory.CurrentText, targetCharacter));
-			ScriptManager.QueueAction(new ScriptActionCharacterWait(actingCharacter, 0.3f));
+			CurrentStage.ScriptManager.QueueAction(new ScriptActionMessage(actingCharacter, CurrentStage.InkStory.CurrentText, targetCharacter));
+			CurrentStage.ScriptManager.QueueAction(new ScriptActionCharacterWait(actingCharacter, 0.3f));
 		}
 	}
 
@@ -266,10 +264,10 @@ public partial class Game : Scene
 			if (!CurrentStage.InkStory.EvaluateFunction("verb", thingID, currentVerbID).AsBool())
 			{
 				// No scripted reaction found, use the default one
-				ScriptManager.QueueAction(new ScriptActionMessage(CurrentStage.PlayerCharacter, GameResource.DefaultVerbReactions[currentVerbID]));
+				CurrentStage.ScriptManager.QueueAction(new ScriptActionMessage(CurrentStage.PlayerCharacter, GameResource.DefaultVerbReactions[currentVerbID]));
 			}
 
-			await ScriptManager.RunScriptActionQueue();
+			await CurrentStage.ScriptManager.RunScriptActionQueue();
 
 			CurrentCommandState = CommandStateEnum.Idle;
 		}
@@ -277,7 +275,7 @@ public partial class Game : Scene
 		{
 			CurrentStage.InkStory.EvaluateFunction("verb", thingID, "walk");
 			InterfaceNode.SetCommandLabel(CurrentStage.StageThingManager.GetThingName(thingID));
-			await ScriptManager.RunScriptActionQueue();
+			await CurrentStage.ScriptManager.RunScriptActionQueue();
 			performedAction = "walk";
 		}
 

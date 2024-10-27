@@ -12,12 +12,12 @@ public partial class Stage : Node2D
 	[Export] public string ID { get; set; } = "";
 	[Export] public InkStory InkStory { get; set; }
 
-
 	public Interface InterfaceNode => GetNode<Interface>("../Interface");
 	public TextureRect BackgroundNode => GetNode<TextureRect>("Background");
 
 	public PlayerCharacter PlayerCharacter { get; set; }
 	public StageThingManager StageThingManager { get; set; } = new();
+	public CustomScriptManager ScriptManager { get; set; }
 
 	public override void _Ready()
 	{
@@ -37,10 +37,19 @@ public partial class Stage : Node2D
 
 		StageThingManager.Clear();
 		StageThingManager.RegisterThings(CollectThings());
+
+		ScriptManager = new CustomScriptManager(GetParent() as Game);
 	}
 
-	// Convert Hotspots into HotspotAreas
-	private void CreateHotspotAreas()
+    public override void _ExitTree()
+    {
+        base._ExitTree();
+
+		ScriptManager.Cleanup();
+    }
+
+    // Convert Hotspots into HotspotAreas
+    private void CreateHotspotAreas()
 	{
 		var hotspotNodes = GetTree().GetNodesInGroup("hotspot");
 
