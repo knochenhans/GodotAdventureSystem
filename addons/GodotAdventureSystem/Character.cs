@@ -22,6 +22,7 @@ public partial class Character : Thing
 		get => _movementState; set
 		{
 			MovementStateChanged(value);
+			Logger.Log($"MovementState changed from {_movementState} to {value}", Logger.LogTypeEnum.Script);
 			_movementState = value;
 		}
 	}
@@ -39,7 +40,8 @@ public partial class Character : Thing
 	{
 		get => _orientation; set
 		{
-			OrientationChanged(value);
+			if (_orientation != value)
+				OrientationChanged(value);
 			_orientation = value;
 		}
 	}
@@ -89,7 +91,12 @@ public partial class Character : Thing
 		}
 	}
 
-	private void OrientationChanged(OrientationEnum value) => AnimatedSprite2D.Play("idle_" + value.ToString().ToLower());
+	private void OrientationChanged(OrientationEnum value)
+	{
+		var currentFrame = AnimatedSprite2D.Frame;
+		AnimatedSprite2D.Play("idle_" + value.ToString().ToLower());
+		AnimatedSprite2D.Frame = currentFrame;
+	}
 
 	public async Task MoveTo(Vector2 position, int desiredDistance = 10, bool isRelative = false)
 	{
