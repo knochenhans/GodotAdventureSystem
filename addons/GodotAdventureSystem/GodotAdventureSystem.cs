@@ -5,36 +5,43 @@ using System;
 [Tool]
 public partial class GodotAdventureSystem : EditorPlugin
 {
-	private Control Dock { get; set; }
-
 	EditorUndoRedoManager UndoRedoManager;
 	Node EditedSceneRoot { get; set; }
+	Control DockNode = GD.Load<PackedScene>("res://addons/GodotAdventureSystem/Dock.tscn").Instantiate<Control>();
 
+	Script HotspotScript = GD.Load<Script>("res://addons/GodotAdventureSystem/Hotspot.cs");
+	Script EntryScript = GD.Load<Script>("res://addons/GodotAdventureSystem/Entry.cs");
+	Script ExitScript = GD.Load<Script>("res://addons/GodotAdventureSystem/Exit.cs");
+	Script StageBackgroundScript = GD.Load<Script>("res://addons/GodotAdventureSystem/StageBackground.cs");
 
 	public override void _EnterTree()
 	{
-		var hotspotScript = GD.Load<Script>("res://addons/GodotAdventureSystem/Hotspot.cs");
-		AddCustomType("Hotspot", "Polygon2D", hotspotScript, null);
+		AddCustomType("Hotspot", "Polygon2D", HotspotScript, null);
+		AddCustomType("Entry", "Marker2D", EntryScript, null);
+		AddCustomType("Exit", "Polygon2D", HotspotScript, null);
+		AddCustomType("StageBackground", "TextureRect", StageBackgroundScript, null);
 
-		var entryScript = GD.Load<Script>("res://addons/GodotAdventureSystem/Entry.cs");
-		AddCustomType("Entry", "Marker2D", entryScript, null);
+		Button AddHotspotButton = DockNode.GetNode<Button>("VBoxContainer/AddHotspot");
+		Button AddStageButton = DockNode.GetNode<Button>("VBoxContainer/AddStage");
+		Button AddEntryButton = DockNode.GetNode<Button>("VBoxContainer/AddEntry");
+		Button AddExitButton = DockNode.GetNode<Button>("VBoxContainer/AddExit");
+		Button AddStageBackgroundButton = DockNode.GetNode<Button>("VBoxContainer/AddBackground");
 
-		Dock = GD.Load<PackedScene>("res://addons/GodotAdventureSystem/Dock.tscn").Instantiate<Control>();
-		AddControlToDock(DockSlot.LeftUl, Dock);
+		AddControlToDock(DockSlot.LeftUl, DockNode);
 
-		var addHotspotButton = Dock.GetNode<Button>("VBoxContainer/AddHotspot");
-		addHotspotButton.Pressed += OnAddHotspotButtonPressed;
-
-		var addStageButton = Dock.GetNode<Button>("VBoxContainer/AddStage");
-		addStageButton.Pressed += OnAddStageButtonPressed;
+		AddHotspotButton.Pressed += OnAddHotspotButtonPressed;
+		AddStageButton.Pressed += OnAddStageButtonPressed;
+		AddEntryButton.Pressed += OnAddEntryButtonPressed;
+		AddExitButton.Pressed += OnAddExitButtonPressed;
+		AddStageBackgroundButton.Pressed += OnAddBackgroundButtonPressed;
 
 		UndoRedoManager = GetUndoRedo();
 	}
 
 	public override void _ExitTree()
 	{
-		RemoveControlFromDocks(Dock);
-		Dock.Free();
+		RemoveControlFromDocks(DockNode);
+		DockNode.Free();
 
 		RemoveCustomType("Entry");
 		RemoveCustomType("Hotspot");
@@ -109,24 +116,43 @@ public partial class GodotAdventureSystem : EditorPlugin
 
 	public void OnAddHotspotButtonPressed()
 	{
-		// We have to set this here as it's not available in _EnterTree for some reason
+		AddNodeToStage<Hotspot>("Hotspot", DoAddHotspotNode, UndoAddHotspotNode);
+	}
+
+	public void OnAddEntryButtonPressed()
+	{
+		AddNodeToStage<Entry>("Entry", DoAddEntryNode, UndoAddEntryNode);
+	}
+
+	public void OnAddExitButtonPressed()
+	{
+		AddNodeToStage<Exit>("Exit", DoAddExitNode, UndoAddExitNode);
+	}
+
+	public void OnAddBackgroundButtonPressed()
+	{
+		AddNodeToStage<StageBackground>("StageBackground", DoStageAddBackgroundNode, UndoStageAddBackgroundNode);
+	}
+
+	private void AddNodeToStage<T>(string nodeName, Action<T> doMethod, Action<T> undoMethod) where T : Node, new()
+	{
 		EditedSceneRoot = EditorInterface.Singleton.GetEditedSceneRoot();
 		if (EditedSceneRoot.IsInGroup("stage"))
 		{
-			var hotspot = new Hotspot
+			var node = new T
 			{
-				Name = GetNewNodeName("Hotspot")
+				Name = GetNewNodeName(nodeName)
 			};
 
-			UndoRedoManager.CreateAction("Add Hotspot", customContext: EditedSceneRoot);
-			UndoRedoManager.AddDoMethod(this, MethodName.DoAddHotspotNode, hotspot);
-			UndoRedoManager.AddDoReference(hotspot);
-			UndoRedoManager.AddUndoMethod(this, MethodName.UndoAddHotspotNode, hotspot);
+			UndoRedoManager.CreateAction($"Add {nodeName}", customContext: EditedSceneRoot);
+			UndoRedoManager.AddDoMethod(this, doMethod.Method.Name, node);
+			UndoRedoManager.AddDoReference(node);
+			UndoRedoManager.AddUndoMethod(this, undoMethod.Method.Name, node);
 			UndoRedoManager.CommitAction();
 
 			var editorSelection = EditorInterface.Singleton.GetSelection();
 			editorSelection.Clear();
-			editorSelection.AddNode(hotspot);
+			editorSelection.AddNode(node);
 		}
 		else
 		{
@@ -142,13 +168,55 @@ public partial class GodotAdventureSystem : EditorPlugin
 	public void DoAddHotspotNode(Hotspot hotspot)
 	{
 		EditedSceneRoot.AddChild(hotspot);
+
+		hotspot.Polygon = new Vector2[]
+		{
+			new(0, 0),
+			new(0, 32),
+			new(32, 32),
+			new(32, 0),
+		};
+
 		hotspot.Owner = EditedSceneRoot;
 	}
 
-	public void UndoAddHotspotNode(Hotspot hotspot)
+	public void UndoAddHotspotNode(Hotspot hotspot) => RemoveNodeFromStage(hotspot);
+
+	public void DoAddEntryNode(Entry entry) => AddNodeToStage(entry);
+
+	public void UndoAddEntryNode(Entry entry) => RemoveNodeFromStage(entry);
+
+    public void DoAddExitNode(Exit exit)
+    {
+        EditedSceneRoot.AddChild(exit);
+
+		exit.Polygon = new Vector2[]
+		{
+			new(0, 0),
+			new(0, 32),
+			new(32, 32),
+			new(32, 0),
+		};
+
+		exit.Owner = EditedSceneRoot;
+    }
+
+    public void UndoAddExitNode(Exit exit) => RemoveNodeFromStage(exit);
+
+	public void DoStageAddBackgroundNode(StageBackground background) => AddNodeToStage(background);
+
+	public void UndoStageAddBackgroundNode(StageBackground background) => RemoveNodeFromStage(background);
+
+	private void AddNodeToStage(Node node)
 	{
-		EditedSceneRoot.RemoveChild(hotspot);
-		hotspot.QueueFree();
+		EditedSceneRoot.AddChild(node);
+		node.Owner = EditedSceneRoot;
+	}
+
+	private void RemoveNodeFromStage(Node node)
+	{
+		EditedSceneRoot.RemoveChild(node);
+		node.QueueFree();
 	}
 }
 #endif
