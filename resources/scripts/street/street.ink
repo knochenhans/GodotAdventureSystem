@@ -13,11 +13,6 @@ INCLUDE ../items.ink
             ~ set_name("door", "Locked door")
         - else: ~ return false
         }
-    - "exit_left":
-        { verb_id:
-        - "walk":
-            ~ switch_stage("meadow", "default")
-        - else: ~ return false
-        }
-    ~ return true
+    - else: ~ return false
     }
+    ~ return true

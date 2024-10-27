@@ -3,8 +3,7 @@ using System;
 
 public partial class PlayerCharacter : Character
 {
-	[Signal]
-	public delegate void SwitchStageEventHandler(string stageID, string entryID);
+	[Signal] public delegate void SwitchStageEventHandler(string stageID, string entryID);
 
 	public override void _Ready()
 	{

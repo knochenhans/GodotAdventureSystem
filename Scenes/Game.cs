@@ -49,7 +49,7 @@ public partial class Game : Scene
 		Input.SetCustomMouseCursor(cursor, Input.CursorShape.Arrow, new Vector2(29, 29));
 
 		SetupInterface();
-		SwitchStage("meadow");
+		SwitchToStage("meadow");
 
 		DialogManager = new DialogManager(this);
 	}
@@ -78,7 +78,7 @@ public partial class Game : Scene
 		}
 	}
 
-	private void SwitchStage(string stageID, string entryID = "default")
+	private void SwitchToStage(string stageID, string entryID = "")
 	{
 		if (CurrentCommandState == CommandStateEnum.Idle)
 		{
@@ -100,7 +100,7 @@ public partial class Game : Scene
 				CurrentStage.ThingHovered += OnThingHovered;
 
 				var playerCharacter = PlayerCharacterScene.Instantiate() as PlayerCharacter;
-				playerCharacter.SwitchStage += (stageID, entryID) => SwitchStage(stageID, entryID);
+				playerCharacter.SwitchStage += (stageID, entryID) => SwitchToStage(stageID, entryID);
 
 				CurrentStage.SetupPlayerCharacter(playerCharacter, entryID);
 				CurrentStage.PlayerCharacter.Inventory.AddThings(playerInventory);
@@ -304,8 +304,21 @@ public partial class Game : Scene
 		}
 		else
 		{
-			CurrentStage.InkStory.EvaluateFunction("interact_stage", thingID, "walk");
 			InterfaceNode.SetCommandLabel(CurrentStage.StageThingManager.GetThingName(thingID));
+
+			// Check for exit scripts
+			if (!CurrentStage.InkStory.EvaluateFunction("interact_stage", thingID, "walk").AsBool())
+			{
+				Logger.Log($"No exit script found for {thingID}", Logger.LogTypeEnum.Script);
+
+				var thing = CurrentStage.StageThingManager.GetThing(thingID);
+
+				if (thing.Resource is ExitResource exitResource)
+				{
+					Logger.Log($"Exit destination found in node: {exitResource.Destination}", Logger.LogTypeEnum.Script);
+					SwitchToStage(exitResource.Destination, exitResource.Entry);
+				}
+			}
 			await CurrentStage.ScriptManager.RunScriptActionQueue();
 			performedAction = "walk";
 		}
@@ -421,7 +434,7 @@ public partial class Game : Scene
 			// Load ink story states per stage
 			InkStoryStates = (Dictionary<string, string>)saveData["inkStoryStates"];
 
-			SwitchStage(saveData["stageID"].ToString());
+			SwitchToStage(saveData["stageID"].ToString());
 			CurrentStage.PlayerCharacter.Position = (Vector2)saveData["position"];
 			CurrentStage.PlayerCharacter.Orientation = Enum.Parse<Character.OrientationEnum>(saveData["orientation"].ToString());
 			Camera2DNode.Position = (Vector2)saveData["cameraPosition"];

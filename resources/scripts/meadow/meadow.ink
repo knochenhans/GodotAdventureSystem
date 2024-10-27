@@ -99,13 +99,6 @@ INCLUDE robot.ink
             It’s not *that* kind of robot. #player
         - else: ~ return false
         }
-
-    - "exit_right":
-        { verb_id:
-        - "walk":
-            ~ switch_stage("street", "default")
-        - else: ~ return false
-        }
     
     - "note":
         { verb_id:
@@ -115,7 +108,6 @@ INCLUDE robot.ink
         }
 
     - else:
-        ~ print_error("Unknown thing.")
         ~ return false
     }
     

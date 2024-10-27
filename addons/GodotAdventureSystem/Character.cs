@@ -28,6 +28,7 @@ public partial class Character : Thing
 
 	public enum OrientationEnum
 	{
+		Idle,
 		Left,
 		Right,
 		Up,
@@ -39,6 +40,9 @@ public partial class Character : Thing
 	{
 		get => _orientation; set
 		{
+			if (value == OrientationEnum.Idle)
+				value = OrientationEnum.Down;
+
 			if (_orientation != value)
 				OrientationChanged(value);
 			_orientation = value;
@@ -58,7 +62,7 @@ public partial class Character : Thing
 	{
 		base._Ready();
 
-		Orientation = OrientationEnum.Right;
+		Orientation = OrientationEnum.Idle;
 		MovementState = MovementStateEnum.Idle;
 
 		AnimatedSprite2D.SpriteFrames = (Resource as CharacterResource).SpriteFrames;
@@ -152,7 +156,6 @@ public partial class Character : Thing
 			AnimatedSprite2D.Play(animationName);
 			AnimatedSprite2D.SpriteFrames.SetAnimationLoop(animationName, false);
 			await ToSignal(AnimatedSprite2D, AnimatedSprite2D.SignalName.AnimationFinished);
-			// AnimatedSprite2D.Play("idle_" + Orientation.ToString().ToLower());
 		}
 		else
 		{

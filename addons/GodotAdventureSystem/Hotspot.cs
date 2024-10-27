@@ -5,7 +5,6 @@ using Godot;
 public partial class Hotspot : Polygon2D
 {
     [Export] public string ID { get; set; }
-
     [Export] public string DisplayedName { get; set; }
 
     [Export]

@@ -41,32 +41,44 @@ public partial class Stage : Node2D
 		ScriptManager = new CustomScriptManager(GetParent() as Game);
 	}
 
-    public override void _ExitTree()
-    {
-        base._ExitTree();
+	public override void _ExitTree()
+	{
+		base._ExitTree();
 
 		ScriptManager.Cleanup();
 		ScriptManager = null;
-    }
+	}
 
-    // Convert Hotspots into HotspotAreas
-    private void CreateHotspotAreas()
+	// Convert Hotspots into HotspotAreas
+	private void CreateHotspotAreas()
 	{
 		var hotspotNodes = GetTree().GetNodesInGroup("hotspot");
 
 		Array<HotspotArea> hotspotAreas = new();
 
 		var newHotspotAreaScene = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/HotspotArea.tscn");
+		var newExitAreaScene = ResourceLoader.Load<PackedScene>("res://addons/GodotAdventureSystem/ExitArea.tscn");
 
 		foreach (var _hotspotNode in hotspotNodes)
 		{
 			if (_hotspotNode is Hotspot hotspotNode)
 			{
-				var hotspotArea = newHotspotAreaScene.Instantiate() as HotspotArea;
+				HotspotArea hotspotArea;
+				if (hotspotNode is Exit)
+					hotspotArea = newExitAreaScene.Instantiate() as HotspotArea;
+				else
+					hotspotArea = newHotspotAreaScene.Instantiate() as HotspotArea;
+
 				(hotspotArea.Resource as ThingResource).DisplayedName = hotspotNode.DisplayedName;
 				(hotspotArea.Resource as ThingResource).ID = hotspotNode.ID;
 				hotspotArea.GetNode<CollisionPolygon2D>("CollisionPolygon2D").Polygon = hotspotNode.Polygon;
 				hotspotArea.Transform = hotspotNode.Transform;
+
+				if (hotspotNode is Exit exitNode)
+				{
+					(hotspotArea.Resource as ExitResource).Destination = exitNode.Destination;
+					(hotspotArea.Resource as ExitResource).Entry = exitNode.Entry;
+				}
 				RemoveChild(hotspotNode);
 
 				hotspotAreas.Add(hotspotArea);
@@ -117,30 +129,47 @@ public partial class Stage : Node2D
 		return things;
 	}
 
-	public void SetupPlayerCharacter(PlayerCharacter playerCharacter, string entryID = "default")
+	public void SetupPlayerCharacter(PlayerCharacter playerCharacter, string entryID = "")
 	{
 		PlayerCharacter = playerCharacter;
 		var entries = GetTree().GetNodesInGroup("entry");
 
-		var entryFound = false;
+		Entry foundEntry = null;
+		Entry fallbackEntry = null;
 
 		foreach (var entryNode in entries)
 		{
-			if (entryNode is Entry entry && entry.ID == entryID && entry.GetParent() == this)
+			if (entryNode is Entry entry)
 			{
-				PlayerCharacter.Position = entry.Position;
-				AddChild(PlayerCharacter);
-				entryFound = true;
-				break;
+				// Use the first entry as a fallback if the entryID is not found
+				fallbackEntry ??= entry;
+
+				if (entry.ID == entryID && entry.GetParent() == this)
+				{
+					foundEntry = entry;
+					break;
+				}
 			}
+		}
+
+		var finalEntry = foundEntry ?? fallbackEntry;
+		if (finalEntry != null)
+		{
+			AddChild(PlayerCharacter);
+			PlayerCharacter.Position = finalEntry.Position;
+			PlayerCharacter.Orientation = finalEntry.Orientation;
+
+			if (finalEntry == fallbackEntry)
+				Logger.Log($"No entry named '{entryID}' found in the stage, using the first entry '{fallbackEntry.ID}' as a fallback.", Logger.LogTypeEnum.Warning);
+		}
+		else
+		{
+			Logger.Log($"No entry named '{entryID}' found in the stage, unable to place the player character.", Logger.LogTypeEnum.Error);
 		}
 
 		PlayerCharacter.Inventory.AddedThing += InterfaceNode.OnPlayerObjectAddedToInventory;
 		PlayerCharacter.Inventory.RemovedThing += InterfaceNode.OnPlayerObjectRemovedFromInventory;
 		PlayerCharacter.ThingPickedUp += OnCharacterPickedUpThing;
-
-		if (!entryFound)
-			Logger.Log($"No entry named '{entryID}' found in the stage, unable to place the player character.", Logger.LogTypeEnum.Error);
 	}
 
 	public void OnCharacterPickedUpThing(ThingResource thingResource)

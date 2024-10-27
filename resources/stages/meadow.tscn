@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dwjqecofhdgta"]
+[gd_scene load_steps=15 format=3 uid="uid://dwjqecofhdgta"]
 
 [ext_resource type="PackedScene" uid="uid://dfn31vgvg841" path="res://addons/GodotAdventureSystem/Stage.tscn" id="1_6d714"]
 [ext_resource type="PackedScene" uid="uid://b44hbsyxbbqit" path="res://resources/Robot.tscn" id="2_6wru3"]
@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://dxunhfut7rfqt" path="res://resources/objects/bush.tscn" id="5_eku16"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Hotspot.cs" id="6_1oyp7"]
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Entry.cs" id="7_haa85"]
+[ext_resource type="Texture2D" uid="uid://dcxqxis21xby2" path="res://resources/stages/meadow.aseprite" id="8_mok45"]
+[ext_resource type="Script" path="res://addons/GodotAdventureSystem/Exit.cs" id="11_ddf3r"]
 
 [sub_resource type="Resource" id="Resource_wo2xp"]
 resource_local_to_scene = true
@@ -46,7 +48,17 @@ Resource = SubResource("Resource_wo2xp")
 position = Vector2(123, 194)
 Resource = SubResource("Resource_qf4n5")
 
-[node name="cloud1" type="Polygon2D" parent="." index="4"]
+[node name="WalkableRegion" parent="." index="3"]
+navigation_polygon = SubResource("NavigationPolygon_3nxf5")
+
+[node name="Background" type="TextureRect" parent="." index="4"]
+offset_right = 960.0
+offset_bottom = 220.0
+texture = ExtResource("8_mok45")
+metadata/_edit_use_anchors_ = true
+metadata/_edit_lock_ = true
+
+[node name="cloud1" type="Polygon2D" parent="." index="5"]
 position = Vector2(-3, 0)
 color = Color(0, 1, 1, 0.262745)
 polygon = PackedVector2Array(26, 22, 25, 34, 31, 39, 42, 44, 50, 48, 58, 56, 68, 56, 80, 51, 90, 60, 104, 44, 116, 43, 132, 29, 130, 14, 114, 6, 106, -2, 57, -1, 48, 10, 36, 10)
@@ -54,31 +66,38 @@ script = ExtResource("6_1oyp7")
 ID = "cloud1"
 DisplayedName = "Cloud"
 
-[node name="cloud2" type="Polygon2D" parent="." index="5"]
+[node name="cloud2" type="Polygon2D" parent="." index="6"]
 color = Color(0, 1, 1, 0.262745)
 polygon = PackedVector2Array(306, 57, 314, 72, 322, 80, 340, 73, 348, 80, 367, 85, 382, 84, 413, 88, 426, 82, 447, 78, 455, 71, 478, 62, 480, 50, 465, 36, 441, 26, 403, 19, 367, 22, 340, 35, 320, 40)
 script = ExtResource("6_1oyp7")
 ID = "cloud2"
 DisplayedName = "Another cloud"
 
-[node name="cloud3" type="Polygon2D" parent="." index="6"]
+[node name="cloud3" type="Polygon2D" parent="." index="7"]
 color = Color(0, 1, 1, 0.262745)
 polygon = PackedVector2Array(702, 68, 690, 85, 692, 96, 707, 114, 737, 120, 771, 121, 832, 133, 853, 118, 895, 118, 912, 93, 938, 73, 953, 57, 949, 33, 928, 21, 889, 19, 863, 16, 841, 25, 818, 18, 805, 30, 782, 28, 758, 1, 739, 3, 724, 22, 719, 35, 701, 41, 698, 56)
 script = ExtResource("6_1oyp7")
 ID = "cloud3"
 DisplayedName = "Yet another cloud"
 
-[node name="WalkableRegion" parent="." index="7"]
-navigation_polygon = SubResource("NavigationPolygon_3nxf5")
-
-[node name="EntryRight" type="Marker2D" parent="." index="9"]
-position = Vector2(222, 187)
+[node name="EntryRight" type="Marker2D" parent="." index="8"]
+position = Vector2(933, 187)
 script = ExtResource("7_haa85")
-ID = "right"
+ID = "entry_right"
+Orientation = 1
 
-[node name="ExitLeft" parent="." index="10"]
-color = Color(0, 1, 1, 0.262745)
+[node name="EntryLeft" type="Marker2D" parent="." index="9"]
+position = Vector2(26, 194)
+script = ExtResource("7_haa85")
+ID = "entry_left"
+Orientation = 2
 
-[node name="ExitRight" parent="." index="11"]
-color = Color(0, 1, 1, 0.262745)
+[node name="Exit" type="Polygon2D" parent="." index="10"]
+position = Vector2(921, 0)
+color = Color(0.960784, 0.937255, 0.258824, 0.25098)
+polygon = PackedVector2Array(-9, -8, -6, 229, 49, 228, 47, -11)
+script = ExtResource("11_ddf3r")
+Destination = "street"
+Entry = "entry_left"
+ID = "exit_right"
 DisplayedName = "To street"

@@ -1,9 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://dfn31vgvg841"]
+[gd_scene load_steps=3 format=3 uid="uid://dfn31vgvg841"]
 
 [ext_resource type="Script" path="res://addons/GodotAdventureSystem/Stage.cs" id="1_5h3ot"]
-[ext_resource type="Texture2D" uid="uid://dcxqxis21xby2" path="res://resources/stages/meadow.aseprite" id="2_4dmls"]
-[ext_resource type="Script" path="res://addons/GodotAdventureSystem/Entry.cs" id="3_yiyc1"]
-[ext_resource type="Script" path="res://addons/GodotAdventureSystem/Hotspot.cs" id="4_q3wx1"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_2q087"]
+resource_local_to_scene = true
+vertices = PackedVector2Array(1920, 1088, 0, 1088, 0, 576, 1920, 576)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(0, 576, 0, 1088, 1920, 1088, 1920, 576)])
+agent_radius = 0.0
 
 [node name="Stage" type="Node2D" groups=["stage"]]
 y_sort_enabled = true
@@ -11,30 +15,6 @@ script = ExtResource("1_5h3ot")
 ID = "meadow"
 metadata/_edit_lock_ = true
 
-[node name="Background" type="TextureRect" parent="."]
-offset_right = 960.0
-offset_bottom = 220.0
-texture = ExtResource("2_4dmls")
-metadata/_edit_use_anchors_ = true
-metadata/_edit_lock_ = true
-
 [node name="WalkableRegion" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_2q087")
 metadata/_edit_lock_ = true
-
-[node name="DefaultEntry" type="Marker2D" parent="."]
-position = Vector2(222, 187)
-script = ExtResource("3_yiyc1")
-ID = "default"
-
-[node name="ExitLeft" type="Polygon2D" parent="."]
-color = Color(0, 1, 1, 0.262745)
-polygon = PackedVector2Array(-9, -8, -6, 229, 49, 228, 47, -11)
-script = ExtResource("4_q3wx1")
-ID = "exit_left"
-
-[node name="ExitRight" type="Polygon2D" parent="."]
-position = Vector2(940, 2)
-color = Color(0, 1, 1, 0.262745)
-polygon = PackedVector2Array(-9, -8, -6, 229, 49, 228, 47, -11)
-script = ExtResource("4_q3wx1")
-ID = "exit_right"

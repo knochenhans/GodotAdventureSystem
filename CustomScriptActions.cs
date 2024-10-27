@@ -78,7 +78,7 @@ public partial class ScriptActionSwitchStage : CharacterScriptAction
     public string StageID { get; set; }
     public string EntryID { get; set; }
 
-    public ScriptActionSwitchStage(PlayerCharacter playerCharacter, string stageID, string entryID = "default") : base(playerCharacter) { StageID = stageID; EntryID = entryID; }
+    public ScriptActionSwitchStage(PlayerCharacter playerCharacter, string stageID, string entryID = "") : base(playerCharacter) { StageID = stageID; EntryID = entryID; }
     public override Task Execute()
     {
         if (Character is PlayerCharacter playerCharacter)
