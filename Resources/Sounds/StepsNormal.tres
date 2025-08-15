@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="SoundSetResource" load_steps=11 format=3 uid="uid://b4y51l6nh6d76"]
+
+[ext_resource type="AudioStream" uid="uid://7egxrqsdulhb" path="res://Resources/Sounds/steps/normal1.ogg" id="1_5qns1"]
+[ext_resource type="Script" uid="uid://cusbm36i8ljoa" path="res://addons/SoundSet/SoundSetEntryResource.cs" id="1_fhrl8"]
+[ext_resource type="AudioStream" uid="uid://ib8oavd4qypy" path="res://Resources/Sounds/steps/normal2.ogg" id="2_cgpwy"]
+[ext_resource type="AudioStream" uid="uid://bmk2gq8rfvqgp" path="res://Resources/Sounds/steps/normal3.ogg" id="3_fuknw"]
+[ext_resource type="AudioStream" uid="uid://fg6xr5f81bf6" path="res://Resources/Sounds/steps/normal4.ogg" id="4_1gs6t"]
+[ext_resource type="Script" uid="uid://chiidjpp5n41d" path="res://addons/SoundSet/SoundSetResource.cs" id="5_hjswk"]
+
+[sub_resource type="Resource" id="Resource_crbre"]
+script = ExtResource("1_fhrl8")
+AudioStream = ExtResource("1_5qns1")
+VolumeOffset = 0.0
+PitchOffset = 1.0
+Probability = 1.0
+metadata/_custom_type_script = "uid://cusbm36i8ljoa"
+
+[sub_resource type="Resource" id="Resource_a2mpg"]
+script = ExtResource("1_fhrl8")
+AudioStream = ExtResource("2_cgpwy")
+VolumeOffset = 0.0
+PitchOffset = 1.0
+Probability = 1.0
+metadata/_custom_type_script = "uid://cusbm36i8ljoa"
+
+[sub_resource type="Resource" id="Resource_2mknm"]
+script = ExtResource("1_fhrl8")
+AudioStream = ExtResource("3_fuknw")
+VolumeOffset = 0.0
+PitchOffset = 1.0
+Probability = 1.0
+metadata/_custom_type_script = "uid://cusbm36i8ljoa"
+
+[sub_resource type="Resource" id="Resource_xnebl"]
+script = ExtResource("1_fhrl8")
+AudioStream = ExtResource("4_1gs6t")
+VolumeOffset = 0.0
+PitchOffset = 1.0
+Probability = 1.0
+metadata/_custom_type_script = "uid://cusbm36i8ljoa"
+
+[resource]
+script = ExtResource("5_hjswk")
+ID = "floor"
+SoundSet = Array[ExtResource("1_fhrl8")]([SubResource("Resource_crbre"), SubResource("Resource_a2mpg"), SubResource("Resource_2mknm"), SubResource("Resource_xnebl")])
+Randomize = true
+VolumeOffset = 0.0
+PitchOffset = 1.0

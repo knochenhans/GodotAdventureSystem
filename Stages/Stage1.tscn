@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://c6eyeyhne65n3"]
+
+[ext_resource type="PackedScene" uid="uid://cyn4ii1nalg1b" path="res://Stages/Stage.tscn" id="1_j7ra7"]
+[ext_resource type="Texture2D" uid="uid://br720x315fdtb" path="res://Resources/Images/Stages/meadow.aseprite" id="2_52kwp"]
+
+[node name="Stage" instance=ExtResource("1_j7ra7")]
+
+[node name="Meadow" type="Sprite2D" parent="." index="6"]
+texture = ExtResource("2_52kwp")
+centered = false

@@ -1,5 +1,0 @@
-[gd_scene format=3 uid="uid://cic11sx8uilrp"]
-
-[node name="Camera2D" type="Camera2D"]
-anchor_mode = 0
-zoom = Vector2(4, 4)

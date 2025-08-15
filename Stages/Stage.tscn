@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://cyn4ii1nalg1b"]
+
+[ext_resource type="Script" uid="uid://b6tt66lvqfr1v" path="res://addons/StageManager/Stage.cs" id="1_ccjji"]
+[ext_resource type="Script" uid="uid://o717tjyuqjlr" path="res://addons/StageManager/StageLimits.cs" id="3_ymcl0"]
+[ext_resource type="PackedScene" uid="uid://ditgc0dpyg0of" path="res://addons/StageManager/EntryPoint.tscn" id="4_vk4xj"]
+
+[node name="Stage" type="Node2D"]
+script = ExtResource("1_ccjji")
+
+[node name="StageLimits" type="Node2D" parent="."]
+script = ExtResource("3_ymcl0")
+Size = Vector2(1000, 500)
+
+[node name="Objects" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Entities" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Spawners" type="Node2D" parent="."]
+
+[node name="Exits" type="Node2D" parent="."]
+
+[node name="Entries" type="Node2D" parent="."]
+
+[node name="EntryPoint" parent="Entries" instance=ExtResource("4_vk4xj")]
+position = Vector2(14, 0)
+ID = "default"

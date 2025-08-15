@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="SoundSetResource" load_steps=11 format=3 uid="uid://dkphfme3c748h"]
+
+[ext_resource type="Script" uid="uid://cusbm36i8ljoa" path="res://addons/SoundSet/SoundSetEntryResource.cs" id="1_057i6"]
+[ext_resource type="AudioStream" uid="uid://cjvhql1n654e3" path="res://Resources/Sounds/steps/sand1.ogg" id="2_34f8j"]
+[ext_resource type="AudioStream" uid="uid://c6ve8t8spjx61" path="res://Resources/Sounds/steps/sand2.ogg" id="3_lojkn"]
+[ext_resource type="AudioStream" uid="uid://ba7rwaarx01uq" path="res://Resources/Sounds/steps/sand3.ogg" id="4_67f2m"]
+[ext_resource type="Script" uid="uid://chiidjpp5n41d" path="res://addons/SoundSet/SoundSetResource.cs" id="5_e02xi"]
+[ext_resource type="AudioStream" uid="uid://dmfd72ae6mjiu" path="res://Resources/Sounds/steps/sand4.ogg" id="5_fx4jr"]
+
+[sub_resource type="Resource" id="Resource_3mcln"]
+script = ExtResource("1_057i6")
+AudioStream = ExtResource("2_34f8j")
+VolumeOffset = 0.0
+PitchOffset = 1.0
+Probability = 1.0
+metadata/_custom_type_script = "uid://cusbm36i8ljoa"
+
+[sub_resource type="Resource" id="Resource_gbicx"]
+script = ExtResource("1_057i6")
+AudioStream = ExtResource("3_lojkn")
+VolumeOffset = 0.0
+PitchOffset = 1.0
+Probability = 1.0
+metadata/_custom_type_script = "uid://cusbm36i8ljoa"
+
+[sub_resource type="Resource" id="Resource_ervoy"]
+script = ExtResource("1_057i6")
+AudioStream = ExtResource("4_67f2m")
+VolumeOffset = 0.0
+PitchOffset = 1.0
+Probability = 1.0
+metadata/_custom_type_script = "uid://cusbm36i8ljoa"
+
+[sub_resource type="Resource" id="Resource_xen7o"]
+script = ExtResource("1_057i6")
+AudioStream = ExtResource("5_fx4jr")
+VolumeOffset = 0.0
+PitchOffset = 1.0
+Probability = 1.0
+metadata/_custom_type_script = "uid://cusbm36i8ljoa"
+
+[resource]
+script = ExtResource("5_e02xi")
+ID = "sand"
+SoundSet = Array[ExtResource("1_057i6")]([SubResource("Resource_3mcln"), SubResource("Resource_gbicx"), SubResource("Resource_ervoy"), SubResource("Resource_xen7o")])
+Randomize = true
+VolumeOffset = 0.0
+PitchOffset = 1.0

@@ -10,41 +10,55 @@ config_version=5
 
 [application]
 
-config/name="Adventure System"
-run/main_scene="res://Main.tscn"
-config/features=PackedStringArray("4.3", "C#", "Mobile")
+config/name="GodotAdventureSystem"
+run/main_scene="uid://d31yuls6jr21p"
+config/features=PackedStringArray("4.4", "C#", "Mobile")
 config/icon="res://icon.svg"
 
-[autoload]
+[aseprite]
 
-SceneManagerNode="*res://addons/SceneManager/SceneManagerNode.tscn"
+import/import_plugin/default_automatic_importer="Static Texture"
 
-[display]
+[audio]
 
-window/size/viewport_width=1920
-window/size/viewport_height=1080
-window/size/mode=2
-window/size/resizable=false
-window/size/borderless=true
-window/stretch/scale_mode="integer"
+buses/default_bus_layout="res://DefaultBusLayout.tres"
 
 [dotnet]
 
-project/assembly_name="AdventureSystem"
+project/assembly_name="GodotAdventureSystem"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/AsepriteWizard/plugin.cfg", "res://addons/GodotAdventureSystem/plugin.cfg", "res://addons/GodotInk/plugin.cfg", "res://addons/Logger/plugin.cfg", "res://addons/SceneManager/plugin.cfg", "res://addons/plugin_refresher/plugin.cfg")
+enabled=PackedStringArray("res://addons/AsepriteWizard/plugin.cfg", "res://addons/Logger/plugin.cfg", "res://addons/SceneManager/plugin.cfg")
 
 [file_customization]
 
 folder_colors={
-"res://Scenes/": "orange",
+"res://Resources/": "purple",
+"res://Resources/Entities/": "orange",
+"res://Resources/Images/": "red",
+"res://Resources/Sounds/": "teal",
+"res://Scenes/": "yellow",
+"res://Stages/": "yellow",
+"res://UI/": "yellow",
 "res://addons/": "gray",
-"res://resources/": "yellow"
+"res://addons/EntitySystem/": "blue",
+"res://addons/EntitySystem/Components/": "purple"
 }
+
+[global_group]
+
+saveable=""
+entity=""
+exit=""
+
+[layer_names]
+
+2d_physics/layer_1="world"
+2d_physics/layer_2="exits"
 
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="mobile"
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)
