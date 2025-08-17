@@ -1,0 +1,31 @@
+[gd_scene load_steps=6 format=3 uid="uid://bdtk41rew7nwl"]
+
+[ext_resource type="Script" uid="uid://l548tftrtwcy" path="res://addons/EntitySystem/Object.cs" id="1_iepak"]
+[ext_resource type="PackedScene" uid="uid://cqcroglmfdd3o" path="res://addons/TimedAudioStreamPlayer/TimedAudioStreamPlayer2D.tscn" id="2_34stj"]
+[ext_resource type="Script" uid="uid://ply4i6vsn2t2" path="res://addons/TimedAudioStreamPlayer/TimedAudioStreamPlayerResource.cs" id="3_687g7"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_va50w"]
+
+[sub_resource type="Resource" id="Resource_jpe4p"]
+script = ExtResource("3_687g7")
+Randomize = true
+RandomVolumeAdded = 0.0
+RandomPitchAdded = 0.0
+BaseDelay = 0.0
+RandomDelayAdded = 0.0
+MaxDelay = 0.0
+MinDelay = 0.0
+metadata/_custom_type_script = "uid://ply4i6vsn2t2"
+
+[node name="Object" type="Node2D" groups=["object"]]
+z_index = 1
+script = ExtResource("1_iepak")
+
+[node name="ClickArea" type="Area2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+y_sort_enabled = true
+
+[node name="TimedAudioStreamPlayer2D" parent="." instance=ExtResource("2_34stj")]
+stream = SubResource("AudioStreamRandomizer_va50w")
+TimedAudioStreamPlayerResource = SubResource("Resource_jpe4p")

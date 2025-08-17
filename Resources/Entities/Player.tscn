@@ -1,6 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://ckuu7gdqdhnv"]
+[gd_scene load_steps=12 format=3 uid="uid://ckuu7gdqdhnv"]
 
-[ext_resource type="PackedScene" uid="uid://cf6ywc71ndnth" path="res://addons/EntitySystem/Entity.tscn" id="1_npn0x"]
+[ext_resource type="PackedScene" uid="uid://b8c5fy0aqksj1" path="res://Resources/Entity.tscn" id="1_npn0x"]
 [ext_resource type="Script" uid="uid://gm8t2aa8812l" path="res://addons/EntitySystem/EntityResource.cs" id="2_eifng"]
 [ext_resource type="SpriteFrames" uid="uid://cl8vjpksifnwe" path="res://Resources/Images/character.aseprite" id="3_bcbp4"]
 [ext_resource type="Script" uid="uid://bxshof805u2c7" path="res://addons/EntitySystem/AnimatedSprite2DResource.cs" id="4_o2ckq"]
@@ -10,7 +10,7 @@
 [sub_resource type="Resource" id="Resource_yksgv"]
 script = ExtResource("2_eifng")
 ID = "player"
-Name = "You"
+DisplayName = ""
 Description = ""
 MaxHealth = 100
 Speed = 200
@@ -32,7 +32,7 @@ StateIDAnimationNameMapping = Dictionary[String, String]({})
 UseSpriteOrientation = true
 RotateSprite = false
 CreateShadow = false
-Offset = Vector2(0, 0)
+Offset = Vector2(0, -21)
 metadata/_custom_type_script = "uid://bxshof805u2c7"
 
 [sub_resource type="Resource" id="Resource_d8pxu"]
@@ -47,8 +47,16 @@ script = ExtResource("6_efb0r")
 States = Array[ExtResource("5_lfnt4")]([SubResource("Resource_d8pxu")])
 InitialStateID = "alive"
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_npn0x"]
+radius = 7.0
+height = 44.0
+
 [node name="Entity" instance=ExtResource("1_npn0x")]
 ID = "player"
 EntityResource = SubResource("Resource_yksgv")
 SpriteResource = SubResource("Resource_bs5nl")
 EntityStateResource = SubResource("Resource_x6n7b")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea" index="0"]
+position = Vector2(0, -21)
+shape = SubResource("CapsuleShape2D_npn0x")

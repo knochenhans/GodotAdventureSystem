@@ -33,14 +33,14 @@ public class CustomGameInputManager : BaseGameInputManager
     {
         mousePosition = game.GetViewport().GetMousePosition();
         HoveredObject = obj;
-        Logger.Log($"Mouse entered object: {obj.Name}", "CustomGameInputManager", Logger.LogTypeEnum.Input);
+        Logger.Log($"Mouse entered object: {obj.ID}", "CustomGameInputManager", Logger.LogTypeEnum.Input);
     }
 
     public override void OnMouseEntersEntity(Entity entity)
     {
         mousePosition = game.GetViewport().GetMousePosition();
         HoveredEntity = entity;
-        Logger.Log($"Mouse entered entity: {entity.Name}", "CustomGameInputManager", Logger.LogTypeEnum.Input);
+        Logger.Log($"Mouse entered entity: {entity.ID}", "CustomGameInputManager", Logger.LogTypeEnum.Input);
     }
 
     protected override void HoveredEntityClicked(InputEventMouseButton mouseButtonEvent)

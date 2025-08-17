@@ -1,0 +1,83 @@
+[gd_scene load_steps=21 format=3 uid="uid://b8c5fy0aqksj1"]
+
+[ext_resource type="Script" uid="uid://cmdcllqctm23p" path="res://addons/EntitySystem/Entity.cs" id="1_b4y3l"]
+[ext_resource type="Resource" uid="uid://ehgvb8pcdckd" path="res://addons/EntitySystem/Entity.tres" id="2_v353c"]
+[ext_resource type="Resource" uid="uid://ddhdqrm61sxwj" path="res://addons/EntitySystem/States/EntityState.tres" id="3_r2d8t"]
+[ext_resource type="Script" uid="uid://bediul007lhpi" path="res://addons/EntitySystem/RigidBody.cs" id="4_0pokc"]
+[ext_resource type="Script" uid="uid://c7eke0dheu7g6" path="res://addons/EntitySystem/CharacterBody.cs" id="5_24tpj"]
+[ext_resource type="PackedScene" uid="uid://cqcroglmfdd3o" path="res://addons/TimedAudioStreamPlayer/TimedAudioStreamPlayer2D.tscn" id="6_xcpjh"]
+[ext_resource type="Resource" uid="uid://b8n7v1h3hn45l" path="res://StepSounds.tres" id="7_s6g4e"]
+[ext_resource type="Resource" uid="uid://b4y51l6nh6d76" path="res://Resources/Sounds/StepsNormal.tres" id="8_nc466"]
+[ext_resource type="PackedScene" uid="uid://fo7ph2umnhwi" path="res://addons/EntitySystem/Components/Damageable.tscn" id="9_vt88i"]
+[ext_resource type="PackedScene" uid="uid://7tugqxfiodci" path="res://addons/EntitySystem/Inventory.tscn" id="10_6q8wy"]
+[ext_resource type="PackedScene" uid="uid://d2vq57n2pgen1" path="res://addons/EntitySystem/Components/Moveable.tscn" id="11_eepj0"]
+[ext_resource type="PackedScene" uid="uid://dps4ertiy6mjj" path="res://addons/EntitySystem/Components/AnimatedSprite2DManager.tscn" id="12_x0v7t"]
+[ext_resource type="PackedScene" uid="uid://fixijhd7lrew" path="res://addons/EntitySystem/Components/EntityStateManager.tscn" id="13_1he3t"]
+[ext_resource type="PackedScene" uid="uid://ctl7s2qm76gpj" path="res://addons/EntitySystem/Components/CanScan2D.tscn" id="14_rgfqu"]
+[ext_resource type="PackedScene" uid="uid://bk5vrjksienyt" path="res://addons/EntitySystem/Components/CanPickup2D.tscn" id="15_bpxos"]
+[ext_resource type="PackedScene" uid="uid://qirf5kknbryc" path="res://addons/EntitySystem/PlayerInputController.tscn" id="16_nicks"]
+[ext_resource type="PackedScene" uid="uid://bwu1ylqb6hri7" path="res://addons/EntitySystem/Components/SoundManager.tscn" id="17_8jllx"]
+[ext_resource type="PackedScene" uid="uid://rp8tkm4sjwfx" path="res://addons/EntitySystem/Components/Logic.tscn" id="18_d87bi"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jwqp2"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_byxpq"]
+
+[node name="Entity" type="Node2D" groups=["entity", "saveable"]]
+script = ExtResource("1_b4y3l")
+ID = "entity"
+EntityResource = ExtResource("2_v353c")
+EntityStateResource = ExtResource("3_r2d8t")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+
+[node name="RigidBody" type="RigidBody2D" parent="."]
+script = ExtResource("4_0pokc")
+
+[node name="CharacterBody" type="CharacterBody2D" parent="."]
+script = ExtResource("5_24tpj")
+
+[node name="ScanArea" type="Area2D" parent="."]
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ScanArea"]
+shape = SubResource("CircleShape2D_jwqp2")
+
+[node name="PickupArea" type="Area2D" parent="."]
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PickupArea"]
+shape = SubResource("CircleShape2D_byxpq")
+
+[node name="ClickArea" type="Area2D" parent="."]
+monitorable = false
+
+[node name="StepSoundPlayer" parent="." instance=ExtResource("6_xcpjh")]
+TimedAudioStreamPlayerResource = ExtResource("7_s6g4e")
+DefaultSoundSet = ExtResource("8_nc466")
+
+[node name="Damageable" parent="." instance=ExtResource("9_vt88i")]
+
+[node name="Inventory" parent="." instance=ExtResource("10_6q8wy")]
+
+[node name="Moveable" parent="." instance=ExtResource("11_eepj0")]
+
+[node name="AnimatedSprite2DManager" parent="." node_paths=PackedStringArray("AnimatedSprite") instance=ExtResource("12_x0v7t")]
+AnimatedSprite = NodePath("../AnimatedSprite2D")
+AlternateAnimations = Dictionary[String, String]({
+"spawning": "alive"
+})
+
+[node name="StateManager" parent="." instance=ExtResource("13_1he3t")]
+
+[node name="CanScan2D" parent="." node_paths=PackedStringArray("ScanArea") instance=ExtResource("14_rgfqu")]
+ScanArea = NodePath("../ScanArea")
+
+[node name="CanPickup2D" parent="." node_paths=PackedStringArray("ScanArea") instance=ExtResource("15_bpxos")]
+ScanArea = NodePath("../PickupArea")
+
+[node name="PlayerInputController" parent="." instance=ExtResource("16_nicks")]
+
+[node name="SoundManager" parent="." instance=ExtResource("17_8jllx")]
+
+[node name="Logic" parent="." instance=ExtResource("18_d87bi")]
