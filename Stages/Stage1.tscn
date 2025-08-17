@@ -1,10 +1,52 @@
-[gd_scene load_steps=3 format=3 uid="uid://c6eyeyhne65n3"]
+[gd_scene load_steps=11 format=3 uid="uid://c6eyeyhne65n3"]
 
 [ext_resource type="PackedScene" uid="uid://cyn4ii1nalg1b" path="res://Stages/Stage.tscn" id="1_j7ra7"]
+[ext_resource type="Script" uid="uid://bh5fb5sf1ijhe" path="res://addons/EntitySystem/Spawner.cs" id="2_2aa6s"]
 [ext_resource type="Texture2D" uid="uid://br720x315fdtb" path="res://Resources/Images/Stages/meadow.aseprite" id="2_52kwp"]
+[ext_resource type="Script" uid="uid://gm8t2aa8812l" path="res://addons/EntitySystem/EntityResource.cs" id="3_uk38h"]
+[ext_resource type="PackedScene" uid="uid://ckuu7gdqdhnv" path="res://Resources/Entities/Player.tscn" id="4_hjltf"]
+[ext_resource type="PackedScene" uid="uid://dt7xkuaogftpl" path="res://addons/EntitySystem/Object.tscn" id="4_hqab3"]
+[ext_resource type="Script" uid="uid://dat5uhee5xjrm" path="res://addons/EntitySystem/ObjectResource.cs" id="5_82npi"]
+[ext_resource type="Script" uid="uid://bnyoqlsxlbwm4" path="res://addons/EntitySystem/SpawnerPolygon.cs" id="6_hqab3"]
+
+[sub_resource type="Resource" id="Resource_2aa6s"]
+script = ExtResource("3_uk38h")
+ID = "player"
+Name = "You"
+Description = ""
+MaxHealth = 100
+Speed = 200
+ScanRadius = 10
+PickupRadius = 5
+ClickRadius = 5
+CollisionEnabled = false
+metadata/_custom_type_script = "uid://gm8t2aa8812l"
+
+[sub_resource type="Resource" id="Resource_hjltf"]
+script = ExtResource("5_82npi")
+ID = "cloud1"
+Name = "Cloud"
+Description = ""
+CollisionPolygon = NodePath("")
+CollisionEnabled = false
+metadata/_custom_type_script = "uid://dat5uhee5xjrm"
 
 [node name="Stage" instance=ExtResource("1_j7ra7")]
 
-[node name="Meadow" type="Sprite2D" parent="." index="6"]
+[node name="Meadow" type="Sprite2D" parent="." index="0"]
 texture = ExtResource("2_52kwp")
 centered = false
+
+[node name="Spawner" type="Marker2D" parent="Spawners" index="0" groups=["spawner"]]
+position = Vector2(240, 176)
+script = ExtResource("2_2aa6s")
+Resource = SubResource("Resource_2aa6s")
+Scene = ExtResource("4_hjltf")
+metadata/_custom_type_script = "uid://bh5fb5sf1ijhe"
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Spawners" index="1" groups=["spawner"]]
+position = Vector2(76, 27)
+polygon = PackedVector2Array(-37.3474, 14.9933, -17.3474, 25.9933, 11.6526, 30.9933, 43.6526, 15.9933, 50.6526, -8.00672, 31.6526, -25.0067, -19.3474, -25.0067, -30.3474, -15.0067, -42.3474, -13.0067, -49.3474, -0.00671577)
+script = ExtResource("6_hqab3")
+Resource = SubResource("Resource_hjltf")
+Scene = ExtResource("4_hqab3")

@@ -1,16 +1,16 @@
 using Godot;
 
-public partial class CustomGame : Game
+public partial class CustomGame : BaseGame
 {
     public override void _Ready()
     {
         CurrentGameState = GameState.Loading;
 
+        GameInputManager = new CustomGameInputManager(this, Camera);
+
         StageManager.Instance.StageLoaded += InitStageContent;
         StageManager.Instance.EntityExitedStage += OnEntityExitedStage;
         StageManager.Instance.Init(this, "stage1");
-
-        GameInputManager = new CustomGameInputManager(this, Camera, TileMapManager);
         SaveStateManager = new SaveStateManager(this);
 
         StageManager.Instance.StoreStageStates();

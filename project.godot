@@ -51,6 +51,7 @@ folder_colors={
 saveable=""
 entity=""
 exit=""
+spawner=""
 
 [layer_names]
 

@@ -3,4 +3,5 @@
 [ext_resource type="Script" uid="uid://b8f2g60ewcmfn" path="res://CustomStageManager.cs" id="2_mj3yy"]
 
 [node name="CustomStageManager" type="Node2D"]
+z_index = 1
 script = ExtResource("2_mj3yy")

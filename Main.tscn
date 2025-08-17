@@ -1,13 +1,19 @@
-[gd_scene load_steps=18 format=3 uid="uid://d31yuls6jr21p"]
+[gd_scene load_steps=25 format=3 uid="uid://d31yuls6jr21p"]
 
 [ext_resource type="Script" uid="uid://h6le44nc3umo" path="res://Main.cs" id="1_glv2v"]
 [ext_resource type="PackedScene" uid="uid://b2l6ex2ecglbl" path="res://addons/SceneManager/Nodes/SceneManager.tscn" id="2_uu6xs"]
 [ext_resource type="PackedScene" uid="uid://c6eyeyhne65n3" path="res://Stages/Stage1.tscn" id="3_j4qnp"]
 [ext_resource type="PackedScene" uid="uid://y6w751vsadf8" path="res://Stages/Stage2.tscn" id="4_fpfj3"]
+[ext_resource type="PackedScene" uid="uid://dm6frlk3i0bo8" path="res://addons/SceneManager/Scenes/CreditsScene.tscn" id="6_devvj"]
+[ext_resource type="PackedScene" uid="uid://b46xhre03dhm8" path="res://Scenes/CustomGame.tscn" id="7_3b0ty"]
+[ext_resource type="PackedScene" uid="uid://b4hulv2gjask8" path="res://addons/SceneManager/Scenes/IntroScene.tscn" id="8_bg4s2"]
 [ext_resource type="Script" uid="uid://chiidjpp5n41d" path="res://addons/SoundSet/SoundSetResource.cs" id="8_j4qnp"]
 [ext_resource type="PackedScene" uid="uid://cfal58ed8k0u3" path="res://addons/GameOptions/GameOptions.tscn" id="8_trn2v"]
 [ext_resource type="PackedScene" uid="uid://qekcycpqsqql" path="res://CustomStageManager.tscn" id="9_03owx"]
+[ext_resource type="PackedScene" uid="uid://dw38qbbkyxh35" path="res://addons/SceneManager/Scenes/MenuScene.tscn" id="9_hhcpw"]
 [ext_resource type="Script" uid="uid://blhm3l7070pvp" path="res://addons/EntitySystem/StepSoundDatabase.cs" id="10_c2ibq"]
+[ext_resource type="PackedScene" uid="uid://dc14s1yyhr3yu" path="res://addons/SceneManager/Scenes/OptionsScene.tscn" id="10_mxvw5"]
+[ext_resource type="Script" uid="uid://q5kvegfjxjon" path="res://addons/SceneManager/Nodes/SceneManagerResource.cs" id="11_xrxkg"]
 [ext_resource type="Resource" uid="uid://b4y51l6nh6d76" path="res://Resources/Sounds/StepsNormal.tres" id="12_fpfj3"]
 [ext_resource type="Resource" uid="uid://dkphfme3c748h" path="res://Resources/Sounds/StepsSand.tres" id="13_sc1dx"]
 [ext_resource type="Script" uid="uid://dsrlv3tetvhrj" path="res://addons/EntitySystem/StepSoundDatabaseResource.cs" id="14_kjvhd"]
@@ -15,6 +21,20 @@
 [ext_resource type="AudioStream" uid="uid://cohiv50cb8wvw" path="res://addons/UISoundPlayer/Sounds/click2.wav" id="16_kjvhd"]
 [ext_resource type="Script" uid="uid://bcbe7wlf5oben" path="res://addons/SoundSet/SimpleSoundSetResource.cs" id="17_5tuhn"]
 [ext_resource type="AudioStream" uid="uid://316myh4e6vk3" path="res://addons/UISoundPlayer/Sounds/click4.wav" id="17_kjvhd"]
+
+[sub_resource type="Resource" id="Resource_sqvbp"]
+script = ExtResource("11_xrxkg")
+ScenesPackedScenes = Dictionary[String, PackedScene]({
+"credits": ExtResource("6_devvj"),
+"game": ExtResource("7_3b0ty"),
+"intro": ExtResource("8_bg4s2"),
+"menu": ExtResource("9_hhcpw"),
+"options": ExtResource("10_mxvw5")
+})
+initialSceneName = "game"
+OverlayMenuOpacity = 0.5
+OverlayMenuFadeTime = 0.3
+metadata/_custom_type_script = "uid://q5kvegfjxjon"
 
 [sub_resource type="Resource" id="Resource_5tuhn"]
 script = ExtResource("14_kjvhd")
@@ -39,6 +59,7 @@ Stages = Dictionary[String, PackedScene]({
 })
 
 [node name="SceneManager" parent="." instance=ExtResource("2_uu6xs")]
+SceneManagerResource = SubResource("Resource_sqvbp")
 
 [node name="GameOptions" parent="." instance=ExtResource("8_trn2v")]
 
