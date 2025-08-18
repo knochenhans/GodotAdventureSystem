@@ -2,7 +2,7 @@ using Godot;
 
 public class CustomGameInputManager : BaseGameInputManager
 {
-    public CustomGameInputManager(BaseGame game, Camera2D camera) : base(game, camera) { }
+    public CustomGameInputManager(CustomGame game, Camera2D camera) : base(game, camera) { }
 
     public override void HandleGlobalInput(InputEvent @event)
     {
@@ -31,14 +31,14 @@ public class CustomGameInputManager : BaseGameInputManager
 
     public override void OnMouseEntersObject(Object obj)
     {
-        mousePosition = game.GetViewport().GetMousePosition();
+        viewportMousePosition = game.GetViewport().GetMousePosition();
         HoveredObject = obj;
         Logger.Log($"Mouse entered object: {obj.ID}", "CustomGameInputManager", Logger.LogTypeEnum.Input);
     }
 
     public override void OnMouseEntersEntity(Entity entity)
     {
-        mousePosition = game.GetViewport().GetMousePosition();
+        viewportMousePosition = game.GetViewport().GetMousePosition();
         HoveredEntity = entity;
         Logger.Log($"Mouse entered entity: {entity.ID}", "CustomGameInputManager", Logger.LogTypeEnum.Input);
     }
@@ -61,9 +61,12 @@ public class CustomGameInputManager : BaseGameInputManager
 
     protected override void OnStageClicked(InputEventMouseButton mouseButtonEvent, bool shiftPressed, bool ctrlPressed = false)
     {
-        if (mouseButtonEvent.IsPressed())
+        if (!(game as CustomGame).StageLimits.HasPoint(mouseButtonEvent.Position))
+            return;
+
+        if (mouseButtonEvent.IsPressed() && mouseButtonEvent.ButtonIndex == MouseButton.Left)
         {
-            // Handle stage click logic here
+            ((game as CustomGame).playerEntity.Moveable as MoveableNavigation).MovementTarget = camera.GetGlobalMousePosition();
         }
     }
 }

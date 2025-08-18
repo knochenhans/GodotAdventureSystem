@@ -1,13 +1,23 @@
-[gd_scene load_steps=4 format=3 uid="uid://cyn4ii1nalg1b"]
+[gd_scene load_steps=5 format=3 uid="uid://cyn4ii1nalg1b"]
 
 [ext_resource type="Script" uid="uid://b6tt66lvqfr1v" path="res://addons/StageManager/Stage.cs" id="1_ccjji"]
 [ext_resource type="Script" uid="uid://o717tjyuqjlr" path="res://addons/StageManager/StageLimits.cs" id="3_ymcl0"]
 [ext_resource type="PackedScene" uid="uid://ditgc0dpyg0of" path="res://addons/StageManager/EntryPoint.tscn" id="4_vk4xj"]
 
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_1phiv"]
+agent_radius = 0.0
+
 [node name="Stage" type="Node2D"]
 script = ExtResource("1_ccjji")
 
+[node name="Background" type="Sprite2D" parent="."]
+centered = false
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_1phiv")
+
 [node name="StageLimits" type="Node2D" parent="."]
+unique_name_in_owner = true
 script = ExtResource("3_ymcl0")
 Size = Vector2(1000, 500)
 
@@ -18,10 +28,13 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 
 [node name="Spawners" type="Node2D" parent="."]
+unique_name_in_owner = true
 
 [node name="Exits" type="Node2D" parent="."]
+unique_name_in_owner = true
 
 [node name="Entries" type="Node2D" parent="."]
+unique_name_in_owner = true
 
 [node name="EntryPoint" parent="Entries" instance=ExtResource("4_vk4xj")]
 position = Vector2(14, 0)

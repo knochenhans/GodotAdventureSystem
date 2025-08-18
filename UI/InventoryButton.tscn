@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3 uid="uid://b0cdu6tiac6hh"]
+
+[ext_resource type="Script" uid="uid://b2f4xdjapo6d3" path="res://UI/InventoryButton.cs" id="1_ojri0"]
+
+[node name="InventoryButton" type="Button"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+script = ExtResource("1_ojri0")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 3

@@ -40,7 +40,7 @@ folder_colors={
 "res://Resources/Sounds/": "teal",
 "res://Scenes/": "yellow",
 "res://Stages/": "yellow",
-"res://UI/": "yellow",
+"res://UI/": "teal",
 "res://addons/": "gray",
 "res://addons/EntitySystem/": "blue",
 "res://addons/EntitySystem/Components/": "purple"

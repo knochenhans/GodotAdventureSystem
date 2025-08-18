@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EntityResource" load_steps=2 format=3 uid="uid://n8p41hnt0j2u"]
+
+[ext_resource type="Script" uid="uid://gm8t2aa8812l" path="res://addons/EntitySystem/EntityResource.cs" id="1_vtiiy"]
+
+[resource]
+script = ExtResource("1_vtiiy")
+ID = "player"
+DisplayName = "You"
+Description = ""
+MaxHealth = 100
+Speed = 100
+ScanRadius = 10
+PickupRadius = 5
+ClickRadius = 5
+CollisionEnabled = false
+metadata/_custom_type_script = "uid://gm8t2aa8812l"

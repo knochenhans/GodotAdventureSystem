@@ -1,0 +1,30 @@
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://yqu3myf53n6r"]
+
+[ext_resource type="FontFile" uid="uid://cdcqyaivl16qs" path="res://Resources/Fonts/dogicapixel.ttf" id="1_ttu11"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_figpj"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.0784314, 0, 0.0784314, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3t2x8"]
+bg_color = Color(0.156863, 0, 0.156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_14m2t"]
+bg_color = Color(0, 0, 0, 1)
+
+[resource]
+default_font = ExtResource("1_ttu11")
+default_font_size = 16
+Button/colors/font_color = Color(0.741176, 0.380392, 0.737255, 1)
+Button/colors/font_focus_color = Color(0.670588, 0.313726, 0.670588, 1)
+Button/colors/font_hover_color = Color(0.670588, 0.313726, 0.670588, 1)
+Button/styles/disabled = SubResource("StyleBoxFlat_figpj")
+Button/styles/focus = SubResource("StyleBoxFlat_figpj")
+Button/styles/hover = SubResource("StyleBoxFlat_3t2x8")
+Button/styles/normal = SubResource("StyleBoxFlat_figpj")
+Button/styles/pressed = SubResource("StyleBoxFlat_3t2x8")
+Label/colors/font_color = Color(0.670588, 0.313726, 0.670588, 1)
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_14m2t")
