@@ -1,17 +1,14 @@
-[gd_scene load_steps=6 format=3 uid="uid://b46xhre03dhm8"]
+[gd_scene load_steps=5 format=3 uid="uid://b46xhre03dhm8"]
 
 [ext_resource type="PackedScene" uid="uid://c7qgcqqf4agib" path="res://addons/CustomGame/Scenes/Game.tscn" id="1_c1plg"]
 [ext_resource type="Script" uid="uid://y3mca5ug3oee" path="res://Scenes/CustomGame.cs" id="2_7cnhq"]
-[ext_resource type="PackedScene" uid="uid://c6eyeyhne65n3" path="res://Stages/Stage1.tscn" id="3_rl2g2"]
-[ext_resource type="PackedScene" uid="uid://y6w751vsadf8" path="res://Stages/Stage2.tscn" id="4_v0k87"]
+[ext_resource type="Texture2D" uid="uid://dbdnxtnsuvfd7" path="res://Resources/Images/cursor_48.png" id="3_rl2g2"]
 [ext_resource type="PackedScene" uid="uid://ca6ex1hvbacgf" path="res://UI/Interface.tscn" id="5_v0k87"]
 
 [node name="CustomGame" instance=ExtResource("1_c1plg")]
 script = ExtResource("2_7cnhq")
-Stages = Dictionary[String, PackedScene]({
-"stage1": ExtResource("3_rl2g2"),
-"stage2": ExtResource("4_v0k87")
-})
+DefaultCursorTexture = ExtResource("3_rl2g2")
+DefaultCursorHotspot = Vector2(22, 22)
 FadeInTime = 1.0
 FadeOutTime = 1.0
 

@@ -2,6 +2,8 @@ using Godot;
 
 public class CustomGameInputManager : BaseGameInputManager
 {
+    CustomGame customGame => (CustomGame)base.game;
+
     public CustomGameInputManager(CustomGame game, Camera2D camera) : base(game, camera) { }
 
     public override void HandleGlobalInput(InputEvent @event)
@@ -31,23 +33,39 @@ public class CustomGameInputManager : BaseGameInputManager
 
     public override void OnMouseEntersObject(Object obj)
     {
-        viewportMousePosition = game.GetViewport().GetMousePosition();
+        viewportMousePosition = customGame.GetViewport().GetMousePosition();
         HoveredObject = obj;
-        Logger.Log($"Mouse entered object: {obj.ID}", "CustomGameInputManager", Logger.LogTypeEnum.Input);
+        customGame.InterfaceNode.SetCommandLabel(obj.DisplayName);
+    }
+
+    public override void OnMouseExitsObject(Object obj)
+    {
+        viewportMousePosition = customGame.GetViewport().GetMousePosition();
+        HoveredObject = null;
+        customGame.InterfaceNode.SetCommandLabel("");
     }
 
     public override void OnMouseEntersEntity(Entity entity)
     {
-        viewportMousePosition = game.GetViewport().GetMousePosition();
+        viewportMousePosition = customGame.GetViewport().GetMousePosition();
         HoveredEntity = entity;
-        Logger.Log($"Mouse entered entity: {entity.ID}", "CustomGameInputManager", Logger.LogTypeEnum.Input);
+        // customGame.InterfaceNode.SetCommandLabel(entity.DisplayName);
+
+        customGame.OnStageNodeHovered(HoveredEntity);
+    }
+
+    public override void OnMouseExitsEntity(Entity entity)
+    {
+        viewportMousePosition = customGame.GetViewport().GetMousePosition();
+        HoveredEntity = null;
+        customGame.InterfaceNode.SetCommandLabel("");
     }
 
     protected override void HoveredEntityClicked(InputEventMouseButton mouseButtonEvent)
     {
         if (HoveredEntity != null)
         {
-            // Handle entity click logic here
+            customGame.OnStageNodeClicked(HoveredEntity, viewportMousePosition);
         }
     }
 
@@ -55,18 +73,18 @@ public class CustomGameInputManager : BaseGameInputManager
     {
         if (HoveredObject != null)
         {
-            // Handle object click logic here
+            customGame.OnStageNodeClicked(HoveredObject, viewportMousePosition);
         }
     }
 
     protected override void OnStageClicked(InputEventMouseButton mouseButtonEvent, bool shiftPressed, bool ctrlPressed = false)
     {
-        if (!(game as CustomGame).StageLimits.HasPoint(mouseButtonEvent.Position))
+        if (!customGame.stageLimits.HasPoint(mouseButtonEvent.Position))
             return;
 
         if (mouseButtonEvent.IsPressed() && mouseButtonEvent.ButtonIndex == MouseButton.Left)
         {
-            ((game as CustomGame).playerEntity.Moveable as MoveableNavigation).MovementTarget = camera.GetGlobalMousePosition();
+            (customGame.GetEntity("player").Moveable as MoveableNavigation).MovementTarget = camera.GetGlobalMousePosition();
         }
     }
 }

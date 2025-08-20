@@ -1,13 +1,22 @@
-[gd_scene load_steps=11 format=3 uid="uid://c6eyeyhne65n3"]
+[gd_scene load_steps=14 format=3 uid="uid://c6eyeyhne65n3"]
 
 [ext_resource type="PackedScene" uid="uid://cyn4ii1nalg1b" path="res://Stages/Stage.tscn" id="1_j7ra7"]
 [ext_resource type="Script" uid="uid://bh5fb5sf1ijhe" path="res://addons/EntitySystem/Spawner.cs" id="2_2aa6s"]
 [ext_resource type="Texture2D" uid="uid://br720x315fdtb" path="res://Resources/Images/Stages/meadow.aseprite" id="2_52kwp"]
+[ext_resource type="Script" uid="uid://bxssf2hjp2xki" path="res://InkGSS/AdventureStageResource.cs" id="2_82npi"]
+[ext_resource type="Resource" uid="uid://di26o5vw2jelg" path="res://Resources/Scripts/meadow/meadow.ink" id="2_dp4ru"]
 [ext_resource type="PackedScene" uid="uid://ckuu7gdqdhnv" path="res://Resources/Entities/Player.tscn" id="4_hjltf"]
 [ext_resource type="Resource" uid="uid://n8p41hnt0j2u" path="res://Resources/Entities/Player.tres" id="4_hqab3"]
 [ext_resource type="Script" uid="uid://dat5uhee5xjrm" path="res://addons/EntitySystem/ObjectResource.cs" id="5_82npi"]
 [ext_resource type="PackedScene" uid="uid://bdtk41rew7nwl" path="res://Resources/Object.tscn" id="5_hqab3"]
 [ext_resource type="Script" uid="uid://bnyoqlsxlbwm4" path="res://addons/EntitySystem/SpawnerPolygon.cs" id="6_hqab3"]
+
+[sub_resource type="Resource" id="Resource_dp4ru"]
+script = ExtResource("2_82npi")
+InkStory = ExtResource("2_dp4ru")
+ID = "meadow"
+Name = ""
+metadata/_custom_type_script = "uid://bxssf2hjp2xki"
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_hqab3"]
 vertices = PackedVector2Array(3, 219, -8, 160, 58, 157, 958, 215, 208, 142, 378, 142, 561, 157, 673, 157, 783, 154, 879, 138, 949, 137)
@@ -25,12 +34,17 @@ CollisionEnabled = false
 metadata/_custom_type_script = "uid://dat5uhee5xjrm"
 
 [node name="Stage" instance=ExtResource("1_j7ra7")]
+StageResource = SubResource("Resource_dp4ru")
+ID = "meadow"
 
 [node name="Background" parent="." index="0"]
 texture = ExtResource("2_52kwp")
 
 [node name="NavigationRegion2D" parent="." index="1"]
 navigation_polygon = SubResource("NavigationPolygon_hqab3")
+
+[node name="StageLimits" parent="." index="2"]
+Size = Vector2(960, 220)
 
 [node name="Spawner" type="Marker2D" parent="Spawners" index="0" groups=["spawner"]]
 position = Vector2(240, 176)

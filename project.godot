@@ -29,7 +29,7 @@ project/assembly_name="GodotAdventureSystem"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/AsepriteWizard/plugin.cfg", "res://addons/Logger/plugin.cfg", "res://addons/SceneManager/plugin.cfg")
+enabled=PackedStringArray("res://addons/AsepriteWizard/plugin.cfg", "res://addons/GodotInk/plugin.cfg", "res://addons/Logger/plugin.cfg", "res://addons/SceneManager/plugin.cfg")
 
 [file_customization]
 

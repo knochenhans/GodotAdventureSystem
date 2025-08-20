@@ -54,9 +54,10 @@ script = ExtResource("1_glv2v")
 
 [node name="StageManager" parent="." instance=ExtResource("9_03owx")]
 Stages = Dictionary[String, PackedScene]({
-"stage1": ExtResource("3_j4qnp"),
-"stage2": ExtResource("4_fpfj3")
+"meadow": ExtResource("3_j4qnp"),
+"street": ExtResource("4_fpfj3")
 })
+initialStageID = "meadow"
 
 [node name="SceneManager" parent="." instance=ExtResource("2_uu6xs")]
 SceneManagerResource = SubResource("Resource_sqvbp")
