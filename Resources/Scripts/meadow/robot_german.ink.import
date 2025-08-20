@@ -1,0 +1,16 @@
+[remap]
+
+importer="ink"
+type="Resource"
+uid="uid://dj8f0w53hoavu"
+path="res://.godot/imported/robot_german.ink-835e603816526305dba604aa8e8198ab.res"
+
+[deps]
+
+source_file="res://Resources/Scripts/meadow/robot_german.ink"
+dest_files=["res://.godot/imported/robot_german.ink-835e603816526305dba604aa8e8198ab.res"]
+
+[params]
+
+is_main_file=false
+compress=true
