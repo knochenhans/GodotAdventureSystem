@@ -1,13 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://ca6ex1hvbacgf"]
+[gd_scene load_steps=8 format=3 uid="uid://ca6ex1hvbacgf"]
 
 [ext_resource type="Script" uid="uid://bqr31jfy6x31v" path="res://UI/Interface.cs" id="1_doeb8"]
 [ext_resource type="Theme" uid="uid://yqu3myf53n6r" path="res://UI/MainTheme.tres" id="1_j7ptp"]
+[ext_resource type="PackedScene" uid="uid://cdlo4l0okxvcy" path="res://UI/VerbButton.tscn" id="2_fleyy"]
 [ext_resource type="Script" uid="uid://coongyjevgjwy" path="res://UI/GamePanel.cs" id="3_npkvw"]
+[ext_resource type="PackedScene" uid="uid://b0cdu6tiac6hh" path="res://UI/InventoryButton.tscn" id="3_xkyee"]
 [ext_resource type="PackedScene" uid="uid://ck4ungp5s64o7" path="res://UI/InterfaceContainer.tscn" id="4_vk6h5"]
 [ext_resource type="PackedScene" uid="uid://cvlvehkpo0v7k" path="res://UI/InterfaceContainerDialog.tscn" id="5_ma5o8"]
 
 [node name="Interface" type="CanvasLayer"]
 script = ExtResource("1_doeb8")
+VerbButtonScene = ExtResource("2_fleyy")
+InventoryButtonScene = ExtResource("3_xkyee")
 
 [node name="MessageTimer" type="Timer" parent="."]
 unique_name_in_owner = true

@@ -39,12 +39,14 @@ size_flags_stretch_ratio = 0.1
 [node name="UpButton" type="Button" parent="HBoxContainer/InventoryUpDownButtons"]
 layout_mode = 2
 size_flags_vertical = 3
+focus_mode = 0
 icon = ExtResource("1_oml8a")
 icon_alignment = 1
 
 [node name="DownButton" type="Button" parent="HBoxContainer/InventoryUpDownButtons"]
 layout_mode = 2
 size_flags_vertical = 3
+focus_mode = 0
 icon = ExtResource("2_bja20")
 icon_alignment = 1
 

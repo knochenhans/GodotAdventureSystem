@@ -1,5 +1,6 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://yqu3myf53n6r"]
+[gd_resource type="Theme" load_steps=17 format=3 uid="uid://yqu3myf53n6r"]
 
+[ext_resource type="StyleBox" uid="uid://dfppmfy187tr3" path="res://UI/HSeparator.tres" id="1_lu26r"]
 [ext_resource type="FontFile" uid="uid://cdcqyaivl16qs" path="res://Resources/Fonts/dogicapixel.ttf" id="1_ttu11"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_figpj"]
@@ -10,10 +11,90 @@ content_margin_bottom = 10.0
 bg_color = Color(0.0784314, 0, 0.0784314, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3t2x8"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
 bg_color = Color(0.156863, 0, 0.156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lu26r"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.156863, 0, 0.156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eapfb"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.156863, 0, 0.156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g6qqc"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.156863, 0, 0.156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qcjyo"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.156863, 0, 0.156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2m3ji"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.156863, 0, 0.156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6n20t"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.0784314, 0, 0.0784314, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cqvut"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.156863, 0, 0.156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ttu11"]
+bg_color = Color(0.670588, 0.313726, 0.670588, 1)
+border_width_top = 4
+border_width_bottom = 4
+border_color = Color(0.670588, 0.313726, 0.670588, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xjm14"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_askcv"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.0784314, 0, 0.0784314, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_14m2t"]
 bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6gj7g"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.0784314, 0, 0.0784314, 1)
 
 [resource]
 default_font = ExtResource("1_ttu11")
@@ -26,5 +107,23 @@ Button/styles/focus = SubResource("StyleBoxFlat_figpj")
 Button/styles/hover = SubResource("StyleBoxFlat_3t2x8")
 Button/styles/normal = SubResource("StyleBoxFlat_figpj")
 Button/styles/pressed = SubResource("StyleBoxFlat_3t2x8")
+CheckBox/styles/hover = SubResource("StyleBoxFlat_lu26r")
+CheckBox/styles/hover_pressed = SubResource("StyleBoxFlat_eapfb")
+CheckBox/styles/pressed = SubResource("StyleBoxFlat_g6qqc")
+CheckButton/styles/hover = SubResource("StyleBoxFlat_qcjyo")
+CheckButton/styles/hover_pressed = SubResource("StyleBoxFlat_2m3ji")
+CheckButton/styles/normal = SubResource("StyleBoxFlat_6n20t")
+CheckButton/styles/pressed = SubResource("StyleBoxFlat_cqvut")
+GridContainer/constants/h_separation = 10
+GridContainer/constants/v_separation = 10
+HSeparator/constants/separation = 20
+HSeparator/styles/separator = ExtResource("1_lu26r")
+HSlider/styles/slider = SubResource("StyleBoxFlat_ttu11")
 Label/colors/font_color = Color(0.670588, 0.313726, 0.670588, 1)
+Label/styles/normal = SubResource("StyleBoxFlat_xjm14")
+OptionButton/styles/normal = SubResource("StyleBoxFlat_askcv")
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_14m2t")
+PopupMenu/constants/v_separation = 10
+PopupMenu/styles/panel = SubResource("StyleBoxFlat_6gj7g")
+PopupMenu/styles/separator = ExtResource("1_lu26r")
+VBoxContainer/constants/separation = 20
