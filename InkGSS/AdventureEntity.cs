@@ -1,10 +1,12 @@
-using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using static Logger;
 
 public partial class AdventureEntity : Entity
 {
+    public Dictionary<string, string> DefaultVerbReactions { get; set; } = [];
+
     PlayerInputControllerNavigation InputController => GetNode<PlayerInputControllerNavigation>("PlayerInputControllerNavigation");
 
     public async Task SpeechBubble(string message)
@@ -27,7 +29,14 @@ public partial class AdventureEntity : Entity
 
     public async Task PlayAnimation(string animationName)
     {
-        GD.Print($"Entity {Name} plays animation: {animationName}");
-        await Task.Delay(1000); // Simulate delay
+        var animatedSpriteManager = SpriteManager as AnimatedSprite2DManager;
+
+        Moveable?.StopMovement();
+        animatedSpriteManager.PlayAnimation(animationName);
+        await ToSignal(animatedSpriteManager.AnimatedSprite, AnimatedSprite2D.SignalName.AnimationFinished);
+
+        CurrentDirection = new Vector2(0, 1);
+        UpdateSpriteOrientation();
+        animatedSpriteManager.PlayAnimation();
     }
 }

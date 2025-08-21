@@ -8,20 +8,6 @@ public partial class ScriptActionPlayAnimation : EntityScriptAction
     public override async Task Execute() => await Entity.PlayAnimation(AnimationName);
 }
 
-// public partial class ScriptActionSwitchStage : EntityScriptAction
-// {
-//     public string StageID { get; set; }
-//     public string EntryID { get; set; }
-
-//     public ScriptActionSwitchStage(AdventureEntity entity, string stageID, string entryID = "") : base(entity) { StageID = stageID; EntryID = entryID; }
-//     public override Task Execute()
-//     {
-//         if (Entity is AdventureEntity playerEntity)
-//             playerEntity.RequestSwitchStage(StageID, EntryID);
-//         return Task.CompletedTask;
-//     }
-// }
-
 // public partial class ScriptActionPrint : ScriptNodeControllerAction
 // {
 //     public string Message { get; set; }

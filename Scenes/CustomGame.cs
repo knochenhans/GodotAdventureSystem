@@ -1,10 +1,11 @@
 using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
-using GodotInk;
 
 public partial class CustomGame : BaseGame
 {
+    [Export] public Dictionary<string, string> DefaultVerbReactions { get; set; } = [];
+
     public Rect2 stageLimits;
 
     public Interface InterfaceNode => GetNode<Interface>("%Interface");
@@ -35,6 +36,8 @@ public partial class CustomGame : BaseGame
     public string currentVerbID;
 
     public Dictionary<string, string> InkStoryStates { get; set; } = [];
+
+    public StageNodeActionCounter StageNodeActionCounter = new();
 
     CommandStateEnum _currentCommandState = CommandStateEnum.Idle;
     public CommandStateEnum CurrentCommandState
@@ -195,24 +198,136 @@ public partial class CustomGame : BaseGame
 
     private async Task PerformVerbAction(string thingID)
     {
-        GD.Print($"Performing verb action: {currentVerbID} on {thingID}");
+        string performedAction;
+
+        var currentStage = StageManager.Instance.CurrentStageScene as AdventureStage;
+
+        var inkStory = currentStage.InkStory;
+
+        inkStory.Continued += Talk;
+
+        if (CurrentCommandState == CommandStateEnum.VerbSelected)
+        {
+            performedAction = currentVerbID;
+            var useDefaultReaction = false;
+
+            // Check if this is an inventory item
+            if (PlayerEntity.Inventory.HasItemMoreThan(thingID, 1))
+            {
+                if (!inkStory.EvaluateFunction("interact_inventory", thingID, currentVerbID).AsBool())
+                    useDefaultReaction = true;
+            }
+            else
+            {
+                if (currentVerbID == "pick_up")
+                {
+                    // var thingResource = currentStage.StageThingManager.GetThing(thingID).Resource as ThingResource;
+
+                    // if (thingResource.CanBePickedUp)
+                    //     currentStage.ScriptManager.PickUp(thingID);
+                    // else
+                    //     useDefaultReaction = true;
+                }
+                else
+                {
+                    if (!inkStory.EvaluateFunction("interact_stage", thingID, currentVerbID).AsBool())
+                        useDefaultReaction = true;
+                }
+            }
+
+            if (useDefaultReaction)
+            {
+                // No scripted reaction found, check the node's default reactions
+                var thing = currentStage.GetStageNodeByID(thingID);
+
+                string reaction = "";
+
+                if (thing is AdventureEntity adventureEntity)
+                    reaction = adventureEntity.DefaultVerbReactions.TryGetValue(currentVerbID, out var entityReaction) ? entityReaction : "";
+
+                if (thing is AdventureObject adventureObject)
+                    reaction = adventureObject.DefaultVerbReactions.TryGetValue(currentVerbID, out var objectReaction) ? objectReaction : "";
+
+                if (reaction == "")
+                    // No default reaction on the node found, use the game's default verb reactions
+                    reaction = DefaultVerbReactions.TryGetValue(currentVerbID, out var defaultReaction) ? defaultReaction : "";
+
+                currentStage.ScriptManager.QueueAction(new ScriptActionMessage(PlayerEntity, reaction));
+            }
+
+            await currentStage.ScriptManager.RunScriptActionQueue();
+
+            CurrentCommandState = CommandStateEnum.Idle;
+        }
+        else
+        {
+            // InterfaceNode.SetCommandLabel(currentStage.StageThingManager.GetThingName(thingID));
+
+            // Check for exit scripts
+            if (!inkStory.EvaluateFunction("interact_stage", thingID, "walk").AsBool())
+            {
+                Logger.Log($"No exit script found for {thingID}", Logger.LogTypeEnum.Script);
+
+                // var thing = currentStage.StageThingManager.GetThing(thingID);
+
+                // if (thing.Resource is ExitResource exitResource)
+                // {
+                //     Logger.Log($"Exit destination found in node: {exitResource.TargetStageID}", Logger.LogTypeEnum.Script);
+                //     StageManager.SwitchStage(exitResource.TargetStageID, exitResource.TargetEntryID);
+                // }
+            }
+            await currentStage.ScriptManager.RunScriptActionQueue();
+            performedAction = "walk";
+        }
+
+        // ThingActionCounter.IncrementActionCounter(thingID, performedAction);
+
+        currentStage.InkStory.Continued -= Talk;
     }
 
     private async Task MovePlayerToStageNode(StageNode stageNode)
-	{
-		Vector2 position = Vector2.Zero;
-		if (stageNode is Object obj)
-			position = obj.Position;
-		else if (stageNode is AdventureEntity character)
-			position = character.Position;
-		// else if (stageNode is HotspotArea hotspotArea)
-		// 	position = hotspotArea.GetClosestPoint(CurrentStage.PlayerCharacter.Position) + hotspotArea.Position;
-		else
-			Logger.LogError($"OnAreaActivated: Area {stageNode.ID} is not an Object or an AdventureEntity", Logger.LogTypeEnum.Script);
+    {
+        Vector2 position = Vector2.Zero;
+        if (stageNode is Object obj)
+            position = obj.Position;
+        else if (stageNode is AdventureEntity character)
+            position = character.Position;
+        // else if (stageNode is HotspotArea hotspotArea)
+        // 	position = hotspotArea.GetClosestPoint(CurrentStage.PlayerCharacter.Position) + hotspotArea.Position;
+        else
+            Logger.LogError($"OnAreaActivated: Area {stageNode.ID} is not an Object or an AdventureEntity", Logger.LogTypeEnum.Script);
 
-		// if (position.DistanceTo(StageNode.PlayerCharacter.Position) > 20)
-		await PlayerEntity.MoveTo(position, 20);
-	}
+        // if (position.DistanceTo(StageNode.PlayerCharacter.Position) > 20)
+        await PlayerEntity.MoveTo(position, 20);
+    }
+
+    private void Talk()
+    {
+        var currentStage = StageManager.Instance.CurrentStageScene as AdventureStage;
+        var inkStory = currentStage.InkStory;
+        var tag = inkStory.GetCurrentTags();
+
+        if (tag.Count > 0 && inkStory.CurrentText != "")
+        {
+            AdventureEntity actingCharacter = PlayerEntity;
+            AdventureEntity targetCharacter = null;
+
+            if (_currentCommandState == CommandStateEnum.Dialog)
+            {
+                // if (tag[0] == "player")
+                //     targetCharacter = DialogManager.CurrentDialogCharacter;
+                // else
+                //     targetCharacter = PlayerEntity;
+            }
+            if (tag[0] != "player")
+            {
+                actingCharacter = currentStage.GetStageNodeByID(tag[0]) as AdventureEntity;
+            }
+
+            currentStage.ScriptManager.QueueAction(new ScriptActionMessage(actingCharacter, inkStory.CurrentText, targetCharacter));
+            currentStage.ScriptManager.QueueAction(new ScriptActionCharacterWait(actingCharacter, 0.3f));
+        }
+    }
 
     protected void SetStageLimits()
     {
@@ -238,14 +353,21 @@ public partial class CustomGame : BaseGame
         }
     }
 
-    public AdventureEntity GetEntity(string id) => GetCurrentStage().GetEntityByID(id) as AdventureEntity;
+    public AdventureEntity GetEntity(string id) => GetCurrentAdventureStage().GetEntityByID(id) as AdventureEntity;
 
     public async Task StartDialog(string knotName)
     {
         // Test
     }
 
-    public Stage GetCurrentStage() => StageManager.Instance.CurrentStageScene;
+    protected override void InitStageContent(bool storedStateFound)
+    {
+        base.InitStageContent(storedStateFound);
 
-    public InkStory GetCurrentInkStory() => (StageManager.Instance.CurrentStageScene.StageResource as AdventureStageResource).InkStory;
+        var inkStory = (StageManager.Instance.CurrentStageScene as AdventureStage).InkStory;
+
+        (StageManager.Instance.CurrentStageScene as AdventureStage).ScriptManager = new CustomScriptManager(this, inkStory, GetTree());
+    }
+
+    public static AdventureStage GetCurrentAdventureStage() => StageManager.Instance.CurrentStageScene as AdventureStage;
 }

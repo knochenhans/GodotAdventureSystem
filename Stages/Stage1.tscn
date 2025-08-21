@@ -1,9 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://c6eyeyhne65n3"]
+[gd_scene load_steps=15 format=3 uid="uid://c6eyeyhne65n3"]
 
 [ext_resource type="PackedScene" uid="uid://cyn4ii1nalg1b" path="res://Stages/Stage.tscn" id="1_j7ra7"]
 [ext_resource type="Script" uid="uid://bh5fb5sf1ijhe" path="res://addons/EntitySystem/Spawner.cs" id="2_2aa6s"]
 [ext_resource type="Texture2D" uid="uid://br720x315fdtb" path="res://Resources/Images/Stages/meadow.aseprite" id="2_52kwp"]
 [ext_resource type="Script" uid="uid://bxssf2hjp2xki" path="res://InkGSS/AdventureStageResource.cs" id="2_82npi"]
+[ext_resource type="Script" uid="uid://bt7ewqmtuntdg" path="res://InkGSS/AdventureStage.cs" id="2_aigtj"]
 [ext_resource type="Resource" uid="uid://di26o5vw2jelg" path="res://Resources/Scripts/meadow/meadow.ink" id="2_dp4ru"]
 [ext_resource type="PackedScene" uid="uid://ckuu7gdqdhnv" path="res://Resources/Entities/Player.tscn" id="4_hjltf"]
 [ext_resource type="Resource" uid="uid://n8p41hnt0j2u" path="res://Resources/Entities/Player.tres" id="4_hqab3"]
@@ -34,6 +35,7 @@ CollisionEnabled = false
 metadata/_custom_type_script = "uid://dat5uhee5xjrm"
 
 [node name="Stage" instance=ExtResource("1_j7ra7")]
+script = ExtResource("2_aigtj")
 StageResource = SubResource("Resource_dp4ru")
 ID = "meadow"
 
