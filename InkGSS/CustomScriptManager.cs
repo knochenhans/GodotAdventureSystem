@@ -85,7 +85,7 @@ public partial class CustomScriptManager : ScriptManager
 		var node = CustomGame.GetCurrentAdventureStage().GetStageNodeByID(stageNodeID);
 		if (node is not null)
 		{
-			CustomGame.GetCurrentAdventureStage().MoveObjectToEntityInventory(node.ID, "player");
+			CustomGame.GetCurrentAdventureStage().MoveStageNodeToInventory(node.ID, "player");
 		}
 	}
 

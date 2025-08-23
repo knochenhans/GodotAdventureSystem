@@ -35,9 +35,9 @@ enabled=PackedStringArray("res://addons/AsepriteWizard/plugin.cfg", "res://addon
 
 folder_colors={
 "res://Resources/": "purple",
-"res://Resources/Entities/": "orange",
 "res://Resources/Images/": "red",
 "res://Resources/Sounds/": "teal",
+"res://Resources/StageNodes/": "orange",
 "res://Scenes/": "yellow",
 "res://Stages/": "yellow",
 "res://UI/": "teal",

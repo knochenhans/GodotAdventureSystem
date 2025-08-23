@@ -16,7 +16,7 @@
 [ext_resource type="Script" uid="uid://q5kvegfjxjon" path="res://addons/SceneManager/Nodes/SceneManagerResource.cs" id="11_xrxkg"]
 [ext_resource type="Resource" uid="uid://b4y51l6nh6d76" path="res://Resources/Sounds/StepsNormal.tres" id="12_fpfj3"]
 [ext_resource type="Resource" uid="uid://dkphfme3c748h" path="res://Resources/Sounds/StepsSand.tres" id="13_sc1dx"]
-[ext_resource type="Script" uid="uid://dsrlv3tetvhrj" path="res://addons/EntitySystem/StepSoundDatabaseResource.cs" id="14_kjvhd"]
+[ext_resource type="Script" uid="uid://dsrlv3tetvhrj" path="res://addons/EntitySystem/Resource/StepSoundDatabaseResource.cs" id="14_kjvhd"]
 [ext_resource type="PackedScene" uid="uid://dgbmno8m15yrd" path="res://addons/UISoundPlayer/UISoundPlayer.tscn" id="15_sc1dx"]
 [ext_resource type="AudioStream" uid="uid://cohiv50cb8wvw" path="res://addons/UISoundPlayer/Sounds/click2.wav" id="16_kjvhd"]
 [ext_resource type="Script" uid="uid://bcbe7wlf5oben" path="res://addons/SoundSet/SimpleSoundSetResource.cs" id="17_5tuhn"]

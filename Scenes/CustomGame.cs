@@ -60,7 +60,7 @@ public partial class CustomGame : BaseGame
         GameInputManager = new CustomGameInputManager(this, Camera);
 
         StageManager.Instance.StageLoaded += InitStageContent;
-        StageManager.Instance.EntityExitedStage += OnEntityExitedStage;
+        StageManager.Instance.StageNodeExitedStage += OnStageNodeExitedStage;
         StageManager.Instance.Init(this);
 
         SetupInterface();
