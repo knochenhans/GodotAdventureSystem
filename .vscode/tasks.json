@@ -8,7 +8,7 @@
 			"args": [
 				"build"
 			],
-			"problemMatcher": "msCompile",
+			"problemMatcher": "$msCompile",
 			"presentation": {
 				"echo": true,
 				"reveal": "silent",
