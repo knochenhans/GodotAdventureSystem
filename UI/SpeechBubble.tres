@@ -1,15 +1,11 @@
-[gd_resource type="Theme" load_steps=4 format=3 uid="uid://c6f1m287eoebh"]
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://c6f1m287eoebh"]
 
-[ext_resource type="FontFile" uid="uid://c2yio41fuhtnv" path="res://Resources/Fonts/dogicapixelbold.ttf" id="1_i5s7g"]
 [ext_resource type="FontFile" uid="uid://cdcqyaivl16qs" path="res://Resources/Fonts/dogicapixel.ttf" id="2_75cea"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jhibm"]
 
 [resource]
+Label/constants/outline_size = 4
+Label/font_sizes/font_size = 8
+Label/fonts/font = ExtResource("2_75cea")
 PanelContainer/styles/panel = SubResource("StyleBoxEmpty_jhibm")
-RichTextLabel/colors/font_outline_color = Color(0, 0, 0, 1)
-RichTextLabel/constants/line_separation = 3
-RichTextLabel/constants/outline_size = 4
-RichTextLabel/font_sizes/normal_font_size = 8
-RichTextLabel/fonts/bold_font = ExtResource("1_i5s7g")
-RichTextLabel/fonts/normal_font = ExtResource("2_75cea")

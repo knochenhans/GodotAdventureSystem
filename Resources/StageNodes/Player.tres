@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="AdventureEntityResource" load_steps=3 format=3 uid="uid://n8p41hnt0j2u"]
+
+[ext_resource type="Script" uid="uid://5s2c64kuosm7" path="res://InkGSS/AdventureEntityResource.cs" id="1_5cipe"]
+[ext_resource type="PackedScene" uid="uid://vo75r3wmqxta" path="res://UI/SpeechBubble.tscn" id="1_n3kn5"]
+
+[resource]
+script = ExtResource("1_5cipe")
+SpeechBubbleScene = ExtResource("1_n3kn5")
+SpeechBubbleColor = Color(1, 1, 1, 1)
+MaxHealth = 100
+Speed = 100
+ScanRadius = 10
+PickupRadius = 5
+ClickRadius = 5
+CollisionEnabled = false
+ID = "player"
+DisplayName = "You"
+Description = ""
+metadata/_custom_type_script = "uid://5s2c64kuosm7"

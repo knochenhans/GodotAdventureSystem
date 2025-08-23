@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://5u6bceha0n42"]
+
+[ext_resource type="PackedScene" uid="uid://ba8uv7k72mxv" path="res://addons/SceneManager/Nodes/OverlayMenuFrame.tscn" id="1_ajduq"]
+[ext_resource type="Theme" uid="uid://yqu3myf53n6r" path="res://UI/MainTheme.tres" id="2_j60jj"]
+
+[node name="OverlayMenu" instance=ExtResource("1_ajduq")]
+theme = ExtResource("2_j60jj")

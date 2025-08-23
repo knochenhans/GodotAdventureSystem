@@ -5,9 +5,9 @@
 [ext_resource type="Texture2D" uid="uid://br720x315fdtb" path="res://Resources/Images/Stages/meadow.aseprite" id="2_52kwp"]
 [ext_resource type="Script" uid="uid://bxssf2hjp2xki" path="res://InkGSS/AdventureStageResource.cs" id="2_82npi"]
 [ext_resource type="Resource" uid="uid://di26o5vw2jelg" path="res://Resources/Scripts/meadow/meadow.ink" id="2_dp4ru"]
-[ext_resource type="PackedScene" uid="uid://ckuu7gdqdhnv" path="res://Resources/StageNodes/player.tscn" id="4_hjltf"]
+[ext_resource type="PackedScene" uid="uid://ckuu7gdqdhnv" path="res://Resources/StageNodes/Player.tscn" id="4_hjltf"]
 [ext_resource type="Script" uid="uid://bnyoqlsxlbwm4" path="res://addons/EntitySystem/Spawner/SpawnerPolygon.cs" id="6_hqab3"]
-[ext_resource type="PackedScene" uid="uid://djmmnyu13nb0m" path="res://Resources/StageNodes/cloud1.tscn" id="8_hqab3"]
+[ext_resource type="PackedScene" uid="uid://djmmnyu13nb0m" path="res://Resources/StageNodes/Cloud1.tscn" id="8_hqab3"]
 
 [sub_resource type="Resource" id="Resource_dp4ru"]
 script = ExtResource("2_82npi")
