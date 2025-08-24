@@ -4,7 +4,19 @@ using Godot.Collections;
 
 public partial class CustomGame : BaseGame
 {
-    [Export] public Dictionary<string, string> DefaultVerbReactions { get; set; } = [];
+    [Export]
+    public Dictionary<string, string> DefaultVerbReactions = new()
+    {
+        { "close", "I can’t close that." },
+        { "give", "There’s no one to give anything to." },
+        { "look", "I see nothing special." },
+        { "open", "I can’t open that." },
+        { "pick_up", "I can’t pick that up." },
+        { "pull", "I can’t pull that." },
+        { "push", "I can’t push that." },
+        { "talk_to", "There’s no one to talk to." },
+        { "use", "I can’t use that." }
+    };
 
     public Rect2 stageLimits;
 
@@ -13,7 +25,7 @@ public partial class CustomGame : BaseGame
     public VariableManager VariableManager;
     public AdventureEntity PlayerEntity;
 
-    Dictionary<string, string> Verbs = new()
+    public Dictionary<string, string> Verbs = new()
     {
         { "close", "Close" },
         { "give", "Give" },
@@ -87,85 +99,14 @@ public partial class CustomGame : BaseGame
     {
         InterfaceNode.Init(Verbs);
 
-        InterfaceNode.GamePanelMouseMotion += OnGamePanelMouseMotion;
-        InterfaceNode.GamePanelMousePressed += OnGamePanelMousePressed;
+        var customGameInputManager = GameInputManager as CustomGameInputManager;
 
-        // InterfaceNode.ThingClicked += OnThingClicked;
-        // InterfaceNode.ThingHovered += OnThingHovered;
+        InterfaceNode.GamePanelMouseMotion += customGameInputManager.OnGamePanelMouseMotion;
+        InterfaceNode.GamePanelMousePressed += customGameInputManager.OnGamePanelMousePressed;
 
-        InterfaceNode.VerbClicked += OnVerbClicked;
-        InterfaceNode.VerbHovered += OnVerbHovered;
-        InterfaceNode.VerbLeave += OnVerbLeave;
-    }
-
-    public void OnVerbHovered(string verbID)
-    {
-        if (CurrentCommandState == CommandStateEnum.Idle)
-            InterfaceNode.SetCommandLabel(Verbs[verbID]);
-    }
-
-    public void OnVerbLeave()
-    {
-        if (CurrentCommandState == CommandStateEnum.Idle)
-            InterfaceNode.ResetCommandLabel();
-    }
-
-    public void OnVerbClicked(string verbID)
-    {
-        // Logger.Log($"_OnVerbActivated: Verb: {verbID} activated", Logger.LogTypeEnum.Script);
-
-        InterfaceNode.SetCommandLabel(Verbs[verbID]);
-        currentVerbID = verbID;
-        CurrentCommandState = CommandStateEnum.VerbSelected;
-    }
-
-    public void OnGamePanelMouseMotion()
-    {
-        // if (CurrentCommandState == CommandStateEnum.Idle)
-        //     InterfaceNode.ResetCommandLabel();
-        // else
-        if (CurrentCommandState == CommandStateEnum.VerbSelected)
-            InterfaceNode.SetCommandLabel(Verbs[currentVerbID]);
-    }
-
-    public async void OnGamePanelMousePressed(InputEventMouseButton mouseButtonEvent)
-    {
-        if (CurrentCommandState == CommandStateEnum.Idle)
-        {
-            // await CurrentStage.PlayerCharacter.MoveTo(mouseButtonEvent.Position / Camera2DNode.Zoom + Camera2DNode.Position, 1);
-        }
-        else if (CurrentCommandState == CommandStateEnum.VerbSelected)
-        {
-            if (mouseButtonEvent.ButtonIndex == MouseButton.Right)
-            {
-                CurrentCommandState = CommandStateEnum.Idle;
-                InterfaceNode.ResetCommandLabel();
-            }
-        }
-    }
-
-    public void OnStageNodeHovered(StageNode stageNode)
-    {
-        if (stageNode == null)
-            return;
-
-        if (CurrentCommandState != CommandStateEnum.Dialog)
-        {
-            // var thing = CurrentStage.StageThingManager.GetThing(thingID);
-            // ThingResource thingResource;
-
-            // if (thing == null)
-            //     thingResource = CurrentStage.PlayerCharacter.Inventory.FindThing(thingID);
-            // else
-            //     thingResource = thing.Resource as ThingResource;
-
-            var stageNodeName = stageNode.DisplayName;
-
-            if (CurrentCommandState == CommandStateEnum.Idle)
-                InterfaceNode.SetCommandLabel(stageNodeName);
-            else if (CurrentCommandState == CommandStateEnum.VerbSelected)
-                InterfaceNode.SetCommandLabel($"{Verbs[currentVerbID]} {stageNodeName}");
-        }
+        InterfaceNode.VerbClicked += customGameInputManager.OnVerbClicked;
+        InterfaceNode.VerbHovered += customGameInputManager.OnVerbHovered;
+        InterfaceNode.VerbLeave += customGameInputManager.OnVerbLeave;
     }
 
     public async Task PerformVerbAction(string stageNodeID)
@@ -213,24 +154,16 @@ public partial class CustomGame : BaseGame
             if (useDefaultReaction)
             {
                 // No scripted reaction found, check the node's default reactions
-                var thing = currentStage.GetStageNodeByID(stageNodeID);
+                var stageNode = currentStage.GetStageNodeByID(stageNodeID);
 
-                string reaction = "";
-
-                if (thing is AdventureEntity adventureEntity)
-                    reaction = adventureEntity.DefaultVerbReactions.TryGetValue(currentVerbID, out var entityReaction) ? entityReaction : "";
-
-                if (thing is AdventureObject adventureObject)
-                    reaction = adventureObject.DefaultVerbReactions.TryGetValue(currentVerbID, out var objectReaction) ? objectReaction : "";
-
-                if (reaction == "")
-                    // No default reaction on the node found, use the game's default verb reactions
-                    reaction = DefaultVerbReactions.TryGetValue(currentVerbID, out var defaultReaction) ? defaultReaction : "";
+                var reaction = DefaultVerbReactions.TryGetValue(currentVerbID, out var defaultReaction) ? defaultReaction : "";
 
                 currentStage.ScriptManager.QueueAction(new ScriptActionMessage(PlayerEntity, reaction));
             }
 
             await currentStage.ScriptManager.RunScriptActionQueue();
+
+            InterfaceNode.UnpressVerbButton(currentVerbID);
 
             CurrentCommandState = CommandStateEnum.Idle;
         }
