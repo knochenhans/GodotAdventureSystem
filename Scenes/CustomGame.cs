@@ -11,7 +11,7 @@ public partial class CustomGame : BaseGame
     public Interface InterfaceNode => GetNode<Interface>("%Interface");
 
     public VariableManager VariableManager;
-    AdventureEntity PlayerEntity;
+    public AdventureEntity PlayerEntity;
 
     Dictionary<string, string> Verbs = new()
     {
@@ -59,7 +59,8 @@ public partial class CustomGame : BaseGame
 
         GameInputManager = new CustomGameInputManager(this, Camera);
 
-        StageManager.Instance.StageLoaded += InitStageContent;
+        StageManager.Instance.StageLoaded += OnStageLoaded;
+        StageManager.Instance.StageUnloaded += OnStageUnloaded;
         StageManager.Instance.StageNodeExitedStage += OnStageNodeExitedStage;
         StageManager.Instance.Init(this);
 
@@ -167,36 +168,7 @@ public partial class CustomGame : BaseGame
         }
     }
 
-    public async void OnStageNodeClicked(StageNode stageNode, Vector2 mousePosition)
-    {
-        if (CurrentCommandState != CommandStateEnum.Dialog)
-        {
-            // var thing = CurrentStage.StageThingManager.GetThing(thingID);
-            // ThingResource thingResource;
-
-            // if (thing == null)
-            // {
-            //     thingResource = CurrentStage.PlayerCharacter.Inventory.FindThing(thingID);
-            // }
-            // else
-            // {
-            //     if (thing is HotspotArea hotspotArea)
-            //     {
-            //         await CurrentStage.PlayerCharacter.MoveTo(mousePosition / Camera2DNode.Zoom + Camera2DNode.Position);
-            //     }
-            //     else
-            //     {
-            //         thingResource = thing.Resource as ThingResource;
-            if (stageNode != null && stageNode != PlayerEntity)
-                await MovePlayerToStageNode(stageNode);
-            //     }
-            // }
-
-            await PerformVerbAction(stageNode.ID);
-        }
-    }
-
-    private async Task PerformVerbAction(string thingID)
+    public async Task PerformVerbAction(string thingID)
     {
         string performedAction;
 
@@ -285,7 +257,7 @@ public partial class CustomGame : BaseGame
         currentStage.InkStory.Continued -= Talk;
     }
 
-    private async Task MovePlayerToStageNode(StageNode stageNode)
+    public async Task MovePlayerToStageNode(StageNode stageNode)
     {
         Vector2 position = Vector2.Zero;
         if (stageNode is Object obj)
@@ -360,13 +332,21 @@ public partial class CustomGame : BaseGame
         // Test
     }
 
-    protected override void InitStageContent(bool storedStateFound)
+    protected override void OnStageLoaded(bool storedStateFound)
     {
-        base.InitStageContent(storedStateFound);
+        base.OnStageLoaded(storedStateFound);
 
-        var inkStory = (StageManager.Instance.CurrentStageScene as AdventureStage).InkStory;
+        var adventureStage = StageManager.Instance.CurrentStageScene as AdventureStage;
+        var inkStory = adventureStage.InkStory;
+        adventureStage.ScriptManager = new CustomScriptManager(this, inkStory, GetTree());
+    }
 
-        (StageManager.Instance.CurrentStageScene as AdventureStage).ScriptManager = new CustomScriptManager(this, inkStory, GetTree());
+    protected override void OnStageUnloaded()
+    {
+        var adventureStage = StageManager.Instance.CurrentStageScene as AdventureStage;
+        adventureStage.InkStory.ResetState();
+        adventureStage.ScriptManager.Cleanup();
+        adventureStage.ScriptManager = null;
     }
 
     public static AdventureStage GetCurrentAdventureStage() => StageManager.Instance.CurrentStageScene as AdventureStage;
