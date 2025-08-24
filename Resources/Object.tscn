@@ -4,4 +4,5 @@
 [ext_resource type="Script" uid="uid://ceg7rurjkopu8" path="res://InkGSS/AdventureObject.cs" id="2_01rs1"]
 
 [node name="AdventureObject" instance=ExtResource("1_8sg1e")]
+y_sort_enabled = true
 script = ExtResource("2_01rs1")

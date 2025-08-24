@@ -58,6 +58,8 @@ radius = 7.0
 height = 44.0
 
 [node name="AdventureEntity" type="Node2D" groups=["entity", "saveable"]]
+z_index = 1
+y_sort_enabled = true
 script = ExtResource("1_u50rl")
 SpriteResource = SubResource("Resource_la5iv")
 EntityStateResource = SubResource("Resource_js0jl")

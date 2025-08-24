@@ -8,6 +8,7 @@
 agent_radius = 0.0
 
 [node name="Stage" type="Node2D"]
+y_sort_enabled = true
 script = ExtResource("1_1phiv")
 
 [node name="Background" type="Sprite2D" parent="."]
@@ -23,6 +24,7 @@ Size = Vector2(1000, 500)
 
 [node name="StageNodes" type="Node2D" parent="."]
 unique_name_in_owner = true
+y_sort_enabled = true
 
 [node name="Spawners" type="Node2D" parent="."]
 unique_name_in_owner = true
