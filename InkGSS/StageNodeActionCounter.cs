@@ -34,7 +34,7 @@ public class StageNodeActionCounter
 		return value;
 	}
 
-	public void SetActionCounters(string stageNodeID, Dictionary<string, int> actionCounters)
+	public void SetActionCounter(string stageNodeID, Dictionary<string, int> actionCounters)
 	{
 		if (!stageNodeActionCounter.ContainsKey(stageNodeID))
 			stageNodeActionCounter[stageNodeID] = [];
