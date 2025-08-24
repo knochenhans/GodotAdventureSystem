@@ -7,7 +7,17 @@
 
 [node name="CustomGame" instance=ExtResource("1_c1plg")]
 script = ExtResource("2_7cnhq")
-DefaultVerbReactions = Dictionary[String, String]({})
+DefaultVerbReactions = Dictionary[String, String]({
+"close": "I can’t close that.",
+"give": "There’s no one to give anything to.",
+"look": "I see nothing special.",
+"open": "I can’t open that.",
+"pick_up": "I can’t pick that up.",
+"pull": "I can’t pull that.",
+"push": "I can’t push that.",
+"talk_to": "There’s no one to talk to.",
+"use": "I can’t use that."
+})
 DefaultCursorTexture = ExtResource("3_rl2g2")
 DefaultCursorHotspot = Vector2(22, 22)
 FadeInTime = 1.0
