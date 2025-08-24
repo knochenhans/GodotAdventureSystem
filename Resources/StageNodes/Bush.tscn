@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3 uid="uid://blep7u3whrlbk"]
+
+[ext_resource type="PackedScene" uid="uid://bdtk41rew7nwl" path="res://Resources/Object.tscn" id="1_w0oq0"]
+[ext_resource type="Script" uid="uid://dat5uhee5xjrm" path="res://addons/EntitySystem/Resource/ObjectResource.cs" id="2_ejsef"]
+[ext_resource type="Texture2D" uid="uid://cjhsvpx1rb866" path="res://Resources/Images/bush.aseprite" id="3_sok4g"]
+
+[sub_resource type="Resource" id="Resource_sok4g"]
+script = ExtResource("2_ejsef")
+isStackable = false
+CollisionPolygon = null
+CollisionEnabled = true
+ID = "bush"
+DisplayName = "Bush"
+Description = ""
+metadata/_custom_type_script = "uid://dat5uhee5xjrm"
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_65vd2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_sok4g")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Object" instance=ExtResource("1_w0oq0")]
+ID = "bush"
+StageNodeResource = SubResource("Resource_sok4g")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="ClickArea" index="0"]
+z_index = 1
+polygon = PackedVector2Array(-1, 3, -9, -2, -14, -8, -14, -17, -12, -21, -11, -27, -3, -35, 9, -27, 9, -14, 12, -12, 12, -5, 10, 0)
+
+[node name="AnimatedSprite2D" parent="." index="1"]
+sprite_frames = SubResource("SpriteFrames_65vd2")
+offset = Vector2(0, -19)

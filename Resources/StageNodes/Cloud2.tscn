@@ -1,0 +1,43 @@
+[gd_scene load_steps=8 format=3 uid="uid://b8n0tjlmk8ygt"]
+
+[ext_resource type="Script" uid="uid://l548tftrtwcy" path="res://addons/EntitySystem/Object.cs" id="1_bt1os"]
+[ext_resource type="Script" uid="uid://dat5uhee5xjrm" path="res://addons/EntitySystem/Resource/ObjectResource.cs" id="2_nibem"]
+[ext_resource type="PackedScene" uid="uid://cqcroglmfdd3o" path="res://addons/TimedAudioStreamPlayer/TimedAudioStreamPlayer2D.tscn" id="3_1odf5"]
+[ext_resource type="Script" uid="uid://ply4i6vsn2t2" path="res://addons/TimedAudioStreamPlayer/TimedAudioStreamPlayerResource.cs" id="4_02r4j"]
+
+[sub_resource type="Resource" id="Resource_bt1os"]
+script = ExtResource("2_nibem")
+isStackable = false
+CollisionPolygon = NodePath("")
+CollisionEnabled = false
+ID = "cloud2"
+DisplayName = "Another Cloud"
+Description = ""
+metadata/_custom_type_script = "uid://dat5uhee5xjrm"
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_va50w"]
+
+[sub_resource type="Resource" id="Resource_jpe4p"]
+script = ExtResource("4_02r4j")
+Randomize = true
+RandomVolumeAdded = 0.0
+RandomPitchAdded = 0.0
+BaseDelay = 0.0
+RandomDelayAdded = 0.0
+MaxDelay = 0.0
+MinDelay = 0.0
+metadata/_custom_type_script = "uid://ply4i6vsn2t2"
+
+[node name="Object" type="Node2D" groups=["object"]]
+z_index = 1
+script = ExtResource("1_bt1os")
+StageNodeResource = SubResource("Resource_bt1os")
+
+[node name="ClickArea" type="Area2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+y_sort_enabled = true
+
+[node name="TimedAudioStreamPlayer2D" parent="." instance=ExtResource("3_1odf5")]
+stream = SubResource("AudioStreamRandomizer_va50w")
+TimedAudioStreamPlayerResource = SubResource("Resource_jpe4p")

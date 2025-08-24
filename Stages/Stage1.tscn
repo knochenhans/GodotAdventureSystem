@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c6eyeyhne65n3"]
+[gd_scene load_steps=13 format=3 uid="uid://c6eyeyhne65n3"]
 
 [ext_resource type="PackedScene" uid="uid://cyn4ii1nalg1b" path="res://Stages/Stage.tscn" id="1_j7ra7"]
 [ext_resource type="Script" uid="uid://bh5fb5sf1ijhe" path="res://addons/EntitySystem/Spawner/Spawner.cs" id="2_2aa6s"]
@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://ckuu7gdqdhnv" path="res://Resources/StageNodes/Player.tscn" id="4_hjltf"]
 [ext_resource type="Script" uid="uid://bnyoqlsxlbwm4" path="res://addons/EntitySystem/Spawner/SpawnerPolygon.cs" id="6_hqab3"]
 [ext_resource type="PackedScene" uid="uid://djmmnyu13nb0m" path="res://Resources/StageNodes/Cloud1.tscn" id="8_hqab3"]
+[ext_resource type="PackedScene" uid="uid://b8n0tjlmk8ygt" path="res://Resources/StageNodes/Cloud2.tscn" id="9_82npi"]
+[ext_resource type="PackedScene" uid="uid://blep7u3whrlbk" path="res://Resources/StageNodes/Bush.tscn" id="10_dp4ru"]
 
 [sub_resource type="Resource" id="Resource_dp4ru"]
 script = ExtResource("2_82npi")
@@ -35,14 +37,26 @@ navigation_polygon = SubResource("NavigationPolygon_hqab3")
 [node name="StageLimits" parent="." index="2"]
 Size = Vector2(960, 220)
 
-[node name="Spawner" type="Marker2D" parent="Spawners" index="0" groups=["spawner"]]
+[node name="player" type="Marker2D" parent="Spawners" index="0" groups=["spawner"]]
 position = Vector2(240, 176)
 script = ExtResource("2_2aa6s")
 Scene = ExtResource("4_hjltf")
 metadata/_custom_type_script = "uid://bh5fb5sf1ijhe"
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Spawners" index="1" groups=["spawner"]]
+[node name="bush" type="Marker2D" parent="Spawners" index="1" groups=["spawner"]]
+position = Vector2(343, 179)
+script = ExtResource("2_2aa6s")
+Scene = ExtResource("10_dp4ru")
+metadata/_custom_type_script = "uid://bh5fb5sf1ijhe"
+
+[node name="cloud1" type="CollisionPolygon2D" parent="Spawners" index="2" groups=["spawner"]]
 position = Vector2(76, 27)
 polygon = PackedVector2Array(-37.3474, 14.9933, -17.3474, 25.9933, 11.6526, 30.9933, 43.6526, 15.9933, 50.6526, -8.00672, 31.6526, -25.0067, -19.3474, -25.0067, -30.3474, -15.0067, -42.3474, -13.0067, -49.3474, -0.00671577)
 script = ExtResource("6_hqab3")
 Scene = ExtResource("8_hqab3")
+
+[node name="cloud2" type="CollisionPolygon2D" parent="Spawners" index="3" groups=["spawner"]]
+position = Vector2(363, 60)
+polygon = PackedVector2Array(-48, 10, -36, 22, -21, 17, -12, 23, -3, 22, 3, 25, 15, 30, 19, 25, 35, 24, 50, 29, 59, 22, 71, 27, 85, 17, 97, 15, 104, 8, 116, 2, 118, -9, 111, -18, 94, -22, 85, -28, 77, -26, 66, -37, 53, -33, 42, -42, 27, -36, 11, -41, -9, -26, -34, -27, -39, -18, -58, -9, -58, 1)
+script = ExtResource("6_hqab3")
+Scene = ExtResource("9_82npi")
