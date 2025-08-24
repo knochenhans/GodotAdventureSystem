@@ -24,7 +24,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Verbs" type="GridContainer" parent="HBoxContainer"]
+[node name="VerbButtons" type="GridContainer" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

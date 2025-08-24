@@ -324,6 +324,7 @@ public partial class CustomGame : BaseGame
         if (value == CommandStateEnum.Idle)
         {
             InterfaceNode.ResetCommandLabel();
+            InterfaceNode.UnpressVerbButton(currentVerbID);
             currentVerbID = "";
         }
     }

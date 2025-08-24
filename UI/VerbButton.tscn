@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://cdlo4l0okxvcy"]
+[gd_scene load_steps=2 format=3 uid="uid://cdlo4l0okxvcy"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_buo8q"]
 
 [node name="VerbButton" type="Button"]
 anchors_preset = 15
@@ -10,4 +12,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 0
 theme_override_font_sizes/font_size = 26
+toggle_mode = true
+button_group = SubResource("ButtonGroup_buo8q")
 text = "Verb"

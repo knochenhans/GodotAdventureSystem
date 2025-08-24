@@ -82,6 +82,8 @@ public partial class Interface : CanvasLayer
 
 	public void Init(Dictionary<string, string> verbs)
 	{
+		var buttonGroup = new ButtonGroup();
+
 		foreach (var verb in verbs)
 		{
 			var button = VerbButtonScene.Instantiate() as Button;
@@ -90,8 +92,10 @@ public partial class Interface : CanvasLayer
 			button.MouseExited += () => EmitSignal(SignalName.VerbLeave);
 			button.Pressed += () => EmitSignal(SignalName.VerbClicked, verb.Key);
 			button.SetMeta("verb", verb.Key);
+			button.ButtonGroup = buttonGroup;
 
-			VerbGridContainer.AddChild(button);
+			VerbButtonsContainer.AddChild(button);
+			VerbButtons[verb.Key] = button;
 		}
 
 		var inventoryButtonCount = 8;
@@ -239,5 +243,11 @@ public partial class Interface : CanvasLayer
 	{
 		// foreach (var child in DialogOptionsContainer.GetChildren())
 		// 	child.QueueFree();
+	}
+
+	public void UnpressVerbButton(string verbID)
+	{
+		if (VerbButtons.TryGetValue(verbID, out var button))
+			button.ButtonPressed = false;
 	}
 }
