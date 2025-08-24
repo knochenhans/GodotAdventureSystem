@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
@@ -9,14 +10,46 @@ public partial class AdventureEntity : Entity
 
     PlayerInputControllerNavigation InputController => GetNode<PlayerInputControllerNavigation>("PlayerInputControllerNavigation");
 
-    public async Task SpeechBubble(string message)
+
+    enum TalkingStateEnum
     {
-        GD.Print($"Entity {Name} says: {message}");
-        await Task.Delay(1000); // Simulate delay
+        Idle,
+        Talk
     }
 
-    public async Task MoveTo(Vector2 position, int v, bool isRelative = false)
+    TalkingStateEnum _currentTalkingState = TalkingStateEnum.Idle;
+    TalkingStateEnum CurrentTalkingState
     {
+        get => _currentTalkingState;
+        set
+        {
+            if (_currentTalkingState == value)
+                return;
+
+            PlayAnimation(value.ToString().ToLower());
+            _currentTalkingState = value;
+        }
+    }
+
+    public async Task SpeechBubble(string message)
+    {
+        if (StageNodeResource is AdventureEntityResource adventureEntityResource)
+        {
+            CurrentTalkingState = TalkingStateEnum.Talk;
+            var speechBubble = adventureEntityResource.SpeechBubbleScene.Instantiate() as SpeechBubble;
+            AddChild(speechBubble);
+            speechBubble.Init(message, adventureEntityResource.SpeechBubbleColor, new Vector2(0, GetGlobalRect().Size.Y));
+
+            await ToSignal(speechBubble, global::SpeechBubble.SignalName.Finished);
+            CurrentTalkingState = TalkingStateEnum.Idle;
+        }
+    }
+
+    public async Task MoveTo(Vector2 position, int desiredDistance = 2, bool isRelative = false)
+    {
+        if (CurrentTalkingState == TalkingStateEnum.Talk)
+            return;
+
         if (isRelative)
             position += GlobalPosition;
 
@@ -27,13 +60,20 @@ public partial class AdventureEntity : Entity
         Log($"Entity {Name} moved to {position}", LogTypeEnum.Script);
     }
 
-    public async Task PlayAnimation(string animationName)
+    public void PlayAnimation(string animationName)
     {
         var animatedSpriteManager = SpriteManager as AnimatedSprite2DManager;
 
         Moveable?.StopMovement();
         animatedSpriteManager.PlayAnimation(animationName);
-        await ToSignal(animatedSpriteManager.AnimatedSprite, AnimatedSprite2D.SignalName.AnimationFinished);
+    }
+
+    public async Task PlayAnimationAndWait(string animationName)
+    {
+        var animatedSpriteManager = SpriteManager as AnimatedSprite2DManager;
+
+        Moveable?.StopMovement();
+        await animatedSpriteManager.PlayAnimationAndWait(animationName);
 
         CurrentDirection = new Vector2(0, 1);
         UpdateSpriteOrientation();
