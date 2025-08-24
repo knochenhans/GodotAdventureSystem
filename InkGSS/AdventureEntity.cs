@@ -6,10 +6,7 @@ using static Logger;
 
 public partial class AdventureEntity : Entity
 {
-    public Dictionary<string, string> DefaultVerbReactions { get; set; } = [];
-
     PlayerInputControllerNavigation InputController => GetNode<PlayerInputControllerNavigation>("PlayerInputControllerNavigation");
-
 
     enum TalkingStateEnum
     {
@@ -35,6 +32,12 @@ public partial class AdventureEntity : Entity
     {
         if (StageNodeResource is AdventureEntityResource adventureEntityResource)
         {
+            if (message == string.Empty)
+            {
+                LogWarning("Speech bubble message is empty.", "SpeechBubble", LogTypeEnum.Script);
+                return;
+            }
+
             CurrentTalkingState = TalkingStateEnum.Talk;
             var speechBubble = adventureEntityResource.SpeechBubbleScene.Instantiate() as SpeechBubble;
             AddChild(speechBubble);

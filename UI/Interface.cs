@@ -4,20 +4,8 @@ using Godot;
 
 public partial class Interface : CanvasLayer
 {
-	GamePanel GamePanel => GetNode<GamePanel>("%GamePanel");
-	Control InterfacePanel => GetNode<Control>("%InterfacePanel");
-	Control InterfaceContainer => InterfacePanel.GetNode<Control>("InterfaceContainer");
-	Control InterfaceContainerDialog => InterfacePanel.GetNode<Control>("InterfaceContainerDialog");
-	// Control DialogOptionsContainer => InterfaceContainerDialog.GetNode<Control>("%DialogOptionsContainer");
-	GridContainer InventoryGridContainer => InterfaceContainer.GetNode<GridContainer>("%Inventory");
-	GridContainer VerbGridContainer => InterfaceContainer.GetNode<GridContainer>("%Verbs");
-	Label CommandLabel => InterfaceContainer.GetNode<Label>("%CommandLabel");
-
 	[Signal] public delegate void GamePanelMouseMotionEventHandler();
 	[Signal] public delegate void GamePanelMousePressedEventHandler(InputEventMouseButton mouseButtonEvent);
-	// [Signal] public delegate void ThingHoveredEventHandler(string thingID);
-	// [Signal] public delegate void ThingLeaveEventHandler();
-	// [Signal] public delegate void ThingClickedEventHandler(string thingID, Vector2 mousePosition);
 	[Signal] public delegate void VerbHoveredEventHandler(string verbID);
 	[Signal] public delegate void VerbLeaveEventHandler();
 	[Signal] public delegate void VerbClickedEventHandler(string verbID);
@@ -26,7 +14,16 @@ public partial class Interface : CanvasLayer
 	[Export] public PackedScene VerbButtonScene;
 	[Export] public PackedScene InventoryButtonScene;
 
-	// // int Zoom = 4;
+	GamePanel GamePanel => GetNode<GamePanel>("%GamePanel");
+	Control InterfacePanel => GetNode<Control>("%InterfacePanel");
+	Control InterfaceContainer => InterfacePanel.GetNode<Control>("InterfaceContainer");
+	Control InterfaceContainerDialog => InterfacePanel.GetNode<Control>("InterfaceContainerDialog");
+	// Control DialogOptionsContainer => InterfaceContainerDialog.GetNode<Control>("%DialogOptionsContainer");
+	GridContainer InventoryGridContainer => InterfaceContainer.GetNode<GridContainer>("%Inventory");
+	GridContainer VerbButtonsContainer => InterfaceContainer.GetNode<GridContainer>("%VerbButtons");
+	Label CommandLabel => InterfaceContainer.GetNode<Label>("%CommandLabel");
+
+	Dictionary<string, Button> VerbButtons = [];
 
 	enum MessageStateEnum
 	{
@@ -150,7 +147,7 @@ public partial class Interface : CanvasLayer
 
 	public void OnMessageTimerTimeout()
 	{
-		SetCommandLabel("");
+		ResetCommandLabel();
 		MessageState = MessageStateEnum.Idle;
 	}
 

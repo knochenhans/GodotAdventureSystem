@@ -5,5 +5,4 @@ using static Logger;
 
 public partial class AdventureObject : Object
 {
-    public Dictionary<string, string> DefaultVerbReactions { get; set; } = [];
 }
