@@ -32,7 +32,7 @@ INCLUDE robot.ink
                     Another cloud. #player
                     ~ set_var("test_value", true)
                 - else:
-                    Seems to work! #player
+                    I’ve looked at this before! #player
             }
         - "talk_to":
             ~ wait(2)
