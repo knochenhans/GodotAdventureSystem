@@ -168,7 +168,7 @@ public partial class CustomGame : BaseGame
         }
     }
 
-    public async Task PerformVerbAction(string thingID)
+    public async Task PerformVerbAction(string stageNodeID)
     {
         string performedAction;
 
@@ -184,25 +184,28 @@ public partial class CustomGame : BaseGame
             var useDefaultReaction = false;
 
             // Check if this is an inventory item
-            if (PlayerEntity.Inventory.HasItemMoreThan(thingID, 1))
+            if (PlayerEntity.Inventory.HasItemMoreThan(stageNodeID, 1))
             {
-                if (!inkStory.EvaluateFunction("interact_inventory", thingID, currentVerbID).AsBool())
+                if (!inkStory.EvaluateFunction("interact_inventory", stageNodeID, currentVerbID).AsBool())
                     useDefaultReaction = true;
             }
             else
             {
                 if (currentVerbID == "pick_up")
                 {
-                    // var thingResource = currentStage.StageThingManager.GetThing(thingID).Resource as ThingResource;
+                    var stageNode = currentStage.GetStageNodeByID(stageNodeID);
 
-                    // if (thingResource.CanBePickedUp)
-                    //     currentStage.ScriptManager.PickUp(thingID);
-                    // else
-                    //     useDefaultReaction = true;
+                    if (stageNode is AdventureObject adventureObject)
+                    {
+                        if (adventureObject.canBePickedUp)
+                            currentStage.MoveStageNodeToInventory(stageNodeID, PlayerEntity.ID);
+                        else
+                            useDefaultReaction = true;
+                    }
                 }
                 else
                 {
-                    if (!inkStory.EvaluateFunction("interact_stage", thingID, currentVerbID).AsBool())
+                    if (!inkStory.EvaluateFunction("interact_stage", stageNodeID, currentVerbID).AsBool())
                         useDefaultReaction = true;
                 }
             }
@@ -210,7 +213,7 @@ public partial class CustomGame : BaseGame
             if (useDefaultReaction)
             {
                 // No scripted reaction found, check the node's default reactions
-                var thing = currentStage.GetStageNodeByID(thingID);
+                var thing = currentStage.GetStageNodeByID(stageNodeID);
 
                 string reaction = "";
 
@@ -233,12 +236,12 @@ public partial class CustomGame : BaseGame
         }
         else
         {
-            // InterfaceNode.SetCommandLabel(currentStage.StageThingManager.GetThingName(thingID));
+            InterfaceNode.SetCommandLabel(currentStage.GetStageNodeByID(stageNodeID).DisplayName);
 
             // Check for exit scripts
-            if (!inkStory.EvaluateFunction("interact_stage", thingID, "walk").AsBool())
+            if (!inkStory.EvaluateFunction("interact_stage", stageNodeID, "walk").AsBool())
             {
-                Logger.Log($"No exit script found for {thingID}", Logger.LogTypeEnum.Script);
+                Logger.Log($"No exit script found for {stageNodeID}", Logger.LogTypeEnum.Script);
 
                 // var thing = currentStage.StageThingManager.GetThing(thingID);
 
@@ -252,7 +255,7 @@ public partial class CustomGame : BaseGame
             performedAction = "walk";
         }
 
-        // ThingActionCounter.IncrementActionCounter(thingID, performedAction);
+        StageNodeActionCounter.IncrementActionCounter(stageNodeID, performedAction);
 
         currentStage.InkStory.Continued -= Talk;
     }
