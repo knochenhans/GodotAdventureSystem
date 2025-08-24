@@ -10,9 +10,9 @@ public partial class ScriptActionMessage : EntityScriptAction
     public override async Task Execute()
     {
         if (Target == null)
-            Entity.LookAt(Entity.GlobalPosition);
+            Entity.TurnTowardsTarget(Entity.GlobalPosition);
         else
-            Entity.LookAt(Target.GlobalPosition);
+            Entity.TurnTowardsTarget(Target.GlobalPosition);
         await Entity.SpeechBubble(Message);
     }
 }

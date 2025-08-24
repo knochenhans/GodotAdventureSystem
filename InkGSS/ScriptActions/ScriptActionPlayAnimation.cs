@@ -5,7 +5,7 @@ public partial class ScriptActionPlayAnimation : EntityScriptAction
     public string AnimationName { get; set; }
 
     public ScriptActionPlayAnimation(AdventureEntity entity, string animationID) : base(entity) { AnimationName = animationID; }
-    public override async Task Execute() => await Entity.PlayAnimation(AnimationName);
+    public override async Task Execute() => await Entity.PlayAnimationAndWait(AnimationName);
 }
 
 // public partial class ScriptActionPrint : ScriptNodeControllerAction

@@ -7,5 +7,7 @@ public partial class ScriptActionCharacterWait : AbstractScriptAction
     {
         this.adventureEntity = adventureEntity;
         this.seconds = seconds;
+        
+        Logger.Log($"Created ScriptActionCharacterWait for entity {adventureEntity.ID} for {seconds} seconds", "InkGSS", Logger.LogTypeEnum.Script);
     }
 }
